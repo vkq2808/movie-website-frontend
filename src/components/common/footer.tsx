@@ -89,19 +89,19 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 pt-8 mt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex space-x-6">
-              <Link href="#" aria-label="Facebook" className="text-gray-400 hover:text-purple-400 transition duration-300">
+              <Link href="#" aria-label="Facebook" className=" hover:text-purple-400 transition duration-300">
                 <FaFacebookF size={24} />
               </Link>
-              <Link href="#" aria-label="Twitter" className="text-gray-400 hover:text-purple-400 transition duration-300">
+              <Link href="#" aria-label="Twitter" className=" hover:text-purple-400 transition duration-300">
                 <FaTwitter size={24} />
               </Link>
-              <Link href="#" aria-label="Instagram" className="text-gray-400 hover:text-purple-400 transition duration-300">
+              <Link href="#" aria-label="Instagram" className=" hover:text-purple-400 transition duration-300">
                 <FaInstagram size={24} />
               </Link>
-              <Link href="#" aria-label="YouTube" className="text-gray-400 hover:text-purple-400 transition duration-300">
+              <Link href="#" aria-label="YouTube" className=" hover:text-purple-400 transition duration-300">
                 <FaYoutube size={24} />
               </Link>
-              <Link href="#" aria-label="TikTok" className="text-gray-400 hover:text-purple-400 transition duration-300">
+              <Link href="#" aria-label="TikTok" className=" hover:text-purple-400 transition duration-300">
                 <FaTiktok size={24} />
               </Link>
             </div>
