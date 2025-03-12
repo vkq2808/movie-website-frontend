@@ -13,7 +13,6 @@ export default function Home() {
             Click để đến trang /about
           </h1>
         </Link>
-        <ThemeSwitcher />
       </main>
     </div>
   );

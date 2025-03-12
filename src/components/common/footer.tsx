@@ -10,9 +10,13 @@ import {
   FaTiktok,
   FaPhone,
   FaEnvelope,
+  FaQuestionCircle,
+  FaUser,
+  FaUserAstronaut,
+  FaPlusCircle,
 } from 'react-icons/fa';
 
-const Footer: React.FC = () => {
+const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -44,9 +48,18 @@ const Footer: React.FC = () => {
                 <FaPhone className="text-purple-400" />
                 <Link href="#" className="hover:text-purple-400 transition duration-300">Contact Us</Link>
               </li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">FAQ</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Help Center</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Subscription Support</Link></li>
+              <li className="flex items-center gap-2">
+                <FaQuestionCircle className="text-purple-400" />
+                <Link href="#" className="hover:text-purple-400 transition duration-300">FAQ</Link>
+              </li>
+              <li className="flex items-center gap-2">
+                <FaUserAstronaut className="text-purple-400" />
+                <Link href="#" className="hover:text-purple-400 transition duration-300">Help Center</Link>
+              </li>
+              <li className="flex items-center gap-2">
+                <FaPlusCircle className="text-purple-400" />
+                <Link href="#" className="hover:text-purple-400 transition duration-300">Subscription Support</Link>
+              </li>
             </ul>
           </div>
 

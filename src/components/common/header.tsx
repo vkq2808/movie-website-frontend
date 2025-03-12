@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import ThemeSwitcher from "@/components/common/ThemeSwitcher";
+import { categories } from "@/constants/mockData";
 
 const Header = () => {
 
@@ -15,19 +16,14 @@ const Header = () => {
         </Link>
 
         {/* Navigation links */}
-        <nav className="grid grid-flow-col gap-8">
-          <Link href="/" className="hover:text-gray-300 transition-colors">
-            Home
-          </Link>
-          <Link href="/about" className="hover:text-gray-300 transition-colors">
-            About
-          </Link>
-          <Link href="/services" className="hover:text-gray-300 transition-colors">
-            Services
-          </Link>
-          <Link href="/contact" className="hover:text-gray-300 transition-colors">
-            Contact
-          </Link>
+        <nav className="hidden grid-flow-col gap-8 md:grid">
+          {
+            categories.map((item, index) => (
+              <Link key={index} href={item.path} className="text-lg font-medium text-gray-600 hover:text-gray-800 transition-colors">
+                {item.title}
+              </Link>
+            ))
+          }
         </nav>
 
         {/* Nút chuyển dark mode */}

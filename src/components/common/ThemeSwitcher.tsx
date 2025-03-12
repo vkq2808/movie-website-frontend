@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Switcher } from "@/components/common";
+import { Moon } from "lucide-react";
 
 export default function ThemeSwitcher() {
   const [theme, setTheme] = useState<string>(() => {
@@ -24,11 +26,11 @@ export default function ThemeSwitcher() {
   };
 
   return (
-    <button
-      onClick={toggleTheme}
-      className="p-2 border rounded bg-gray-200 dark:bg-gray-800 dark:text-white"
+    <div
+      className="flex p-2 select-none rounded-full bg-gray-300 transition-colors"
     >
-      {theme === "light" ? "🌙 Dark" : "☀️ Light"}
-    </button>
+      <Switcher onChange={toggleTheme} initialValue={theme === "dark"} />
+      <Moon size={28} />
+    </div>
   );
 }

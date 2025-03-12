@@ -8,12 +8,12 @@ const AboutPage: React.FC = () => {
       </h1>
 
       {/* Team Members Section */}
-      <section className="mb-12">
+      <section className="mb-12 px-5 ">
         <MembersContainer />
       </section>
 
       {/* Project Overview Section */}
-      <section className="mb-12">
+      <section className="mb-12 md:px-20">
         <h2 className="text-3xl font-semibold mb-4">Project Overview</h2>
         <p className="text-gray-700 mb-4">
           <strong>Project Title:</strong> Online Movie Streaming Platform
@@ -32,7 +32,7 @@ const AboutPage: React.FC = () => {
 
       {/* Footer */}
       <footer className="text-center text-gray-600 mt-8">
-        <p>&copy; {new Date().getFullYear()} Project Team. All rights reserved.</p>
+        <p>&copy; 2025s Project Team. All rights reserved.</p>
       </footer>
     </div>
   );
@@ -57,8 +57,8 @@ const MembersContainer = () => {
   ];
 
   return (
-    <div className="relative min-h-[620px] w-full p-3">
-      <div className="absolute w-1/2 h-3/5 z-1">
+    <div className="relative min-h-[620px] w-full">
+      <div className="absolute w-1/2 h-3/5 z-1 left-1/24">
         <MemberCard {...members[0]} />
       </div>
       <div className="absolute top-15/40 left-11/24 w-1/2 h-3/5">
@@ -79,18 +79,20 @@ interface MemberCardProps {
 
 const MemberCard: React.FC<MemberCardProps> = ({ fullname, role, hobbies, avatar, className, nickname }) => {
   return (
-    <div className={`bg-[var(--color-neutral-800)] text-[var(--color-neutral-50)] shadow-lg rounded-lg p-6 w-full ${className}`}>
+    <div className={`bg-[var(--color-neutral-300)] text-[var(--color-neutral-800)] shadow-lg rounded-lg py-6 w-full ${className}`}>
       <div className="flex items-center justify-center mb-4 select-none">
-        <img src={avatar} alt={fullname} className="w-48 h-48 rounded-full" />
+        <img src={avatar} alt={fullname} className="w-24 h-24 md:w-48 md:h-48 rounded-full" />
       </div>
-      <h3 className="text-2xl font-bold mb-2">{fullname}</h3>
-      <p className="">
-        <strong>Role:</strong> {role}
-        <br />
-        <strong>Interests:</strong> {hobbies.join(', ')}
-        <br />
-        <strong>Nickname: </strong> {nickname}
-      </p>
+      <div className="px-6">
+        <h3 className="text-2xl font-bold mb-2">{fullname}</h3>
+        <p>
+          <strong>Role:</strong> {role}
+          <br />
+          <strong>Interests:</strong> {hobbies.join(', ')}
+          <br />
+          <strong>Nickname: </strong> {nickname}
+        </p>
+      </div>
     </div>
   );
 };
