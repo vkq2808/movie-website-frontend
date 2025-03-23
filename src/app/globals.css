@@ -18,6 +18,19 @@ html.dark {
 body {
   color: var(--color-neutral-900);
   background: var(--color-slate-50);
+  user-select: none;
+  transition: all 0.2s ease-in-out;
+}
+
+label,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  user-select: text;
 }
 
 html {

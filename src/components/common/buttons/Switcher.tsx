@@ -22,8 +22,8 @@ const Switcher = ({ onChange, initialValue = false }: SwitcherProps) => {
     <button
       onClick={toggleSwitch}
       style={{
-        width: "60px",
-        height: "30px",
+        width: "40px",
+        height: "24px",
         borderRadius: "15px",
         backgroundColor: isOn ? "green" : "gray",
         border: "none",
@@ -35,10 +35,10 @@ const Switcher = ({ onChange, initialValue = false }: SwitcherProps) => {
       <div
         style={{
           position: "absolute",
-          top: "3px",
-          left: isOn ? "32px" : "3px",
-          width: "24px",
-          height: "24px",
+          top: "2px",
+          left: isOn ? "16px" : "3px",
+          width: "20px",
+          height: "20px",
           borderRadius: "50%",
           background: "#fff",
           transition: "left 0.2s ease"

@@ -7,13 +7,11 @@ export default function Home() {
 
   return (
     <div className="dark grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-fit p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start dark:text-white dark:bg-black">
-        <Link href="/about">
-          <h1 className="text-4xl font-bold text-center sm:text-left hover:cursor-pointer"        >
-            Click để đến trang /about
-          </h1>
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+        <Link href="/about" className="text-4xl font-bold text-center sm:text-left hover:cursor-pointer"  >
+          Click để đến trang /about
         </Link>
       </main>
-    </div>
+    </div >
   );
 }

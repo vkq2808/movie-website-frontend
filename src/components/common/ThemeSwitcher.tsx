@@ -27,10 +27,10 @@ export default function ThemeSwitcher() {
 
   return (
     <div
-      className="flex p-2 select-none rounded-full bg-gray-300 transition-colors"
+      className="flex p-1 select-none rounded-full bg-gray-300 transition-colors"
     >
       <Switcher onChange={toggleTheme} initialValue={theme === "dark"} />
-      <Moon size={28} />
+      <Moon size={24} />
     </div>
   );
 }
