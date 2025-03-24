@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persistNSync } from 'persist-and-sync';
 
 interface AuthStore {
   auth: {
@@ -8,17 +9,21 @@ interface AuthStore {
   setAuth: (auth: { token: string | undefined, user: User | undefined }) => void;
   setUser: (user: User) => void;
   setToken: (token: string) => void;
+  logout: () => void;
 }
 
-export const useAuthStore = create<AuthStore>((set) => ({
-  auth: {
-    token: undefined,
-    user: undefined
-  },
-  setAuth: (auth) => set({ auth }),
-  setUser: (user) => set((state) => ({ auth: { ...state.auth, user } })),
-  setToken: (token) => set((state) => ({ auth: { ...state.auth, token } })),
-}));
+export const useAuthStore = create<AuthStore>(
+  persistNSync((set) => ({
+    auth: {
+      token: undefined,
+      user: undefined
+    },
+    setAuth: (auth) => set({ auth }),
+    setUser: (user) => set((state) => ({ auth: { ...state.auth, user } })),
+    setToken: (token) => set((state) => ({ auth: { ...state.auth, token } })),
+    logout: () => set({ auth: { token: undefined, user: undefined } }),
+  }), { name: 'auth' }
+  ));
 
 export interface User {
   _id: string;

@@ -1,26 +1,46 @@
 'use client'
-import api from '@/utils/api.util'
+import api, { baseURL } from '@/utils/api.util'
 import React, { useEffect } from 'react'
 import { oauth2Google } from '@/services/auth.service'
+import { useAuthStore } from '@/zustand/auth.store'
 
 const GoogleOAuth2Page = () => {
-
-  const [loading, setLoading] = React.useState(true)
+  const auth = useAuthStore(state => state.auth)
+  const [loading, setLoading] = React.useState(false)
+  const [timer, setTimer] = React.useState(3);
 
   const handleLoginWithGoogle = async () => {
     try {
+      setLoading(true);
+      window.open(`${baseURL}/auth/google-oauth2`, 'newWindow', 'width=500,height=600');
     } catch (error) {
       console.error(error)
     }
   }
 
   useEffect(() => {
-    oauth2Google()
+    if (!auth.token) return;
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev === 1) {
+          clearInterval(interval)
+          window.location.href = '/'
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return () => clearInterval(interval)
   }, [])
+
+  React.useEffect(() => {
+    if (auth.token) {
+      setLoading(false)
+    }
+  }, [auth])
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
-      <div className="bg-neutral-50 p-8 rounded-lg shadow-md w-full max-w-md">
+      <div className="bg-slate-100 p-8 rounded-lg shadow-md w-full max-w-md">
         {
           loading ? (
             <div className="flex items-center justify-center h-64">
@@ -45,7 +65,7 @@ const GoogleOAuth2Page = () => {
                 ></path>
               </svg>
             </div>
-          ) : (
+          ) : !auth.token ? (
             <div>
               <h2 className="text-2xl font-bold mb-6 text-center">Đăng nhập với Google</h2>
               <button
@@ -54,6 +74,11 @@ const GoogleOAuth2Page = () => {
               >
                 Đăng nhập với Google
               </button>
+            </div>
+          ) : (
+            <div>
+              <h2 className="text-2xl font-bold mb-6 text-center">Đăng nhập thành công</h2>
+              <p>Bạn sẽ được chuyển hướng về trang chủ sau {timer} giây</p>
             </div>
           )}
       </div>

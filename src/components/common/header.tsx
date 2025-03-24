@@ -7,6 +7,7 @@ import { useAuthStore } from "@/zustand/auth.store";
 
 const Header = () => {
   const auth = useAuthStore(state => state.auth);
+  const handleLogout = useAuthStore(state => state.logout);
 
   return (
     <header className="shadow-[0_4px_3px_-1px_var(--color-neutral-500)]">
@@ -32,9 +33,14 @@ const Header = () => {
           <ThemeSwitcher />
           {
             auth.user ? (
-              <Link href="/profile" className="text-lg font-medium text-gray-700 hover:text-gray-800 transition-colors">
-                {auth.user.username}
-              </Link>
+              <>
+                <Link href="/profile" className="text-lg font-medium text-gray-700 hover:text-gray-800 transition-colors">
+                  <img src={auth.user.photoUrl} alt="avatar" className="w-8 h-8 rounded-full" />
+                </Link>
+                <div className="cursor-pointer text-lg font-medium text-gray-700 hover:text-gray-800 transition-colors" onClick={handleLogout}>
+                  Đăng xuất
+                </div>
+              </>
             ) :
               (
                 <Link href="/auth/login" className="text-lg font-medium text-gray-700 hover:text-gray-800 transition-colors">

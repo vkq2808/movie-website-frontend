@@ -1,11 +1,11 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
-import { LoginForm } from '@/components/common';
+import { LoginForm, LoginOauth2 } from '@/components/common';
 
 const LoginPage: NextPage = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
-      <div className="bg-neutral-50 p-8 rounded-lg shadow-xl max-w-md w-full">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-400  to-pink-400">
+      <div className="bg-slate-100 p-8 rounded-lg shadow-xl max-w-md w-full">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
           Chào mừng trở lại!
         </h2>
@@ -19,6 +19,7 @@ const LoginPage: NextPage = () => {
             Đăng ký ngay
           </Link>
         </p>
+        <LoginOauth2 />
       </div>
     </div>
   );
