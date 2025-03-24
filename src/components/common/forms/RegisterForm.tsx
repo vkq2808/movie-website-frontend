@@ -3,16 +3,18 @@ import React from 'react';
 import { useState } from 'react';
 import api from '@/utils/api.util';
 import { useRouter } from 'next/navigation';
+import { authApi, RegisterData } from '@/apis/auth.api';
 
 const RegisterForm: React.FC = () => {
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const initialRegisterData: RegisterData = {
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
     birthdate: '',
-  });
+  }
+  const [formData, setFormData] = useState(initialRegisterData);
   const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,19 +31,13 @@ const RegisterForm: React.FC = () => {
       return;
     }
 
-    try {
-      await api.post('/auth/register', formData).then(
-        res => {
-          if (res.status === 201) {
-            router.push(`/auth/verify?token=${res.data.otpToken}`);
-          }
-        }
-      );
-      // Implement navigation to the login or home page after successful registration
-    } catch (err: any) {
-      console.log(err.response.data.code)
-      setError('Registration failed');
-    }
+    await authApi.register(formData).then(res => {
+      if (res.status === 201) {
+        router.push(`/auth/verify?email=${formData.email}`);
+      }
+    }).catch(err => {
+      setError(err.response.data.message);
+    });
   };
 
   const validateData = async () => {

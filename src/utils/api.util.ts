@@ -37,7 +37,7 @@ const processQueue = (error: any, token: string | null = null) => {
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     config.headers = config.headers || {};
-    const token = localStorage.getItem('accessToken');
+    const token = JSON.parse(localStorage.getItem('auth') as string)?.accessToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

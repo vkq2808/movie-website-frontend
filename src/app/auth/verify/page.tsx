@@ -6,9 +6,8 @@ import { useEffect, useState } from 'react';
 const VerifyPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get('token');
+  const email = searchParams.get('email');
   const [isLoading, setIsLoading] = useState(true);
-  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [otp, setOtp] = useState('');
   const [countdown, setCountdown] = useState(60);
@@ -45,23 +44,11 @@ const VerifyPage: React.FC = () => {
   };
 
   useEffect(() => {
-    setError('');
-    if (token) {
-      api.get(`/auth/get-email/${token}`)
-        .then(res => {
-          setEmail(res.data.email);
-          setIsLoading(false);
-        })
-        .catch(err => {
-          console.log(err);
-          setError('Token không hợp lệ');
-          setIsLoading(false);
-        });
-    } else {
-      setError('Token không hợp lệ');
-      setIsLoading(false);
+    if (!email) {
+      router.push('/auth/register');
     }
-  }, [token]);
+    setIsLoading(false);
+  }, [email]);
 
   // Hiệu ứng đếm ngược cho nút gửi lại OTP
   useEffect(() => {

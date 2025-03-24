@@ -4,6 +4,7 @@ import Link from 'next/link';
 import api from '@/utils/api.util';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/zustand/auth.store';
+import { authApi } from '@/apis/auth.api';
 
 const LoginForm = () => {
   const router = useRouter();
@@ -19,17 +20,13 @@ const LoginForm = () => {
     setLoading(true);
 
     try {
-      await api.post('/auth/login', { email, password })
-        .then(res => {
-          console.log('res', res)
-          if (res.data.user) {
-            localStorage.setItem('token', res.data.token)
-            setAth({ token: res.data.token, user: res.data.user })
-            router.push('/')
-          } else if (res.data.otpToken) {
-            router.push(`/auth/verify?token=${res.data.otpToken}`)
-          }
-        })
+      await authApi.login({ email, password }).then(res => {
+        console.log('res', res)
+        if (res.data.user) {
+          setAth({ accessToken: res.data.accessToken, user: res.data.user, refreshToken: res.data.refreshToken });
+          router.push('/')
+        }
+      })
         .catch(err => {
           throw new Error(err.response.data.message)
         })

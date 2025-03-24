@@ -3,25 +3,27 @@ import { persistNSync } from 'persist-and-sync';
 
 interface AuthStore {
   auth: {
-    token: string | undefined;
+    accessToken: string | undefined;
+    refreshToken: string | undefined;
     user: User | undefined;
   },
-  setAuth: (auth: { token: string | undefined, user: User | undefined }) => void;
+  setAuth: ({ accessToken, user, refreshToken }: { accessToken: string | undefined, user: User | undefined, refreshToken: string | undefined }) => void;
   setUser: (user: User) => void;
-  setToken: (token: string) => void;
+  setToken: (accessToken: string) => void;
   logout: () => void;
 }
 
 export const useAuthStore = create<AuthStore>(
   persistNSync((set) => ({
     auth: {
-      token: undefined,
+      accessToken: undefined,
+      refreshToken: undefined,
       user: undefined
     },
     setAuth: (auth) => set({ auth }),
     setUser: (user) => set((state) => ({ auth: { ...state.auth, user } })),
-    setToken: (token) => set((state) => ({ auth: { ...state.auth, token } })),
-    logout: () => set({ auth: { token: undefined, user: undefined } }),
+    setToken: (accessToken) => set((state) => ({ auth: { ...state.auth, accessToken } })),
+    logout: () => set({ auth: { accessToken: undefined, user: undefined, refreshToken: undefined } }),
   }), { name: 'auth' }
   ));
 

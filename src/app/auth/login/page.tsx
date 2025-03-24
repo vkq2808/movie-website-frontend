@@ -19,6 +19,12 @@ const LoginPage: NextPage = () => {
             Đăng ký ngay
           </Link>
         </p>
+        <p className="mt-6 text-sm text-center text-gray-600">
+          Quên mật khẩu?{' '}
+          <Link href="/auth/forget-password" className="text-blue-600 hover:underline">
+            Lấy lại mật khẩu
+          </Link>
+        </p>
         <LoginOauth2 />
       </div>
     </div>

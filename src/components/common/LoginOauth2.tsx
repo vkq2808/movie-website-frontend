@@ -22,11 +22,11 @@ const LoginOauth2 = () => {
   }
 
   React.useEffect(() => {
-    if (auth.token) {
+    if (auth.accessToken) {
       setIsLoading(false);
       window.location.href = '/';
     }
-  }, [auth.token]);
+  }, [auth.accessToken]);
 
   return (
     isLoading ?

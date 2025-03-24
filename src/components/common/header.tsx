@@ -12,7 +12,7 @@ const Header = () => {
 
   const handleTestToken = async () => {
     try {
-      api.get('/auth/test-token', { headers: { Authorization: `Bearer ${auth.token}` } })
+      api.get('/auth/test-token', { headers: { Authorization: `Bearer ${auth.accessToken}` } })
         .then(res => {
           console.log('res', res)
         })
