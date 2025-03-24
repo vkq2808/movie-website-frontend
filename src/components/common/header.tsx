@@ -4,10 +4,22 @@ import Link from "next/link";
 import ThemeSwitcher from "@/components/common/ThemeSwitcher";
 import { categories } from "@/constants/mockData";
 import { useAuthStore } from "@/zustand/auth.store";
+import api from "@/utils/api.util";
 
 const Header = () => {
   const auth = useAuthStore(state => state.auth);
   const handleLogout = useAuthStore(state => state.logout);
+
+  const handleTestToken = async () => {
+    try {
+      api.get('/auth/test-token', { headers: { Authorization: `Bearer ${auth.token}` } })
+        .then(res => {
+          console.log('res', res)
+        })
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
     <header className="shadow-[0_4px_3px_-1px_var(--color-neutral-500)]">
@@ -30,6 +42,9 @@ const Header = () => {
 
         {/* Nút chuyển dark mode */}
         <div className="flex items-center gap-4">
+          <button onClick={handleTestToken} className="px-4 py-2 text-white bg-blue-500 rounded-md hover:cursor-pointer">
+            Test Token
+          </button>
           <ThemeSwitcher />
           {
             auth.user ? (

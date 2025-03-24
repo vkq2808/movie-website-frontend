@@ -34,7 +34,6 @@ const LoginForm = () => {
           throw new Error(err.response.data.message)
         })
     } catch (err) {
-      console.error(err);
       setErrorMsg('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
     } finally {
       setLoading(false);
