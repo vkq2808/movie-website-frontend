@@ -5,21 +5,30 @@ import ThemeSwitcher from "@/components/common/ThemeSwitcher";
 import { categories } from "@/constants/mockData";
 import { useAuthStore } from "@/zustand/auth.store";
 import api from "@/utils/api.util";
+import { fetchUser } from "@/apis/user.api";
+import { useUserStore } from "@/zustand/user.store";
 
 const Header = () => {
   const auth = useAuthStore(state => state.auth);
+  const user = useUserStore(state => state.user);
+  const fetchUser = useUserStore(state => state.fetchUser);
   const handleLogout = useAuthStore(state => state.logout);
 
   const handleTestToken = async () => {
     try {
-      api.get('/auth/test-token', { headers: { Authorization: `Bearer ${auth.accessToken}` } })
-        .then(res => {
-          console.log('res', res)
-        })
+      return api.get('/auth/test-token', { headers: { Authorization: `Bearer ${auth.accessToken}` } })
     } catch (error) {
       console.error(error)
     }
   }
+
+  React.useEffect(() => {
+    if (auth.accessToken) {
+      fetchUser();
+    } else {
+      handleLogout();
+    }
+  }, [auth.accessToken]);
 
   return (
     <header className="shadow-[0_4px_3px_-1px_var(--color-neutral-500)]">
@@ -47,10 +56,10 @@ const Header = () => {
           </button>
           <ThemeSwitcher />
           {
-            auth.user ? (
+            user ? (
               <>
                 <Link href="/profile" className="text-lg font-medium text-gray-700 hover:text-gray-800 transition-colors">
-                  <img src={auth.user.photoUrl} alt="avatar" className="w-8 h-8 rounded-full" />
+                  <img src={user.photoUrl} alt="avatar" className="w-8 h-8 rounded-full" />
                 </Link>
                 <div className="cursor-pointer text-lg font-medium text-gray-700 hover:text-gray-800 transition-colors" onClick={handleLogout}>
                   Đăng xuất

@@ -1,12 +1,14 @@
 'use client'
 import api from '@/utils/api.util';
 import { useAuthStore } from '@/zustand/auth.store';
+import { useUserStore } from '@/zustand/user.store';
 import { useSearchParams } from 'next/navigation';
 import React from 'react'
 
 function FacebookOauth2CallbackPage() {
   const setAuth = useAuthStore(state => state.setAuth);
   const searchParams = useSearchParams();
+  const setUser = useUserStore(state => state.setUser);
 
   // Effect lấy dữ liệu callback từ URL và gọi API
   React.useEffect(() => {
@@ -19,7 +21,8 @@ function FacebookOauth2CallbackPage() {
         })
         .then((res) => {
           if (res.status === 200) {
-            setAuth(res.data);
+            setAuth({ accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+            setUser(res.data.user);
             window.close();
           }
         })

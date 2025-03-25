@@ -1,12 +1,19 @@
 import api from "@/utils/api.util";
+import { User } from "@/zustand/auth.store";
 
 export interface LoginData {
   email: string;
   password: string;
 }
 
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
+}
+
 const login = async (data: LoginData) => {
-  return api.post('/auth/login', data);
+  return api.post<LoginResponse>('/auth/login', data);
 }
 
 export interface RegisterData {
@@ -48,7 +55,6 @@ export interface ResetPasswordData {
 const resetPassword = async (data: ResetPasswordData) => {
   return api.post(`/auth/reset-password`, data);
 }
-
 
 export const authApi = {
   login,

@@ -1,11 +1,13 @@
 'use client'
 import api from '@/utils/api.util';
 import { useAuthStore } from '@/zustand/auth.store';
+import { useUserStore } from '@/zustand/user.store';
 import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 const GoogleOAuth2CallBackPage = () => {
   const setAuth = useAuthStore(state => state.setAuth);
+  const setUser = useUserStore(state => state.setUser);
   const searchParams = useSearchParams();
 
   // Effect lấy dữ liệu callback từ URL và gọi API
@@ -22,7 +24,8 @@ const GoogleOAuth2CallBackPage = () => {
         })
         .then((res) => {
           if (res.status === 200) {
-            setAuth(res.data);
+            setAuth({ accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+            setUser(res.data.user);
             window.close();
           }
         })

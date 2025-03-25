@@ -1,10 +1,9 @@
 'use client';
 import React, { FormEvent } from 'react'
-import Link from 'next/link';
-import api from '@/utils/api.util';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/zustand/auth.store';
 import { authApi } from '@/apis/auth.api';
+import { useUserStore } from '@/zustand/user.store';
 
 const LoginForm = () => {
   const router = useRouter();
@@ -12,29 +11,26 @@ const LoginForm = () => {
   const [password, setPassword] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState('');
-  const setAth = useAuthStore(state => state.setAuth);
+  const setAuth = useAuthStore(state => state.setAuth);
+  const setUser = useUserStore(state => state.setUser);
 
   const handleLoginSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setErrorMsg('');
     setLoading(true);
 
-    try {
-      await authApi.login({ email, password }).then(res => {
-        console.log('res', res)
-        if (res.data.user) {
-          setAth({ accessToken: res.data.accessToken, user: res.data.user, refreshToken: res.data.refreshToken });
-          router.push('/')
-        }
-      })
-        .catch(err => {
-          throw new Error(err.response.data.message)
-        })
-    } catch (err) {
+    await authApi.login({ email, password }).then(res => {
+      console.log('res', res)
+      if (res.status === 200) {
+        setAuth({ accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+        setUser(res.data.user);
+        router.push('/');
+      }
+    }).catch(err => {
       setErrorMsg('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
-    } finally {
+    }).finally(() => {
       setLoading(false);
-    }
+    });
   }
   return (
     <form onSubmit={handleLoginSubmit} className="space-y-5">
