@@ -1,14 +1,18 @@
-import Link from "next/link";
+import MovieSlider from "@/components/common/MovieSlider";
+import NoControlVideoPlayer from "@/components/common/video-player/NoControlVideoPlayer";
 
 export default function Home() {
 
+  const videoSrc = "http://localhost:2808/video/test.mp4"; // Replace with your video source
+
   return (
-    <div className="dark grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-fit p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Link href="/about" className="text-4xl font-bold text-center sm:text-left hover:cursor-pointer"  >
-          Click để đến trang /about
-        </Link>
-      </main>
-    </div >
+    <main className="flex flex-col items-center justify-center w-full min-h-[70vh]">
+      <div className="w-full flex justify-center items-center h-fit py-10">
+        <MovieSlider />
+      </div>
+      <div className="w-100 flex justify-center items-center h-100">
+        <NoControlVideoPlayer src={videoSrc} />
+      </div>
+    </main>
   );
 }

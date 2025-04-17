@@ -7,12 +7,14 @@ import { useAuthStore } from "@/zustand/auth.store";
 import api from "@/utils/api.util";
 import { fetchUser } from "@/apis/user.api";
 import { useUserStore } from "@/zustand/user.store";
+import { usePathname } from "next/navigation";
 
 const Header = () => {
   const auth = useAuthStore(state => state.auth);
   const user = useUserStore(state => state.user);
   const fetchUser = useUserStore(state => state.fetchUser);
   const handleLogout = useAuthStore(state => state.logout);
+  const path = usePathname();
 
   const handleTestToken = async () => {
     try {
@@ -31,18 +33,19 @@ const Header = () => {
   }, [auth.accessToken]);
 
   return (
-    <header className="shadow-[0_4px_3px_-1px_var(--color-neutral-500)]">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+    <header className="shadow-[0_4px_3px_-1px_var(--color-neutral-500)] bg-gradient-to-b from-slate-50 to-transparent sticky top-0 z-5000">
+      <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold hover:text-gray-300 transition-colors">
-          MyLogo
-        </Link>
 
         {/* Navigation links */}
         <nav className="hidden grid-flow-col gap-8 md:grid">
+          <Link href="/" className={`text-2xl font-bold hover:text-gray-300 transition-colors mr-10 h-12 w-auto flex items-center`}>
+            MyLogo
+          </Link>
           {
             categories.map((item, index) => (
-              <Link key={index} href={item.path} className="text-lg font-medium text-gray-700 hover:text-gray-800 transition-colors">
+              <Link key={index} href={item.path} className={`text-lg font-medium text-gray-700 h-full flex items-center hover:text-gray-800 transition-colors 
+                ${path === item.path ? 'text-gray-800 border-b-2 bg-gradient-to-t from-cyan-300 via-cyan-100 to-slate-50' : ''}`}>
                 {item.title}
               </Link>
             ))
@@ -51,9 +54,9 @@ const Header = () => {
 
         {/* Nút chuyển dark mode */}
         <div className="flex items-center gap-4">
-          <button onClick={handleTestToken} className="px-4 py-2 text-white bg-blue-500 rounded-md hover:cursor-pointer">
+          {/* <button onClick={handleTestToken} className="px-4 py-2 text-white bg-blue-500 rounded-md hover:cursor-pointer">
             Test Token
-          </button>
+          </button> */}
           <ThemeSwitcher />
           {
             user ? (

@@ -1,29 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Moon } from "lucide-react";
-import { on } from "events";
+import useThemeStore from "@/zustand/theme.store";
 
 export default function ThemeSwitcher() {
-  const [theme, setTheme] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") || "light";
-    }
-    return "light";
-  });
-
-  useEffect(() => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
+  const { theme, toggleTheme } = useThemeStore();
 
   return (
     <div
@@ -41,6 +23,8 @@ export default function ThemeSwitcher() {
           position: "relative",
           outline: "none"
         }}
+        className={`w-10 h-6 rounded-full flex items-center justify-between transition-colors ${theme === "dark" ? "bg-green-500" : "bg-gray-300"
+          }`}
       >
         <div
           style={{
