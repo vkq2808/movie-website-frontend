@@ -1,5 +1,5 @@
 import MovieSlider from "@/components/common/MovieSlider";
-import NoControlVideoPlayer from "@/components/common/video-player/NoControlVideoPlayer";
+import VideoPlayer from "@/components/common/video-player/VideoPlayer"
 
 export default function Home() {
 
@@ -7,12 +7,12 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-center w-full min-h-[70vh]">
-      <div className="w-full flex justify-center items-center h-fit py-10">
+      <div className="w-full h-fit flex justify-center items-center">
         <MovieSlider />
       </div>
-      <div className="w-100 flex justify-center items-center h-100">
-        <NoControlVideoPlayer src={videoSrc} />
-      </div>
+      {/* <div className="w-100 flex justify-center items-center h-100">
+        <VideoPlayer src={videoSrc} />
+      </div> */}
     </main>
   );
 }

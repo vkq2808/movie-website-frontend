@@ -1,12 +1,7 @@
 'use client';
 import React from "react";
 import Link from "next/link";
-import ThemeSwitcher from "@/components/common/ThemeSwitcher";
-import { categories } from "@/constants/mockData";
-import { useAuthStore } from "@/zustand/auth.store";
-import api from "@/utils/api.util";
-import { fetchUser } from "@/apis/user.api";
-import { useUserStore } from "@/zustand/user.store";
+import { Genre, useAuthStore, useGenreStore, useUserStore } from "@/zustand";
 import { usePathname } from "next/navigation";
 
 const Header = () => {
@@ -15,14 +10,9 @@ const Header = () => {
   const fetchUser = useUserStore(state => state.fetchUser);
   const handleLogout = useAuthStore(state => state.logout);
   const path = usePathname();
-
-  const handleTestToken = async () => {
-    try {
-      return api.get('/auth/test-token', { headers: { Authorization: `Bearer ${auth.accessToken}` } })
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  const genres = useGenreStore(state => state.genres);
+  const [displayGenres, setDisplayGenres] = React.useState<Genre[]>([]);
+  const fetchGenres = useGenreStore(state => state.fetchGenres);
 
   React.useEffect(() => {
     if (auth.accessToken) {
@@ -32,45 +22,62 @@ const Header = () => {
     }
   }, [auth.accessToken]);
 
-  return (
-    <header className="shadow-[0_4px_3px_-1px_var(--color-neutral-500)] bg-gradient-to-b from-slate-50 to-transparent sticky top-0 z-5000">
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        {/* Logo */}
+  React.useEffect(() => {
+    if (genres.length > 0) {
+      let newDisplayGenres: Genre[] = [];
+      newDisplayGenres.push({ _id: 'home', name: 'Trang chủ', slug: '' });
+      newDisplayGenres.push(...(genres.map((item) => { return { _id: item._id, name: item.name, slug: item.slug } })));
+      setDisplayGenres(newDisplayGenres);
+    } else {
+      fetchGenres();
+    }
+    console.log(genres)
+  }, [genres]);
 
+  return (
+    <header className="bg-gradient-to-b from-slate-900 fixed top-0 left-0 right-0 z-5000 ">
+      <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Navigation links */}
-        <nav className="hidden grid-flow-col gap-8 md:grid">
-          <Link href="/" className={`text-2xl font-bold hover:text-gray-300 transition-colors mr-10 h-12 w-auto flex items-center`}>
+        <nav className="hidden grid-flow-col gap-4 md:grid">
+          {/* Logo */}
+          <Link href="/" className={`text-2xl font-bold text-neutral-100 hover:text-gray-300 transition-colors mr-10 h-12 w-auto flex items-center`}>
             MyLogo
           </Link>
-          {
-            categories.map((item, index) => (
-              <Link key={index} href={item.path} className={`text-lg font-medium text-gray-700 h-full flex items-center hover:text-gray-800 transition-colors 
-                ${path === item.path ? 'text-gray-800 border-b-2 bg-gradient-to-t from-cyan-300 via-cyan-100 to-slate-50' : ''}`}>
-                {item.title}
-              </Link>
-            ))
-          }
+          <div className="flex justify-center items-center gap-4 ">
+            {
+              displayGenres.length > 6 ? (
+                <>
+                  {displayGenres.slice(0, 6).map((genre) => (
+                    <Link key={genre._id} href={`/genre/${genre.slug}`} className={`text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors`}>
+                      {genre.name}
+                    </Link>
+                  ))}
+                  <Link href="/genre" className={`text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors`}>
+                    Xem thêm
+                  </Link>
+                </>
+              ) : (<></>)
+            }
+          </div>
         </nav>
 
-        {/* Nút chuyển dark mode */}
         <div className="flex items-center gap-4">
           {/* <button onClick={handleTestToken} className="px-4 py-2 text-white bg-blue-500 rounded-md hover:cursor-pointer">
             Test Token
           </button> */}
-          <ThemeSwitcher />
           {
             user ? (
               <>
-                <Link href="/profile" className="text-lg font-medium text-gray-700 hover:text-gray-800 transition-colors">
+                <Link href="/profile" className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors">
                   <img src={user.photoUrl} alt="avatar" className="w-8 h-8 rounded-full" />
                 </Link>
-                <div className="cursor-pointer text-lg font-medium text-gray-700 hover:text-gray-800 transition-colors" onClick={handleLogout}>
+                <div className="cursor-pointer text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors" onClick={handleLogout}>
                   Đăng xuất
                 </div>
               </>
             ) :
               (
-                <Link href="/auth/login" className="text-lg font-medium text-gray-700 hover:text-gray-800 transition-colors">
+                <Link href="/auth/login" className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors">
                   Đăng nhập
                 </Link>
               )

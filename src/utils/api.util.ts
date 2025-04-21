@@ -2,6 +2,14 @@
 
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
+export const apiEnpoint = {
+  MOVIE: '/movie',
+  GENRE: '/genre',
+  IMAGE: '/image',
+  AUTH: '/auth',
+  USER: '/user',
+}
+
 // Mở rộng interface InternalAxiosRequestConfig để thêm thuộc tính _retry
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -45,6 +53,12 @@ api.interceptors.request.use(
   },
   error => Promise.reject(error)
 );
+
+axios.interceptors.request.use((req) => {
+  console.log('Method:', req.method?.toUpperCase()); // method (GET, POST, PUT, ...)
+  console.log('URL:', req.url); // URL của request
+  return req;
+});
 
 // Interceptor cho response để xử lý lỗi 401 và tự động refresh token
 api.interceptors.response.use(

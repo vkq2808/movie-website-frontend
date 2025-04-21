@@ -1,5 +1,6 @@
-import api from "@/utils/api.util";
+import api, { apiEnpoint } from "@/utils/api.util";
 import { create } from "zustand";
+import { User } from "./types";
 
 export interface UserStore {
   user: User | undefined;
@@ -12,7 +13,7 @@ export const useUserStore = create<UserStore>((set) => ({
   setUser: (user: User) => set({ user }),
   fetchUser: async () => {
     try {
-      const res = await api.get<User>('/users/me');
+      const res = await api.get<User>(`${apiEnpoint.AUTH}/me`);
       set({ user: res.data });
     } catch (error) {
       console.error(error);
@@ -20,38 +21,3 @@ export const useUserStore = create<UserStore>((set) => ({
   }
 }));
 
-
-export interface User {
-  _id: string;
-  email: string;
-  username: string;
-  role: string;
-  birthdate: string;
-  photoUrl: string;
-
-  favoriteMovies: Movie[];
-
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Movie {
-  generes: Genre[];
-  title: string;
-  description: string;
-  releasedDate: string;
-  duration: number;
-  posterUrl: string;
-  trailerUrl: string;
-  rating: number;
-  createdAt: string;
-  updatedAt: string;
-  _id: string;
-}
-
-export interface Genre {
-  _id: string;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-}

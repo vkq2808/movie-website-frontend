@@ -1,5 +1,5 @@
 'use client'
-import api from '@/utils/api.util';
+import api, { apiEnpoint } from '@/utils/api.util';
 import { useAuthStore } from '@/zustand/auth.store';
 import { useUserStore } from '@/zustand/user.store';
 import { useSearchParams } from 'next/navigation';
@@ -19,7 +19,7 @@ const GoogleOAuth2CallBackPage = () => {
 
     if (code && scope) {
       api
-        .get('/auth/google-oauth2/callback', {
+        .get(`${apiEnpoint.AUTH}/google-oauth2/callback`, {
           params: { code, scope, authUser, prompt }
         })
         .then((res) => {

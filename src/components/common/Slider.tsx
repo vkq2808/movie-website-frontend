@@ -4,8 +4,6 @@ import { ChevronLeftIcon } from 'lucide-react'
 
 interface SliderProps {
   length?: number,
-  height?: number,
-  slideWidth?: number,
   autoplay?: boolean,
   autoplayInterval?: number,
   children?: React.ReactNode[]
@@ -13,8 +11,6 @@ interface SliderProps {
 
 const Slider = ({
   length = 5,
-  height = 400,
-  slideWidth = 450,
   autoplay = true,
   autoplayInterval = 3000,
   children
@@ -42,16 +38,15 @@ const Slider = ({
 
 
   return (
-    <div className="flex justify-center items-center w-full">
-      <div className="relative w-full" style={{ height }}>
+    <div className="flex justify-center items-center">
+      <div className={"relative h-[55vw] w-[99vw]"}>
         <div className="bg-transparent overflow-hidden absolute inset-y-0 inset-x-0 flex items-center justify-center">
-          <div className='relative overflow-clip' style={{ width: slideWidth, height }}>
+          <div className='relative overflow-clip h-[55vw] w-[99vw]'>
             {children ? React.Children.map(children, (child, index) => (
               <div
                 className={`absolute transition-transform duration-500 ease-in-out ${index === activeIndex ? 'translate-x-0 z-5' :
                   index > activeIndex ? `translate-x-[100%]` : `translate-x-[-100%]`
                   }`}
-                style={{ width: slideWidth, height }}
                 key={index}
               >
                 {child}
@@ -63,13 +58,13 @@ const Slider = ({
         {/* Các nút điều hướng nằm giữa container */}
         <div className="absolute inset-x-0 inset-y-0 flex justify-between items-center z-20">
           <button
-            className="bg-neutral-50 text-slate-900 p-2 rounded-full"
+            className="bg-gradient-to-r from-slate-900  to-transparent text-slate-900 p-4 rounded-full h-[55vw]"
             onClick={handlePrev}
           >
             <ChevronLeftIcon className="w-8 h-8" />
           </button>
           <button
-            className="bg-neutral-50 text-slate-900 p-2 rounded-full"
+            className="bg-gradient-to-l from-slate-900  to-transparent text-slate-900 p-4 rounded-full h-[55vw]"
             onClick={handleNext}
           >
             <ChevronLeftIcon className="w-8 h-8 rotate-180" />

@@ -1,9 +1,16 @@
 'use client';
-import React from 'react';
+import React, { ReactEventHandler } from 'react';
 import LoadingSpinner from '../LoadingSpinner';
 
 interface NoControlVideoPlayerProps {
   src: string;
+  controls?: boolean;
+  loop?: boolean;
+  autoPlay?: boolean;
+  muted?: boolean;
+  onClick?: (e?: React.SyntheticEvent<HTMLVideoElement>) => void;
+  onLoadedData?: (e?: React.SyntheticEvent<HTMLVideoElement>) => void;
+  onError?: (e?: React.SyntheticEvent<HTMLVideoElement>) => void;
 }
 
 /**
@@ -13,7 +20,16 @@ interface NoControlVideoPlayerProps {
  *
 **/
 
-const NoControlVideoPlayer: React.FC<NoControlVideoPlayerProps> = ({ src }) => {
+const NoControlVideoPlayer: React.FC<NoControlVideoPlayerProps> = ({
+  src,
+  controls = false,
+  loop = false,
+  autoPlay = false,
+  muted = false,
+  onClick = undefined,
+  onLoadedData = undefined,
+  onError = undefined,
+}) => {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -30,6 +46,11 @@ const NoControlVideoPlayer: React.FC<NoControlVideoPlayerProps> = ({ src }) => {
       }
     }
   }
+
+  const handleError = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+    setIsLoading(false);
+    console.error('Error loading video:', e);
+  };
 
   React.useEffect(() => {
     if (videoRef.current) {
@@ -54,10 +75,13 @@ const NoControlVideoPlayer: React.FC<NoControlVideoPlayerProps> = ({ src }) => {
       <video
         ref={videoRef}
         className={`w-full h-full object-cover ${isLoading ? 'hidden' : ''}`}
-        autoPlay
-        muted
-        onClick={handleClick}
-        loop
+        onClick={onClick ?? handleClick}
+        onLoadedData={onLoadedData ?? handleLoadedData}
+        onError={onError ?? handleError}
+        loop={loop}
+        autoPlay={autoPlay}
+        muted={muted}
+        controls={controls}
       ></video>
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">

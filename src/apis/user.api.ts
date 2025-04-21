@@ -1,9 +1,9 @@
-import api from "@/utils/api.util";
-import { User } from "@/zustand/auth.store";
+import api, { apiEnpoint } from "@/utils/api.util";
+import { User } from "@/zustand";
 
 const fetchUser = async (): Promise<User> => {
   try {
-    const res = await api.get('/auth/me');
+    const res = await api.get(`${apiEnpoint.AUTH}/me`);
     return res.data;
   } catch (error) {
     throw error;

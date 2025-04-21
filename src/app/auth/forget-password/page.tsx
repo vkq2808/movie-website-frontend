@@ -1,6 +1,5 @@
 'use client';
 import { authApi } from '@/apis/auth.api';
-import api from '@/utils/api.util';
 import { useRouter } from 'next/navigation';
 import React from 'react'
 import { ClipLoader } from 'react-spinners';
