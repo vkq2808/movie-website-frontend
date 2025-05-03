@@ -5,6 +5,15 @@
   --font-mono: var(--font-geist-mono);
 }
 
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 html {
   --background: #ffffff;
   --foreground: #171717;

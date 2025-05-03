@@ -25,7 +25,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gradient-to-b to-gray-400 from-gray-50 pt-12 pb-6">
+    <footer className="bg-gradient-to-b from-slate-950 to-gray-800 pt-12 pb-6 text-neutral-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Quick Links */}
@@ -79,7 +79,7 @@ const Footer = () => {
             <h3 className="text-xl font-bold mb-4 select-none">Stay Updated</h3>
             <form onSubmit={handleNewsletterSubmit} className="space-y-4">
               <div className="relative flex justify-center items-center">
-                <FaEnvelope className="left-3 text-gray-400" />
+                <FaEnvelope className="left-3 text-purple-400 text-3xl" />
                 <input
                   type="email"
                   placeholder="Enter your email"
@@ -99,7 +99,7 @@ const Footer = () => {
         </div>
 
         {/* Social Media */}
-        <div className="border-t border-gray-800 pt-8 mt-8">
+        <div className="border-t border-gray-700 pt-8 mt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex space-x-6">
               <Link href="#" aria-label="Facebook" className=" hover:text-purple-400 transition duration-300">

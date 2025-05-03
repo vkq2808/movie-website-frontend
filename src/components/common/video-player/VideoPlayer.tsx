@@ -11,6 +11,7 @@ interface NoControlVideoPlayerProps {
   onClick?: (e?: React.SyntheticEvent<HTMLVideoElement>) => void;
   onLoadedData?: (e?: React.SyntheticEvent<HTMLVideoElement>) => void;
   onError?: (e?: React.SyntheticEvent<HTMLVideoElement>) => void;
+  text?: string;
 }
 
 /**
@@ -29,9 +30,11 @@ const NoControlVideoPlayer: React.FC<NoControlVideoPlayerProps> = ({
   onClick = undefined,
   onLoadedData = undefined,
   onError = undefined,
+  text = 'Your browser does not support the video tag.'
 }) => {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [isLoading, setIsLoading] = React.useState(true);
+
 
   const handleLoadedData = () => {
     setIsLoading(false);
@@ -65,24 +68,27 @@ const NoControlVideoPlayer: React.FC<NoControlVideoPlayerProps> = ({
 
   React.useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.src = src;
       videoRef.current.load();
     }
   }, [src]);
 
   return (
-    <div className="relative w-full h-full overflow-hidden rounded-lg shadow-lg bg-black">
+    <div className="relative w-full h-full overflow-hidden rounded-lg shadow-lg flex items-center justify-center scale-125">
       <video
         ref={videoRef}
-        className={`w-full h-full object-cover ${isLoading ? 'hidden' : ''}`}
+        className={`w-auto h-[100vh]`}
         onClick={onClick ?? handleClick}
         onLoadedData={onLoadedData ?? handleLoadedData}
         onError={onError ?? handleError}
         loop={loop}
-        autoPlay={autoPlay}
         muted={muted}
         controls={controls}
-      ></video>
+        autoPlay={autoPlay}
+        playsInline
+      >
+        <source src={src} type="video/mp4" />
+        {text}
+      </video>
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <LoadingSpinner />

@@ -27,10 +27,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="hide-scrollbar">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased
-        flex flex-col `}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col`}
       >
         <Header />
         {children}

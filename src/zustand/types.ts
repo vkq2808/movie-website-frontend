@@ -14,18 +14,33 @@ export interface User {
 }
 
 export interface Movie {
-  generes: Genre[];
+  genres: Genre[];
   title: string;
   description: string;
   releasedDate: string;
   duration: number;
   posterUrl: Image;
   backdropUrl: Image;
-  trailerUrl: string;
+  trailerUrl: string | null;
   rating: number;
   createdAt: string;
   updatedAt: string;
   _id: string;
+  videos: Video[];
+}
+
+export interface Video {
+  movieId: string;
+  key: string;
+  name: string;
+  site: string;
+  size: number;
+  type: string;
+  iso_639_1: string;
+  iso_3166_1: string;
+  _id: string;
+  publishedAt: Date;
+  createdAt: Date;
 }
 
 export interface Image {
