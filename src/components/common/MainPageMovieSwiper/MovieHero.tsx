@@ -24,7 +24,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({
   backgroundImage,
 }) => {
   return (
-    <div className="relative w-full h-screen text-white flex items-center justify-between overflow-hidden px-16">
+    <div className="relative w-full h-[80vh] text-white flex items-center justify-between overflow-hidden px-16">
       {/* Ảnh nền */}
       <img
         src={backgroundImage}
@@ -33,7 +33,10 @@ const MovieHero: React.FC<MovieHeroProps> = ({
       />
 
       {/* Overlay tối */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-black to-transparent opacity-80 z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent via-10% to-transparent opacity-90 z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent via-10% to-transparent opacity-90 z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent via-5% to-transparent opacity-90 z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-l from-black via-transparent via-5% to-transparent opacity-90 z-0"></div>
 
       {/* Nội dung bên trái */}
       <div className="relative z-10 max-w-[45%] space-y-4 pt-72">
@@ -67,6 +70,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({
             <InfoIcon className="w-6 h-6" />
           </button>
         </div>
+
       </div>
     </div>
   )

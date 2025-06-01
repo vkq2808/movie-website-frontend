@@ -11,7 +11,6 @@ import {
   FaPhone,
   FaEnvelope,
   FaQuestionCircle,
-  FaUser,
   FaUserAstronaut,
   FaPlusCircle,
 } from 'react-icons/fa';
@@ -25,7 +24,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gradient-to-b from-slate-950 to-gray-800 pt-12 pb-6 text-neutral-50">
+    <footer className="bg-gradient-to-b from-black to-gray-800 pt-12 pb-6 text-neutral-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Quick Links */}

@@ -5,12 +5,14 @@
   --font-mono: var(--font-geist-mono);
 }
 
-.hide-scrollbar {
+.hide-scrollbar,
+.scrollbar-hide {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
-.hide-scrollbar::-webkit-scrollbar {
+.hide-scrollbar::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 

@@ -1,33 +1,35 @@
 'use client'
 import React from 'react'
 import Swiper from '../Swiper'
-import api, { apiEnpoint } from '@/utils/api.util'
 import { Movie } from '@/zustand'
 import LoadingSpinner from '../LoadingSpinner'
 import { getTop5Movies } from '@/apis/movie.api'
-import { head } from 'framer-motion/client'
 import MovieHero from './MovieHero'
+import { useGlobalStore } from '@/zustand/global.store'
 
 const MovieSwiper = () => {
   const [loading, setLoading] = React.useState<boolean>(true)
   const [movies, setMovies] = React.useState<Movie[]>([])
   const [error, setError] = React.useState<string | null>(null)
+  const setGlobalLoading = useGlobalStore((state) => state.setLoading);
 
   const fetchTop5Movies = React.useCallback(async () => {
     try {
+      setGlobalLoading(true);
       const top5Movies = await getTop5Movies();
       setMovies(top5Movies)
+      console.log('Top 5 Movies:', top5Movies)
     } catch (error) {
       setError('Failed to fetch movies')
     } finally {
       setLoading(false)
+      setGlobalLoading(false);
     }
-  }, [])
+  }, [setGlobalLoading])
 
   React.useEffect(() => {
     fetchTop5Movies()
-  }, [])
-
+  }, [fetchTop5Movies])
   if (error) {
     return <div className="text-center">{error}</div>
   }
@@ -40,24 +42,15 @@ const MovieSwiper = () => {
 
   return (
     <div className="w-full h-full flex justify-center items-center">
-      <FullScreenSwiper
+      <CustomSwiper
         autoplay={true}
         autoplayInterval={5000}
         length={movies.length}
-        height={'90vh'}
-        width={'100vw'}
       >
         {movies.map((movie, index) => (
-          // <div key={index} className=" flex items-center justify-center">
-          //   <img
-          //     src={movie.backdropUrl?.url}
-          //     alt={movie.title}
-          //     className="object-cover rounded-lg"
-          //   />
-          // </div>
 
           <MovieHero
-            key={index}
+            key={movie.id}
             title={movie.title}
             rating={movie.rating}
             resolution={'HD'}
@@ -65,22 +58,22 @@ const MovieSwiper = () => {
             episode={'1'}
             genres={movie.genres.map((genre) => genre.name)}
             description={movie.description}
-            backgroundImage={`${movie.backdropUrl?.url}`}
+            backgroundImage={`${movie.backdrop?.url}`}
           />
         ))}
-      </FullScreenSwiper>
+      </CustomSwiper>
     </div>
   )
 }
 
-class FullScreenSwiper extends Swiper {
+class CustomSwiper extends Swiper {
   static defaultProps = {
     autoplay: false,
     autoplayInterval: 3000,
     length: 5,
-    height: '100vh',
+    height: '80vh',
     width: '100vw',
-    showArrows: false,
+    showArrows: false
   }
 }
 

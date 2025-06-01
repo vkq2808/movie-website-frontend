@@ -8,6 +8,7 @@ export const apiEnpoint = {
   IMAGE: '/image',
   AUTH: '/auth',
   USER: '/user',
+  LANGUAGE: '/language',
 }
 
 // Mở rộng interface InternalAxiosRequestConfig để thêm thuộc tính _retry
