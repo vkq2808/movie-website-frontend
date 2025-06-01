@@ -1,18 +1,26 @@
-import MovieSlider from "@/components/common/MainPageMovieSwiper/MovieSwiper";
-import VideoPlayer from "@/components/common/video-player/VideoPlayer"
+import { MovieSwiper, GenreList, LanguageMovieSelector } from "@/components/common";
 
 export default function Home() {
 
-  const videoSrc = "http://localhost:2808/video/test.mp4"; // Replace with your video source
-
   return (
-    <main className="flex flex-col items-center justify-center w-full min-h-[70vh] bg-neutral-950 ">
+    <main className="flex flex-col items-center justify-center w-full min-h-[70vh] bg-black ">
       <div className="w-full h-fit flex justify-center items-center">
-        <MovieSlider />
+        <MovieSwiper />
       </div>
-      {/* <div className="w-100 flex justify-center items-center h-100">
-        <VideoPlayer src={videoSrc} />
-      </div> */}
+      <GenreList />
+      <div className="min-h-screen bg-gray-900 text-white py-8 w-full">
+        <div className="w-full container mx-auto px-4">
+          <h1 className="text-4xl font-bold mb-8 text-center">Discover Movies By Language</h1>
+
+          {/* LanguageMovieSelector component with predefined languages */}
+          <LanguageMovieSelector
+            title="Featured International Movies"
+            limit={12}
+            height="auto"
+            width="100%"
+          />
+        </div>
+      </div>
     </main>
   );
 }

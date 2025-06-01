@@ -10,6 +10,7 @@ interface SwiperProps {
   height?: number | string;
   width?: number | string;
   showArrows?: boolean;
+  className?: string;
 }
 
 interface SwiperState {

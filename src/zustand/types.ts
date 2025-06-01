@@ -1,35 +1,48 @@
+interface Model {
+}
 
-export interface User {
-  _id: string;
+interface BaseModelWithoutId extends Model {
+  created_at: string;
+  updated_at: string;
+}
+
+interface BaseModelWithId extends Model {
+  id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface BaseModelWithId {
+  id: string;
+  created_at: string;
+  updated_at: string;
+}
+export interface User extends BaseModelWithId {
   email: string;
   username: string;
   role: string;
   birthdate: string;
-  photoUrl: string;
+  photo_url: string;
 
   favoriteMovies: Movie[];
-
-  createdAt: string;
-  updatedAt: string;
 }
 
-export interface Movie {
+export interface Movie extends BaseModelWithId {
   genres: Genre[];
   title: string;
   description: string;
-  releasedDate: string;
+  released_date: string;
   duration: number;
-  posterUrl: Image;
-  backdropUrl: Image;
-  trailerUrl: string | null;
+  poster: Image;
+  backdrop: Image;
+  trailer_url: string | null;
   rating: number;
-  createdAt: string;
-  updatedAt: string;
-  _id: string;
   videos: Video[];
+  vote_average: number;
+  vote_count: number;
 }
 
-export interface Video {
+export interface Video extends BaseModelWithId {
   movieId: string;
   key: string;
   name: string;
@@ -38,12 +51,10 @@ export interface Video {
   type: string;
   iso_639_1: string;
   iso_3166_1: string;
-  _id: string;
-  publishedAt: Date;
-  createdAt: Date;
+  published_at: Date;
 }
 
-export interface Image {
+export interface Image extends BaseModelWithId {
   url: string;
   alt: string;
   width: number;
@@ -51,8 +62,15 @@ export interface Image {
   bytes: number;
 }
 
-export interface Genre {
-  _id: string;
-  name: string;
-  slug: string;
+export interface Genre extends BaseModelWithId {
+  original_id: string;
+  names: {
+    iso_639_1: string;
+    name: string;
+  }[]
 }
+
+export interface Language extends Model {
+  iso_639_1: string;
+  name: string;
+};

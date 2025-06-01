@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Footer, Header } from "@/components/common";
+import { Footer, Header, LoadingOverlay } from "@/components/common";
 import dotenv from "dotenv";
+import React from "react";
 
 dotenv.config({ path: ".env" });
 
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col`}
       >
+        <LoadingOverlay />
         <Header />
         {children}
         <Footer />
