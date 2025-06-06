@@ -2,6 +2,7 @@
 import React from 'react'
 import { Movie, useLanguageStore } from '@/zustand'
 import { Play, Heart, Share, MessageCircle } from 'lucide-react'
+import { getMovieOverviewByLanguage, getMovieTitleByLanguage } from '@/utils/movie.util'
 
 interface MovieHeroProps {
   movie: Movie
@@ -56,7 +57,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
             <div className="flex-1 space-y-6">
               {/* Title */}
               <h1 className="text-5xl font-bold text-white mb-4">
-                {movie.title}
+                {getMovieTitleByLanguage(movie, currentLanguage.iso_639_1)}
               </h1>
 
               {/* Action Buttons */}
@@ -122,7 +123,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
 
               {/* Description */}
               <p className="text-gray-200 text-lg leading-relaxed max-w-3xl">
-                {movie.description || 'No description available.'}
+                {getMovieOverviewByLanguage(movie, currentLanguage.iso_639_1)}
               </p>
             </div>
           </div>

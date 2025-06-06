@@ -31,7 +31,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
       const demoMovies: Movie[] = Array.from({ length: 12 }, (_, index) => ({
         id: `suggested-${index}`,
         title: `Suggested Movie ${index + 1}`,
-        description: `This is a suggested movie description for movie ${index + 1}. It shares similar themes with the current movie.`,
+        overview: `This is a suggested movie overview for movie ${index + 1}. It shares similar themes with the current movie.`,
         release_date: `202${index % 4}-0${(index % 12) + 1}-01`,
         duration: 90 + (index * 10),
         vote_average: 7.5 + (index % 3),
@@ -122,9 +122,9 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
             ))}
           </div>
 
-          {/* Description */}
+          {/* overview */}
           <p className="text-gray-400 text-xs line-clamp-2">
-            {suggestedMovie.description || 'No description available.'}
+            {suggestedMovie.overview || 'No overview available.'}
           </p>
         </div>
       </div>
@@ -197,7 +197,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
                     {suggestedMovie.release_date?.split('-')[0]} • {suggestedMovie.vote_average?.toFixed(1)} ★
                   </p>
                   <p className="text-gray-400 text-xs line-clamp-2">
-                    {suggestedMovie.description}
+                    {suggestedMovie.overview}
                   </p>
                 </div>
               </div>

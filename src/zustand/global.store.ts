@@ -6,6 +6,6 @@ export interface GlobalStore {
 }
 
 export const useGlobalStore = create<GlobalStore>((set) => ({
-  isLoading: true,
+  isLoading: false,
   setLoading: (isLoading: boolean) => set({ isLoading }),
 }));

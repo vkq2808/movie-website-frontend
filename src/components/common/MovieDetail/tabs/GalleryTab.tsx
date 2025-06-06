@@ -17,12 +17,22 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
     // Add more images if available in your data structure
   ].filter(Boolean)
 
+  const handlePressEscape = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      closeModal()
+    }
+  }
+
   const openModal = (imageUrl: string) => {
     setSelectedImage(imageUrl)
+    // Add event listener for Escape key
+    document.addEventListener('keydown', handlePressEscape)
   }
 
   const closeModal = () => {
     setSelectedImage(null)
+    // Remove event listener for Escape key
+    document.removeEventListener('keydown', handlePressEscape)
   }
 
   return (
@@ -34,15 +44,15 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
           {galleryImages.map((image, index) => (
             <div
               key={index}
-              className="relative aspect-video bg-gray-800 rounded-lg overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-200"
+              className="relative aspect-video rounded-lg overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-200 justify-center items-center flex"
               onClick={() => openModal(image.url)}
             >
               <img
                 src={image.url}
                 alt={image.alt || `Gallery image ${index + 1}`}
-                className="w-full h-full object-cover"
+                className="max-w-full max-h-full object-cover rounded-lg"
               />
-              <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-200" />
+              <div className="absolute inset-0 bg-black opacity-20 hover:bg-opacity-20 transition-all duration-200" />
             </div>
           ))}
 
@@ -132,7 +142,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
             <img
               src={selectedImage}
               alt="Full size"
-              className="max-w-full max-h-full object-contain"
+              className="max-w-screen max-h-screen object-contain"
               onClick={(e) => e.stopPropagation()}
             />
           </div>

@@ -40,6 +40,10 @@ export interface Movie extends BaseModelWithId {
   videos: Video[];
   vote_average: number;
   vote_count: number;
+  alternative_titles: AlternativeTitle[];
+  alternative_overviews: AlternativeOverview[];
+  original_language: string;
+  original_title: string;
 }
 
 export interface Video extends BaseModelWithId {
@@ -74,3 +78,13 @@ export interface Language extends Model {
   iso_639_1: string;
   name: string;
 };
+
+export interface AlternativeTitle {
+  title: string;
+  iso_639_1: string;
+}
+
+export interface AlternativeOverview {
+  overview: string;
+  iso_639_1: string;
+}

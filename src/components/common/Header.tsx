@@ -1,6 +1,7 @@
 'use client';
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Genre, useAuthStore, useGenreStore, useUserStore } from "@/zustand";
 import { ChevronDownIcon, SearchIcon, UserIcon, Globe2Icon } from "lucide-react";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
@@ -16,6 +17,7 @@ const Header = () => {
   const fetchGenres = useGenreStore(state => state.fetchGenres);
   const [search, setSearch] = React.useState('');
   const { currentLanguage, setLanguage } = useLanguageStore();
+  const router = useRouter();
 
   // Function to get genre name based on current language
   const getGenreName = (genre: Genre) => {
@@ -51,26 +53,41 @@ const Header = () => {
           <Link href="/" className={`text-2xl font-bold text-neutral-100 hover:text-gray-300 transition-colors mr-10 h-12 w-auto flex items-center`}>
             MyLogo
           </Link>
-          <div className="flex-1 mx-4 relative">            <input
-            type="text"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder={currentLanguage.iso_639_1 === 'en' ? 'Search movies, actors' : 'Tìm kiếm phim, diễn viên'}
-            className="w-full h-10 pl-10 pr-4 rounded placeholder-neutral-50 focus:outline-none"
-          />
-            <SearchIcon className="w-5 h-5 text-neutral-50 absolute left-3 top-2.5" />
-          </div>          <Link href="/chu-de">{currentLanguage.iso_639_1 === 'en' ? 'Topics' : 'Chủ Đề'}</Link>
+          <div className="flex-2 mx-4 relative">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              if (search.trim()) {
+                router.push(`/search?q=${encodeURIComponent(search.trim())}`);
+              }
+            }}>
+              <input
+                type="text"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder={currentLanguage.iso_639_1 === 'en' ? 'Search movies, actors' : 'Tìm kiếm phim, diễn viên'}
+                className="w-full h-10 pl-10 pr-10 rounded placeholder-neutral-50 focus:outline-none bg-gray-800/70"
+              />
+              <button type="submit" className="absolute right-3 top-2.5">
+                <SearchIcon className="w-5 h-5 text-neutral-50" />
+              </button>
+            </form>
+          </div>
 
           {/* Mega menu "Thể loại" */}
-          <Popover className="relative">            <PopoverButton className="flex items-center space-x-1cursor-pointer focus:outline-none">
-            <span>{currentLanguage.iso_639_1 === 'en' ? 'Genres' : 'Thể Loại'}</span>
-            <ChevronDownIcon className="w-4 h-4" />
-          </PopoverButton>
-
-            <PopoverPanel className="absolute z-10 mt-2 w-screen max-w-md bg-gray-800 p-4 rounded shadow-lg focus:outline-none">
-              <div className="grid grid-cols-4 gap-4">
+          <Popover className="relative">
+            <PopoverButton className="flex items-center space-x-1cursor-pointer focus:outline-none min-w-24">
+              <span>{currentLanguage.iso_639_1 === 'en' ? 'Genres' : 'Thể Loại'}</span>
+              <ChevronDownIcon className="w-4 h-4" />
+            </PopoverButton>
+            <PopoverPanel className="absolute z-10 mt-2 w-screen max-w-lg pr-8 bg-gray-800 p-4 rounded shadow-lg focus:outline-none">
+              <div className="grid grid-cols-4 gap-6">
                 {genres.map(g => (
-                  <Link className="block px-2 py-1 hover:bg-gray-700 rounded" key={g.id} href={`/genre/${g.original_id}`}>
+                  <Link
+                    className="block px-2 py-1 w-32 hover:bg-gray-700 text-center break-words hyphens-auto overflow-hidden hover:z-10 hover:scale-110 transition-all"
+                    key={g.id}
+                    href={`/genre/${g.original_id}`}
+                    title={getGenreName(g)}
+                  >
                     {getGenreName(g)}
                   </Link>
                 ))}

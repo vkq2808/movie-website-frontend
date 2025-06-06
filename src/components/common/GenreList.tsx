@@ -135,7 +135,6 @@ export default function GenreList() {
         {displayGenres.length > 0 && displayGenres.map((genre) => {
           const bgColor = `rgb(${genre.bgColor.r}, ${genre.bgColor.g}, ${genre.bgColor.b})`;
           const textColor = genre.bgColor.r + genre.bgColor.g + genre.bgColor.b > 192 ? 'black' : 'white';
-          console.log('Genre:', genre, 'Background Color:', bgColor, 'Text Color:', textColor);
           return (
             <Link
               key={genre.id}

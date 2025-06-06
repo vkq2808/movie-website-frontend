@@ -2,6 +2,7 @@
 import React from 'react'
 import { Movie, useLanguageStore } from '@/zustand'
 import Link from 'next/link'
+import { getMovieTitleByLanguage } from '@/utils/movie.util'
 
 interface MovieCardProps {
   movie: Movie
@@ -36,7 +37,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
 
         {/* Movie info */}
         <div className="p-4">
-          <h3 className="text-white font-medium text-lg mb-1 line-clamp-1">{movie.title}</h3>
+          <h3 className="text-white font-medium text-lg mb-1 line-clamp-1">{getMovieTitleByLanguage(movie, currentLanguage.iso_639_1)}</h3>
           <div className="flex items-center text-sm text-gray-300 mb-2">
             <span>{movie.release_date?.split('-')[0] || 'N/A'}</span>
           </div>
