@@ -2,7 +2,7 @@
 import React from 'react'
 import Swiper from '../Swiper'
 import { Movie } from '@/zustand'
-import { Spinner } from '../'
+import LoadingSpinner from '../LoadingSpinner'
 import { getTop5Movies } from '@/apis/movie.api'
 import MovieHero from './MovieHero'
 import { useGlobalStore } from '@/zustand/global.store'
@@ -46,7 +46,7 @@ const MovieSwiper = () => {
     return (
       <div className="w-full h-[80vh] flex justify-center items-center bg-gray-900">
         <div className="flex flex-col items-center">
-          <Spinner size="lg" color="text-yellow-400" />
+          <LoadingSpinner size={60} />
           <p className="mt-4 text-white animate-pulse">Loading featured movies...</p>
         </div>
       </div>
@@ -54,27 +54,32 @@ const MovieSwiper = () => {
   }
 
   return (
-    <div className="w-full h-[80vh] flex justify-center items-center">
+    <div className="w-full h-full flex justify-center items-center">
       <CustomSwiper
         autoplay={true}
         autoplayInterval={5000}
         length={movies.length}
       >
-        {
-          movies.map((movie, index) => {
-            // Get genre name based on current language
-            const getGenreName = (genre: any) => {
-              return genre.names?.[0]?.name || 'Unknown';
-            };
+        {movies.map((movie, index) => {
+          // Get genre name based on current language
+          const getGenreName = (genre: any) => {
+            return genre.names?.[0]?.name || 'Unknown';
+          };
 
-            return (
-              <MovieHero
-                key={movie.id}
-                movie={movie}
-              />
-            );
-          })
-        }
+          return (
+            <MovieHero
+              key={movie.id}
+              title={movie.title}
+              rating={movie.rating}
+              resolution={'HD'}
+              year={movie.release_date}
+              episode={'1'}
+              genres={movie.genres.map((genre) => getGenreName(genre))}
+              description={movie.description}
+              backgroundImage={`${movie.backdrop?.url}`}
+            />
+          );
+        })}
       </CustomSwiper>
     </div>
   )

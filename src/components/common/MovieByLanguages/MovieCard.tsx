@@ -38,7 +38,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         <div className="p-4">
           <h3 className="text-white font-medium text-lg mb-1 line-clamp-1">{movie.title}</h3>
           <div className="flex items-center text-sm text-gray-300 mb-2">
-            <span>{movie.released_date?.split('-')[0] || 'N/A'}</span>
+            <span>{movie.release_date?.split('-')[0] || 'N/A'}</span>
           </div>
 
           {/* Genres */}

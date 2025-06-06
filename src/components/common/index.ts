@@ -10,6 +10,7 @@ import LoginOauth2 from "./LoginOauth2";
 import GenreList from "./GenreList";
 import LoadingOverlay from "./LoadingOverlay";
 import LanguageMovieSelector from "./MovieByLanguages/LanguageMovieSelector";
+import Spinner from "./Spinner";
 
 
 export {
@@ -18,5 +19,6 @@ export {
   LoginOauth2,
   GenreList,
   LoadingOverlay,
-  LanguageMovieSelector
+  LanguageMovieSelector,
+  Spinner
 };

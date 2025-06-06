@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Genre, useAuthStore, useGenreStore, useUserStore } from "@/zustand";
 import { ChevronDownIcon, SearchIcon, UserIcon, Globe2Icon } from "lucide-react";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
-import { useHydration } from "@/hooks/useHydration";
 import { useGlobalStore } from "@/zustand/global.store";
 import { useLanguageStore, SUPPORTED_LANGUAGES } from "@/zustand";
 
@@ -13,7 +12,8 @@ const Header = () => {
   const fetchUser = useUserStore(state => state.fetchUser);
   const handleLogout = useAuthStore(state => state.logout);
   const genres = useGenreStore(state => state.genres);
-  const [displayGenres, setDisplayGenres] = React.useState<Genre[]>([]); const fetchGenres = useGenreStore(state => state.fetchGenres);
+  const [displayGenres, setDisplayGenres] = React.useState<Genre[]>([]);
+  const fetchGenres = useGenreStore(state => state.fetchGenres);
   const [search, setSearch] = React.useState('');
   const { currentLanguage, setLanguage } = useLanguageStore();
 
@@ -40,7 +40,7 @@ const Header = () => {
     } else {
       fetchGenres();
     }
-  }, [genres]);
+  }, [genres.length, fetchGenres]);
 
   return (
     <header className="bg-gradient-to-b from-slate-900 to-transparent fixed top-0 left-0 right-0 z-5000 text-neutral-50">

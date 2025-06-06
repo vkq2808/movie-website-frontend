@@ -30,8 +30,8 @@ export interface User extends BaseModelWithId {
 export interface Movie extends BaseModelWithId {
   genres: Genre[];
   title: string;
-  description: string;
-  released_date: string;
+  overview: string;
+  release_date: string;
   duration: number;
   poster: Image;
   backdrop: Image;
