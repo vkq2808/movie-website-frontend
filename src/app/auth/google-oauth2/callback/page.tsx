@@ -3,9 +3,10 @@ import api, { apiEnpoint } from '@/utils/api.util';
 import { useAuthStore } from '@/zustand/auth.store';
 import { useUserStore } from '@/zustand/user.store';
 import { useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, Suspense } from 'react';
 
-const GoogleOAuth2CallBackPage = () => {
+// Component that uses useSearchParams
+const GoogleOAuth2Content = () => {
   const setAuth = useAuthStore(state => state.setAuth);
   const setUser = useUserStore(state => state.setUser);
   const searchParams = useSearchParams();
@@ -59,7 +60,7 @@ const GoogleOAuth2CallBackPage = () => {
           console.error(err);
         });
     }
-  }, [searchParams, setAuth]);
+  }, [searchParams, setAuth, setUser]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
@@ -70,6 +71,29 @@ const GoogleOAuth2CallBackPage = () => {
         </p>
       </div>
     </div>
+  );
+};
+
+// Loading component to show while waiting for the content to load
+const LoadingCallback = () => {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+      <div className="bg-slate-100 p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 className="text-3xl font-bold text-center">Google OAuth2 Callback</h1>
+        <p className="text-center">
+          Đang xử lý đăng nhập Google...
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// Main page component with Suspense boundary
+const GoogleOAuth2CallBackPage = () => {
+  return (
+    <Suspense fallback={<LoadingCallback />}>
+      <GoogleOAuth2Content />
+    </Suspense>
   );
 };
 

@@ -62,6 +62,11 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
         rating: 7.5 + (index % 3),
         created_at: '',
         updated_at: '',
+        // Add missing Movie properties
+        alternative_titles: [],
+        alternative_overviews: [],
+        original_language: currentLanguage.iso_639_1 || 'en',
+        original_title: `Suggested Movie ${index + 1}`,
       }))
 
       setSuggestedMovies(demoMovies)

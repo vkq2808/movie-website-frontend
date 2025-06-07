@@ -2,10 +2,10 @@
 import { authApi, ResetPasswordData } from '@/apis/auth.api';
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ClipLoader } from 'react-spinners';
-import React from 'react'
+import React, { Suspense } from 'react'
 
-
-const ResetPasswordPage = () => {
+// Component using useSearchParams
+const ResetPasswordContent = () => {
   const params = useSearchParams();
   const initialResetPasswordData: ResetPasswordData = {
     email: params.get('email') || '',
@@ -133,5 +133,28 @@ const ResetPasswordPage = () => {
     </div>
   )
 }
+
+// Loading component to show while waiting for the content to load
+const LoadingResetPassword = () => {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+      <div className="bg-slate-100 p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 className="text-xl font-medium text-center">Đang tải...</h1>
+        <div className="flex justify-center mt-4">
+          <ClipLoader color="#3b82f6" size={30} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Main page component with Suspense boundary
+const ResetPasswordPage = () => {
+  return (
+    <Suspense fallback={<LoadingResetPassword />}>
+      <ResetPasswordContent />
+    </Suspense>
+  );
+};
 
 export default ResetPasswordPage
