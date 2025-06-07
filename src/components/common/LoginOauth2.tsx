@@ -1,7 +1,6 @@
 'use client'
 import { baseURL } from '@/utils/api.util';
 import { useAuthStore } from '@/zustand/auth.store';
-import Link from 'next/link';
 import React from 'react'
 import { FaGoogle, FaFacebook } from 'react-icons/fa';
 import { ClipLoader } from 'react-spinners';

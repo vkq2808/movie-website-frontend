@@ -18,15 +18,41 @@ const GoogleOAuth2CallBackPage = () => {
     const prompt = searchParams.get('prompt');
 
     if (code && scope) {
+      console.log('Google OAuth2 Callback Params:', { code, scope, authUser, prompt });
+      // Log the setAuth function to see if it's defined correctly
+      console.log('setAuth function:', setAuth);
+
       api
         .get(`${apiEnpoint.AUTH}/google-oauth2/callback`, {
           params: { code, scope, authUser, prompt }
-        })
-        .then((res) => {
+        }).then((res) => {
           if (res.status === 200) {
-            setAuth({ accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
-            setUser(res.data.user);
-            window.close();
+            console.log('Auth response:', res.data);
+            // Manually check if the data we're using exists
+            console.log('accessToken exists:', !!res.data.accessToken);
+            console.log('refreshToken exists:', !!res.data.refreshToken);
+
+            try {
+              if (res.data.user) {
+                setUser(res.data.user);
+                console.log('After setUser - success');
+              } else {
+                console.warn('No user data in response');
+              }
+            } catch (error) {
+              console.error('Error in setUser:', error);
+            }
+
+            try {
+              setAuth({ accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+              console.log('After setAuth - success');
+            } catch (error) {
+              console.error('Error in setAuth:', error);
+            }
+
+            setTimeout(() => {
+              window.close();
+            }, 1000); // Close after 1 second to ensure state updates
           }
         })
         .catch((err) => {

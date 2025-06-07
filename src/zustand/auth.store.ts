@@ -16,9 +16,19 @@ export const useAuthStore = create<AuthStore>(
     auth: {
       accessToken: undefined,
       refreshToken: undefined,
-      user: undefined
+    }, setAuth: ({ accessToken, refreshToken }) => {
+      console.log('setAuth called with:', { accessToken, refreshToken });
+      // Handle case where accessToken or refreshToken might be null or undefined
+      if (!accessToken && !refreshToken) {
+        console.warn('Both accessToken and refreshToken are empty in setAuth');
+      }
+      set({
+        auth: {
+          accessToken: accessToken || undefined,
+          refreshToken: refreshToken || undefined
+        }
+      });
     },
-    setAuth: (auth) => set({ auth }),
     setToken: (accessToken) => set((state) => ({ auth: { ...state.auth, accessToken } })),
     logout: () => set({ auth: { accessToken: undefined, refreshToken: undefined } }),
   }), { name: 'auth' }

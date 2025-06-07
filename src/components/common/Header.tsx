@@ -9,7 +9,8 @@ import { useGlobalStore } from "@/zustand/global.store";
 import { useLanguageStore, SUPPORTED_LANGUAGES } from "@/zustand";
 
 const Header = () => {
-  const auth = useAuthStore(state => state.auth); const user = useUserStore(state => state.user);
+  const auth = useAuthStore(state => state.auth);
+  const user = useUserStore(state => state.user);
   const fetchUser = useUserStore(state => state.fetchUser);
   const handleLogout = useAuthStore(state => state.logout);
   const genres = useGenreStore(state => state.genres);
@@ -27,6 +28,7 @@ const Header = () => {
 
   React.useEffect(() => {
     if (auth.accessToken) {
+      console.log('Access token found:', auth.accessToken);
       fetchUser();
     } else {
       handleLogout();
@@ -96,25 +98,27 @@ const Header = () => {
           </Popover>
         </nav>
 
-        {/* Mobile menu button and user */}        <div className="flex items-center gap-4">
+        {/* Mobile menu button and user */}
+        <div className="flex items-center gap-4">
           {/* Language Selector */}
           <Popover className="relative">
             <PopoverButton className="flex items-center space-x-1 focus:outline-none">
               <Globe2Icon className="w-5 h-5" />
             </PopoverButton>
 
-            <PopoverPanel className="absolute z-10 mt-2 w-48 bg-gray-800 p-2 rounded shadow-lg focus:outline-none right-0">              <div className="flex flex-col gap-1">
-              {SUPPORTED_LANGUAGES.map(lang => (
-                <button
-                  key={lang.iso_639_1}
-                  className={`px-4 py-2 text-left hover:bg-gray-700 rounded transition-colors ${currentLanguage.iso_639_1 === lang.iso_639_1 ? 'bg-gray-700' : ''
-                    }`}
-                  onClick={() => setLanguage(lang)}
-                >
-                  {lang.name}
-                </button>
-              ))}
-            </div>
+            <PopoverPanel className="absolute z-10 mt-2 w-48 bg-gray-800 p-2 rounded shadow-lg focus:outline-none right-0">
+              <div className="flex flex-col gap-1">
+                {SUPPORTED_LANGUAGES.map(lang => (
+                  <button
+                    key={lang.iso_639_1}
+                    className={`px-4 py-2 text-left hover:bg-gray-700 rounded transition-colors ${currentLanguage.iso_639_1 === lang.iso_639_1 ? 'bg-gray-700' : ''
+                      }`}
+                    onClick={() => setLanguage(lang)}
+                  >
+                    {lang.name}
+                  </button>
+                ))}
+              </div>
             </PopoverPanel>
           </Popover>
 

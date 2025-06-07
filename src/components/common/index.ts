@@ -11,6 +11,7 @@ import GenreList from "./GenreList";
 import LoadingOverlay from "./LoadingOverlay";
 import LanguageMovieSelector from "./MovieByLanguages/LanguageMovieSelector";
 import Spinner from "./Spinner";
+import CountryLanguageDemo from "./demo/CountryLanguageDemo";
 
 
 export {
@@ -20,5 +21,6 @@ export {
   GenreList,
   LoadingOverlay,
   LanguageMovieSelector,
-  Spinner
+  Spinner,
+  CountryLanguageDemo
 };
