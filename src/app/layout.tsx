@@ -28,10 +28,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="hide-scrollbar">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col`}
-      >
+    <html lang="en" className={`hide-scrollbar ${geistSans.variable} ${geistMono.variable}`}>
+      <body className="antialiased flex flex-col">
         <LoadingOverlay />
         <Header />
         {children}
