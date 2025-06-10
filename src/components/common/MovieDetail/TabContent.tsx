@@ -14,13 +14,13 @@ interface TabContentProps {
 const TabContent: React.FC<TabContentProps> = ({ activeTab, movie }) => {
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'tapphim':
+      case 'episode-tab':
         return <EpisodesTab movie={movie} />
-      case 'gallery':
+      case 'gallery-tab':
         return <GalleryTab movie={movie} />
-      case 'dienvier':
+      case 'cast-tab':
         return <CastTab movie={movie} />
-      case 'dexuat':
+      case 'suggestion-tab':
         return <SuggestionsTab movie={movie} />
       default:
         return <EpisodesTab movie={movie} />

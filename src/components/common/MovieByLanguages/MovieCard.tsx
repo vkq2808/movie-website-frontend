@@ -3,13 +3,14 @@ import React from 'react'
 import { Movie, useLanguageStore } from '@/zustand'
 import Link from 'next/link'
 import { getMovieTitleByLanguage } from '@/utils/movie.util'
+import { useTranslation } from '@/contexts/translation.context'
 
 interface MovieCardProps {
   movie: Movie
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
-  const currentLanguage = useLanguageStore((state) => state.currentLanguage)
+  const { language, t } = useTranslation();
 
   return (
     <Link href={`/movie/${movie.id}`}>
@@ -25,7 +26,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
           )}
           {!movie.poster && (
             <div className="w-full h-full bg-gray-700 flex items-center justify-center">
-              <span className="text-gray-400">No poster available</span>
+              <span className="text-gray-400">{t('No image available')}</span>
             </div>
           )}
 
@@ -37,7 +38,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
 
         {/* Movie info */}
         <div className="p-4">
-          <h3 className="text-white font-medium text-lg mb-1 line-clamp-1">{getMovieTitleByLanguage(movie, currentLanguage.iso_639_1)}</h3>
+          <h3 className="text-white font-medium text-lg mb-1 line-clamp-1">{getMovieTitleByLanguage(movie, language)}</h3>
           <div className="flex items-center text-sm text-gray-300 mb-2">
             <span>{movie.release_date?.split('-')[0] || 'N/A'}</span>
           </div>
@@ -49,7 +50,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
                 key={genre.id}
                 className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded"
               >
-                {genre.names?.find(n => n.iso_639_1 === currentLanguage.iso_639_1)?.name || genre.names?.[0]?.name || ''}
+                {genre.names?.find(n => n.iso_639_1 === language)?.name || genre.names?.[0]?.name || ''}
               </span>
             ))}
           </div>
@@ -57,7 +58,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
 
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <span className="text-white font-bold px-4 py-2 bg-yellow-400 rounded-full">View Details</span>
+          <span className="text-white font-bold px-4 py-2 bg-yellow-400 rounded-full">{t('View Details')}</span>
         </div>
       </div>
     </Link>

@@ -1,4 +1,4 @@
-import api, { apiEnpoint } from '@/utils/api.util'
+import api, { apiEndpoint } from '@/utils/api.util'
 
 /**
  * Save a search query to the user's search history

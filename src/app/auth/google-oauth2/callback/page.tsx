@@ -1,14 +1,13 @@
 'use client'
-import api, { apiEnpoint } from '@/utils/api.util';
+import api, { apiEndpoint } from '@/utils/api.util';
 import { useAuthStore } from '@/zustand/auth.store';
-import { useUserStore } from '@/zustand/user.store';
 import { useSearchParams } from 'next/navigation';
 import React, { useEffect, Suspense } from 'react';
 
 // Component that uses useSearchParams
 const GoogleOAuth2Content = () => {
   const setAuth = useAuthStore(state => state.setAuth);
-  const setUser = useUserStore(state => state.setUser);
+  const setUser = useAuthStore(state => state.setUser);
   const searchParams = useSearchParams();
 
   // Effect lấy dữ liệu callback từ URL và gọi API
@@ -24,14 +23,10 @@ const GoogleOAuth2Content = () => {
       console.log('setAuth function:', setAuth);
 
       api
-        .get(`${apiEnpoint.AUTH}/google-oauth2/callback`, {
+        .get(`${apiEndpoint.AUTH}/google-oauth2/callback`, {
           params: { code, scope, authUser, prompt }
         }).then((res) => {
           if (res.status === 200) {
-            console.log('Auth response:', res.data);
-            // Manually check if the data we're using exists
-            console.log('accessToken exists:', !!res.data.accessToken);
-            console.log('refreshToken exists:', !!res.data.refreshToken);
 
             try {
               if (res.data.user) {
@@ -45,7 +40,7 @@ const GoogleOAuth2Content = () => {
             }
 
             try {
-              setAuth({ accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+              setAuth({ access_token: res.data.access_token, refresh_token: res.data.refresh_token });
               console.log('After setAuth - success');
             } catch (error) {
               console.error('Error in setAuth:', error);

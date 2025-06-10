@@ -4,6 +4,7 @@ import "./globals.css";
 import { Footer, Header, LoadingOverlay } from "@/components/common";
 import dotenv from "dotenv";
 import React from "react";
+import { TranslationProvider } from "@/contexts/translation.context";
 
 dotenv.config({ path: ".env" });
 
@@ -30,10 +31,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`hide-scrollbar ${geistSans.variable} ${geistMono.variable}`}>
       <body className="antialiased flex flex-col">
-        <LoadingOverlay />
-        <Header />
-        {children}
-        <Footer />
+        <TranslationProvider>
+          <LoadingOverlay />
+          <Header />
+          {children}
+          <Footer />
+        </TranslationProvider>
       </body>
     </html>
   );

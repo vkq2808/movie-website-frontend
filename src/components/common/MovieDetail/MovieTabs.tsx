@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { Movie } from '@/zustand'
 import TabContent from './TabContent'
+import { useTranslation } from '@/contexts/translation.context'
 
 interface MovieTabsProps {
   movie: Movie
@@ -10,13 +11,14 @@ interface MovieTabsProps {
 type TabType = 'tapphim' | 'gallery' | 'dienvier' | 'dexuat'
 
 const MovieTabs: React.FC<MovieTabsProps> = ({ movie }) => {
-  const [activeTab, setActiveTab] = useState<TabType>('tapphim')
+  const { language, t } = useTranslation()
+  const [activeTab, setActiveTab] = useState<TabType>('episode-tab')
 
   const tabs = [
-    { id: 'tapphim', label: 'Tập phim', icon: null },
-    { id: 'gallery', label: 'Gallery', icon: null },
-    { id: 'dienvier', label: 'Diễn viên', icon: null },
-    { id: 'dexuat', label: 'Đề xuất', icon: null },
+    { id: 'episode-tab', label: t('Episode'), icon: null },
+    { id: 'gallery-tab', label: t('Gallery'), icon: null },
+    { id: 'cast-tab', label: t('Cast'), icon: null },
+    { id: 'suggestion-tab', label: t('Suggestion'), icon: null },
   ] as const
 
   return (

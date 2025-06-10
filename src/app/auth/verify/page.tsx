@@ -1,5 +1,5 @@
 'use client';
-import api, { apiEnpoint } from '@/utils/api.util';
+import api, { apiEndpoint } from '@/utils/api.util';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 
@@ -17,7 +17,7 @@ const VerifyContent: React.FC = () => {
   const handleSubmitOTP = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await api.post(`${apiEnpoint.AUTH}/verify`, { email, otp });
+      const res = await api.post(`${apiEndpoint.AUTH}/verify`, { email, otp });
       if (res.status === 200) {
         router.push('/auth/login');
       }
@@ -31,7 +31,7 @@ const VerifyContent: React.FC = () => {
     setIsResending(true);
     try {
       if (!email) return;
-      const res = await api.post(`${apiEnpoint.AUTH}/resend-otp`, { email });
+      const res = await api.post(`${apiEndpoint.AUTH}/resend-otp`, { email });
       if (res.status === 200) {
         // Đặt lại timer khi gửi lại OTP thành công
         setCountdown(60);

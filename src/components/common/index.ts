@@ -1,6 +1,5 @@
 
-export * from "./forms";
-// export * from "./buttons";
+export * from "./Form";
 export * from "./MainPageMovieSwiper";
 
 
@@ -11,7 +10,6 @@ import GenreList from "./GenreList";
 import LoadingOverlay from "./LoadingOverlay";
 import LanguageMovieSelector from "./MovieByLanguages/LanguageMovieSelector";
 import Spinner from "./Spinner";
-import CountryLanguageDemo from "./demo/CountryLanguageDemo";
 
 
 export {
@@ -21,6 +19,5 @@ export {
   GenreList,
   LoadingOverlay,
   LanguageMovieSelector,
-  Spinner,
-  CountryLanguageDemo
+  Spinner
 };

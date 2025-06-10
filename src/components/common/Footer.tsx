@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslation } from '@/contexts/translation.context';
 import Link from 'next/link';
 import React from 'react';
 import {
@@ -17,6 +18,7 @@ import {
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { t } = useTranslation();
 
   const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,59 +31,59 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-bold mb-4 select-none">Quick Links</h3>
+            <h3 className="text-xl font-bold mb-4 select-none">{t('Quick Links')}</h3>
             <ul className="space-y-2">
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Movie Categories</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Genres</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Top Rated Movies</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">New Releases</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Upcoming Films</Link></li>
+              <li><Link href="#" className="hover:text-purple-400 transition duration-300">{t('Movie Categories')}</Link></li>
+              <li><Link href="#" className="hover:text-purple-400 transition duration-300">{t('Genres')}</Link></li>
+              <li><Link href="#" className="hover:text-purple-400 transition duration-300">{t('Top Rated Movies')}</Link></li>
+              <li><Link href="#" className="hover:text-purple-400 transition duration-300">{t('New Releases')}</Link></li>
+              <li><Link href="#" className="hover:text-purple-400 transition duration-300">{t('Upcoming Films')}</Link></li>
             </ul>
           </div>
 
           {/* Customer Support */}
           <div>
-            <h3 className="text-xl font-bold mb-4 select-none">Customer Support</h3>
+            <h3 className="text-xl font-bold mb-4 select-none">{t('Customer Support')}</h3>
             <ul className="space-y-2">
               <li className="flex items-center gap-2">
                 <FaPhone className="text-purple-400" />
-                <Link href="#" className="hover:text-purple-400 transition duration-300">Contact Us</Link>
+                <Link href="#" className="hover:text-purple-400 transition duration-300">{t('Contact Us')}</Link>
               </li>
               <li className="flex items-center gap-2">
                 <FaQuestionCircle className="text-purple-400" />
-                <Link href="#" className="hover:text-purple-400 transition duration-300">FAQ</Link>
+                <Link href="#" className="hover:text-purple-400 transition duration-300">{t('FAQ')}</Link>
               </li>
               <li className="flex items-center gap-2">
                 <FaUserAstronaut className="text-purple-400" />
-                <Link href="#" className="hover:text-purple-400 transition duration-300">Help Center</Link>
+                <Link href="#" className="hover:text-purple-400 transition duration-300">{t('Help Center')}</Link>
               </li>
               <li className="flex items-center gap-2">
                 <FaPlusCircle className="text-purple-400" />
-                <Link href="#" className="hover:text-purple-400 transition duration-300">Subscription Support</Link>
+                <Link href="#" className="hover:text-purple-400 transition duration-300">{t('Subscription Support')}</Link>
               </li>
             </ul>
           </div>
 
           {/* Legal */}
           <div>
-            <h3 className="text-xl font-bold mb-4 select-none">Legal</h3>
+            <h3 className="text-xl font-bold mb-4 select-none">{t('Legal')}</h3>
             <ul className="space-y-2">
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Privacy Policy</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Terms of Service</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Cookie Policy</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">About Us</Link></li>
+              <li><Link href="#" className="hover:text-purple-400 transition duration-300">{t('Privacy Policy')}</Link></li>
+              <li><Link href="#" className="hover:text-purple-400 transition duration-300">{t('Terms of Service')}</Link></li>
+              <li><Link href="#" className="hover:text-purple-400 transition duration-300">{t('Cookie Policy')}</Link></li>
+              <li><Link href="#" className="hover:text-purple-400 transition duration-300">{t('About Us')}</Link></li>
             </ul>
           </div>
 
           {/* Newsletter */}
           <div>
-            <h3 className="text-xl font-bold mb-4 select-none">Stay Updated</h3>
+            <h3 className="text-xl font-bold mb-4 select-none">{t('Stay Updated')}</h3>
             <form onSubmit={handleNewsletterSubmit} className="space-y-4">
               <div className="relative flex justify-center items-center">
                 <FaEnvelope className="left-3 text-purple-400 text-3xl" />
                 <input
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder={t('Enter your email')}
                   className="w-full bg-gray-800 rounded-lg py-2 ml-3 pl-10 pr-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
                   aria-label="Email for newsletter"
@@ -91,7 +93,7 @@ const Footer = () => {
                 type="submit"
                 className="w-full bg-purple-600 hover:bg-purple-700 font-semibold py-2 px-4 rounded-lg transition duration-300"
               >
-                Subscribe
+                {t('Subscribe')}
               </button>
             </form>
           </div>
@@ -118,7 +120,7 @@ const Footer = () => {
               </Link>
             </div>
             <p className="text-gray-400 text-sm">
-              © {currentYear} MovieHub. All rights reserved.
+              © {currentYear} MovieHub. {t('All rights reserved.')}
             </p>
           </div>
         </div>

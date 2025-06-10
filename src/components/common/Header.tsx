@@ -2,43 +2,43 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Genre, useAuthStore, useGenreStore, useUserStore } from "@/zustand";
+import { Genre, useAuthStore, useGenreStore } from "@/zustand";
 import { ChevronDownIcon, SearchIcon, UserIcon, Globe2Icon } from "lucide-react";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { useGlobalStore } from "@/zustand/global.store";
 import { useLanguageStore, SUPPORTED_LANGUAGES } from "@/zustand";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useTranslation } from "@/contexts/translation.context";
 
 const Header = () => {
-  const auth = useAuthStore(state => state.auth);
-  const user = useUserStore(state => state.user);
-  const fetchUser = useUserStore(state => state.fetchUser);
+  const auth = useAuthStore(state => state);
   const handleLogout = useAuthStore(state => state.logout);
+  const fetchUser = useAuthStore(state => state.fetchUser);
+  const user = useAuthStore(state => state.user);
+
   const genres = useGenreStore(state => state.genres);
   const [displayGenres, setDisplayGenres] = React.useState<Genre[]>([]);
   const fetchGenres = useGenreStore(state => state.fetchGenres);
   const [search, setSearch] = React.useState('');
-  const { currentLanguage, setLanguage } = useLanguageStore();
+  const { language, t } = useTranslation();
   const router = useRouter();
 
   // Function to get genre name based on current language
   const getGenreName = (genre: Genre) => {
-    const nameForLanguage = genre.names.find(n => n.iso_639_1 === currentLanguage.iso_639_1);
+    const nameForLanguage = genre.names.find(n => n.iso_639_1 === language);
     return nameForLanguage ? nameForLanguage.name : genre.names[0]?.name || 'Unknown';
   };
 
   React.useEffect(() => {
-    if (auth.accessToken) {
-      console.log('Access token found:', auth.accessToken);
+    if (auth.access_token) {
+      console.log('Access token found:', auth.access_token);
       fetchUser();
-    } else {
-      handleLogout();
     }
-  }, [auth.accessToken]);
+  }, [auth.access_token]);
 
   React.useEffect(() => {
     if (genres.length > 0) {
       let newDisplayGenres: Genre[] = [];
-      newDisplayGenres.push({ id: 'home', names: [{ name: 'Trang chủ', iso_639_1: 'vi' }, { iso_639_1: 'en', name: 'Home' }], original_id: '', created_at: '', updated_at: '' });
       newDisplayGenres.push(...genres);
       setDisplayGenres(newDisplayGenres);
     } else {
@@ -66,7 +66,7 @@ const Header = () => {
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder={currentLanguage.iso_639_1 === 'en' ? 'Search movies, actors' : 'Tìm kiếm phim, diễn viên'}
+                placeholder={t('Search movies, actors')}
                 className="w-full h-10 pl-10 pr-10 rounded placeholder-neutral-50 focus:outline-none bg-gray-800/70"
               />
               <button type="submit" className="absolute right-3 top-2.5">
@@ -78,7 +78,7 @@ const Header = () => {
           {/* Mega menu "Thể loại" */}
           <Popover className="relative">
             <PopoverButton className="flex items-center space-x-1cursor-pointer focus:outline-none min-w-24">
-              <span>{currentLanguage.iso_639_1 === 'en' ? 'Genres' : 'Thể Loại'}</span>
+              <span>{t('Genres')}</span>
               <ChevronDownIcon className="w-4 h-4" />
             </PopoverButton>
             <PopoverPanel className="absolute z-10 mt-2 w-screen max-w-lg pr-8 bg-gray-800 p-4 rounded shadow-lg focus:outline-none">
@@ -87,7 +87,7 @@ const Header = () => {
                   <Link
                     className="block px-2 py-1 w-32 hover:bg-gray-700 text-center break-words hyphens-auto overflow-hidden hover:z-10 hover:scale-110 transition-all"
                     key={g.id}
-                    href={`/genre/${g.original_id}`}
+                    href={`/search?genres=${g.id}`}
                     title={getGenreName(g)}
                   >
                     {getGenreName(g)}
@@ -101,26 +101,7 @@ const Header = () => {
         {/* Mobile menu button and user */}
         <div className="flex items-center gap-4">
           {/* Language Selector */}
-          <Popover className="relative">
-            <PopoverButton className="flex items-center space-x-1 focus:outline-none">
-              <Globe2Icon className="w-5 h-5" />
-            </PopoverButton>
-
-            <PopoverPanel className="absolute z-10 mt-2 w-48 bg-gray-800 p-2 rounded shadow-lg focus:outline-none right-0">
-              <div className="flex flex-col gap-1">
-                {SUPPORTED_LANGUAGES.map(lang => (
-                  <button
-                    key={lang.iso_639_1}
-                    className={`px-4 py-2 text-left hover:bg-gray-700 rounded transition-colors ${currentLanguage.iso_639_1 === lang.iso_639_1 ? 'bg-gray-700' : ''
-                      }`}
-                    onClick={() => setLanguage(lang)}
-                  >
-                    {lang.name}
-                  </button>
-                ))}
-              </div>
-            </PopoverPanel>
-          </Popover>
+          <LanguageSwitcher className="hidden lg:block" />
 
           {/* User Section */}
           <div className="flex items-center lg:hidden space-x-4">
@@ -129,15 +110,15 @@ const Header = () => {
           {user ? (
             <>
               <Link href="/profile" className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors">
-                <img src={user.photo_url} alt="avatar" className="w-8 h-8 rounded-full" />
+                <img src={user.photo_url} alt={t('Profile')} className="w-8 h-8 rounded-full" />
               </Link>
               <div className="cursor-pointer text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors" onClick={handleLogout}>
-                {currentLanguage.iso_639_1 === 'en' ? 'Logout' : 'Đăng xuất'}
+                {t('Logout')}
               </div>
             </>
           ) : (
             <Link href="/auth/login" className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors">
-              {currentLanguage.iso_639_1 === 'en' ? 'Login' : 'Đăng nhập'}
+              {t('Login')}
             </Link>
           )}
         </div>

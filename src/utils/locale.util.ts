@@ -1,210 +1,288 @@
 /**
- * Utilities for handling locale, language, and country code conversions
- * This file contains helper functions that work in both client and server environments
+ * Simplified locale utility for handling the most popular 20 languages
+ * Converts between locale code (xx-XX), ISO 639-1 language code (xx), and ISO 3166-1 country code (XX)
  */
 
 /**
- * Safely loads the i18n-iso-countries library (only on client-side)
- * @returns The countries library instance or null if unavailable
+ * The supported languages (based on your movie website languages)
+ * Combined from the languages shown in the image and your backend
  */
-export const loadCountriesLib = () => {
-  if (typeof window !== 'undefined') {
-    try {
-      const countries = require('i18n-iso-countries');
-      // Register at least English locale for country names
-      countries.registerLocale(require('i18n-iso-countries/langs/en.json'));
-      return countries;
-    } catch (error) {
-      console.warn('Failed to load i18n-iso-countries library:', error);
-      return null;
-    }
-  }
-  return null;
+export const SUPPORTED_LANGUAGES = [
+  'en', // English
+  'zh', // Mandarin Chinese (Standard Chinese)
+  'hi', // Hindi
+  'es', // Spanish
+  'ar', // Arabic
+  'bn', // Bengali
+  'fr', // French
+  'ru', // Russian
+  'pt', // Portuguese
+  'ur', // Urdu
+  'id', // Indonesian
+  'de', // German
+  'ja', // Japanese
+  'mr', // Marathi
+  'te', // Telugu
+  'tr', // Turkish
+  'ta', // Tamil
+  'yue', // Yue Chinese (Cantonese)
+  'ko', // Korean
+  'vi', // Vietnamese
+] as const;
+
+export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
+
+/**
+ * Language to native name mapping
+ */
+export const LANGUAGE_NAMES: Record<SupportedLanguage, string> = {
+  'en': 'English',
+  'zh': '中文',
+  'hi': 'हिन्दी',
+  'es': 'Español',
+  'ar': 'العربية',
+  'bn': 'বাংলা',
+  'fr': 'Français',
+  'ru': 'Русский',
+  'pt': 'Português',
+  'ur': 'اردو',
+  'id': 'Bahasa Indonesia',
+  'de': 'Deutsch',
+  'ja': '日本語',
+  'mr': 'मराठी',
+  'te': 'తెలుగు',
+  'tr': 'Türkçe',
+  'ta': 'தமிழ்',
+  'yue': '粵語',
+  'ko': '한국어',
+  'vi': 'Tiếng Việt',
 };
 
 /**
- * Gets the native language name for a given language code
- * @param languageCode ISO 639-1 language code
- * @returns The native name of the language
+ * Default countries for each language
  */
-export const getLanguageName = (languageCode: string): string => {
-  // Common languages with their native names
-  const languageNames: Record<string, string> = {
-    'en': 'English',
-    'fr': 'Français',
-    'de': 'Deutsch',
-    'es': 'Español',
-    'it': 'Italiano',
-    'pt': 'Português',
-    'ru': 'Русский',
-    'zh': '中文',
-    'ja': '日本語',
-    'ko': '한국어',
-    'ar': 'العربية',
-    'hi': 'हिन्दी',
-    'vi': 'Tiếng Việt',
-    'th': 'ไทย',
-    'id': 'Bahasa Indonesia',
-    'ms': 'Bahasa Melayu',
-    'nl': 'Nederlands',
-    'sv': 'Svenska',
-    'no': 'Norsk',
-    'da': 'Dansk',
-    'fi': 'Suomi',
-    'pl': 'Polski',
-    'tr': 'Türkçe',
-    'cs': 'Čeština',
-    'el': 'Ελληνικά',
-    'he': 'עברית',
-    'uk': 'Українська'
+export const LANGUAGE_TO_COUNTRY: Record<SupportedLanguage, string> = {
+  'en': 'US',
+  'zh': 'CN',
+  'hi': 'IN',
+  'es': 'ES',
+  'ar': 'SA',
+  'bn': 'BD',
+  'fr': 'FR',
+  'ru': 'RU',
+  'pt': 'PT',
+  'ur': 'PK',
+  'id': 'ID',
+  'de': 'DE',
+  'ja': 'JP',
+  'mr': 'IN',
+  'te': 'IN',
+  'tr': 'TR',
+  'ta': 'IN',
+  'yue': 'HK',
+  'ko': 'KR',
+  'vi': 'VN',
+};
+
+/**
+ * Common country to language mapping
+ * Note: Some countries may have multiple languages
+ */
+export const COUNTRY_TO_LANGUAGE: Record<string, SupportedLanguage> = {
+  'US': 'en',
+  'GB': 'en',
+  'CA': 'en',
+  'AU': 'en',
+  'NZ': 'en',
+  'CN': 'zh',
+  'SG': 'zh',
+  'TW': 'zh',
+  'IN': 'hi', // India has multiple languages (hi, mr, te, ta, etc.)
+  'ES': 'es',
+  'MX': 'es',
+  'CO': 'es',
+  'AR': 'es',
+  'SA': 'ar',
+  'AE': 'ar',
+  'EG': 'ar',
+  'BD': 'bn',
+  'FR': 'fr',
+  'CA-FR': 'fr',
+  'RU': 'ru',
+  'PT': 'pt',
+  'BR': 'pt',
+  'PK': 'ur',
+  'ID': 'id',
+  'DE': 'de',
+  'AT': 'de',
+  'CH': 'de',
+  'JP': 'ja',
+  'TR': 'tr',
+  'HK': 'yue',
+  'KR': 'ko',
+  'VN': 'vi'
+};
+
+/**
+ * Check if a language is supported
+ */
+export function isLanguageSupported(language: string): boolean {
+  return SUPPORTED_LANGUAGES.includes(language.toLowerCase() as SupportedLanguage);
+}
+
+/**
+ * Parse a locale code (e.g., en-US) into its language and country parts
+ * Validates if the locale code is valid (contains a valid language code)
+ * @param localeCode The locale code to parse
+ * @returns Object with language and country parts, or null if invalid
+ */
+export function parseLocaleCode(localeCode: string): { language: string; country: string } | null {
+  if (!localeCode || typeof localeCode !== 'string') {
+    return null;
+  }
+
+  // Match valid locale format: xx or xx-XX or xx_XX
+  const localeRegex = /^([a-z]{2,3})(?:[-_]([A-Z]{2,3}))?$/i;
+  const match = localeCode.match(localeRegex);
+
+  if (!match) {
+    return null;
+  }
+
+  const language = match[1].toLowerCase();
+
+  // Check if the language is in our supported list
+  if (!isLanguageSupported(language)) {
+    return null;
+  }
+
+  let country = match[2]?.toUpperCase() || '';
+
+  // If country is not provided, try to get the default country for the language
+  if (!country) {
+    country = LANGUAGE_TO_COUNTRY[language as SupportedLanguage] || '';
+  }
+
+  return {
+    language,
+    country
   };
-
-  return languageNames[languageCode] || languageCode;
-};
+}
 
 /**
- * Gets country information from a country code
- * @param countryCode ISO 3166-1 country code
- * @returns Country name and other details if available
+ * Create a locale code from language and country codes
  */
-export const getCountryInfo = (countryCode: string) => {
-  const countries = loadCountriesLib();
-  if (!countries) return { name: countryCode };
+export function createLocaleCode(language: string, country?: string): string {
+  if (!language) return 'en';
 
-  try {
-    const name = countries.getName(countryCode.toUpperCase(), 'en');
-    return {
-      name,
-      code: countryCode.toUpperCase(),
-      // Add more information as needed
-    };
-  } catch (e) {
-    return { name: countryCode };
-  }
-};
+  const languageCode = language.toLowerCase();
 
-/**
- * Alternative approach using Intl.DisplayNames API for modern browsers
- * This only works in client-side code with modern browsers that support this API
- */
-export const getCountryNameFromCode = (countryCode: string): string => {
-  if (typeof window === 'undefined') return countryCode; // SSR check
-
-  try {
-    if (typeof Intl !== 'undefined' && Intl.DisplayNames) {
-      const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
-      return regionNames.of(countryCode.toUpperCase()) || countryCode;
-    }
-  } catch (e) {
-    // Fallback to basic handling
+  // Check if language is supported
+  if (!isLanguageSupported(languageCode)) {
+    return 'en';
   }
 
-  return countryCode;
-};
+  const countryCode = country?.toUpperCase() ||
+    LANGUAGE_TO_COUNTRY[languageCode as SupportedLanguage] || '';
+
+  return countryCode ? `${languageCode}-${countryCode}` : languageCode;
+}
 
 /**
- * Alternative approach using Intl.DisplayNames API for modern browsers
- * This only works in client-side code with modern browsers that support this API
+ * Get language (ISO 639-1) code from locale code
  */
-export const getLanguageNameFromCode = (languageCode: string): string => {
-  if (typeof window === 'undefined') return getLanguageName(languageCode); // SSR check with fallback
-
-  try {
-    if (typeof Intl !== 'undefined' && Intl.DisplayNames) {
-      const languageNames = new Intl.DisplayNames(['en'], { type: 'language' });
-      return languageNames.of(languageCode) || getLanguageName(languageCode);
-    }
-  } catch (e) {
-    // Fallback to basic handling
-  }
-
-  return getLanguageName(languageCode);
-};
+export function getLanguageFromLocale(localeCode: string): string {
+  const parsed = parseLocaleCode(localeCode);
+  return parsed ? parsed.language : 'en';
+}
 
 /**
- * Directly get a language code from a country code
- * This is a wrapper around the implementation in movie.util.ts for consistency
- * 
- * @param countryCode ISO 3166-1 country code (e.g., 'US', 'FR', 'JP')
- * @returns ISO 639-1 language code (e.g., 'en', 'fr', 'ja')
+ * Get country (ISO 3166-1) code from locale code
  */
-export const getLanguageCodeFromCountry = (countryCode: string): string => {
+export function getCountryFromLocale(localeCode: string): string {
+  const parsed = parseLocaleCode(localeCode);
+  return parsed ? parsed.country : 'US';
+}
+
+/**
+ * Get language code from country code
+ */
+export function getLanguageFromCountry(countryCode: string): string {
   if (!countryCode) return 'en';
+  const code = countryCode.toUpperCase();
+  return COUNTRY_TO_LANGUAGE[code] || 'en';
+}
 
-  try {
-    // Standardize the input
-    const code = countryCode.toUpperCase();
+/**
+ * Get country code from language code
+ */
+export function getCountryFromLanguage(languageCode: string): string {
+  if (!languageCode) return 'US';
+  const code = languageCode.toLowerCase();
+  return LANGUAGE_TO_COUNTRY[code as SupportedLanguage] || 'US';
+}
 
-    // Option 1: Use the browser's Intl API if available (modern browsers)
-    if (typeof window !== 'undefined' && typeof Intl !== 'undefined' && Intl.Locale) {
-      try {
-        // Create a locale from the country code
-        const locale = new Intl.Locale(code);
-        // If the locale has a language, use it
-        if (locale.language) {
-          return locale.language;
-        }
-      } catch (e) {
-        // Continue to fallback if browser API fails
-      }
+/**
+ * Get the native language name
+ */
+export function getLanguageName(languageCode: string): string {
+  if (!languageCode) return 'English';
+  const code = languageCode.toLowerCase() as SupportedLanguage;
+  return LANGUAGE_NAMES[code] || languageCode;
+}
+
+/**
+ * Get the native country name
+ * Uses browser's Intl API if available
+ */
+export function getCountryName(countryCode: string): string {
+  if (!countryCode) return '';
+  const code = countryCode.toUpperCase();
+
+  // Try browser's Intl API if available
+  if (typeof window !== 'undefined' && typeof Intl !== 'undefined' && Intl.DisplayNames) {
+    try {
+      const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+      const name = regionNames.of(code);
+      if (name) return name;
+    } catch (e) {
+      // Continue to fallback
     }
-
-    // Option 2: Use the i18n-iso-countries library
-    const countries = loadCountriesLib();
-    if (countries) {
-      // Some countries have a direct mapping from country to language
-      // This is a simplified approach for the most common cases
-      const countryInfo = countries.getName(code, 'en');
-      if (countryInfo) {
-        // For many countries, we can derive the language from country names
-        const languageMap: Record<string, string> = {
-          'United States': 'en',
-          'United Kingdom': 'en',
-          'France': 'fr',
-          'Germany': 'de',
-          'Italy': 'it',
-          'Spain': 'es',
-          'Portugal': 'pt',
-          'Japan': 'ja',
-          'China': 'zh',
-          'Russia': 'ru',
-          'Vietnam': 'vi',
-          'Thailand': 'th',
-          'South Korea': 'ko',
-          'Saudi Arabia': 'ar',
-          'Brazil': 'pt',
-          'Mexico': 'es',
-        };
-
-        if (languageMap[countryInfo]) {
-          return languageMap[countryInfo];
-        }
-      }
-    }
-
-    // Option 3: Fallback to a basic mapping for the most common countries
-    const fallbackMap: Record<string, string> = {
-      // Most common countries by ISO code
-      US: 'en', GB: 'en', CA: 'en', AU: 'en', NZ: 'en',
-      FR: 'fr', DE: 'de', IT: 'it', ES: 'es', PT: 'pt',
-      NL: 'nl', BE: 'nl', CH: 'de', AT: 'de', DK: 'da',
-      SE: 'sv', NO: 'no', FI: 'fi', GR: 'el', PL: 'pl',
-      CZ: 'cs', HU: 'hu', RU: 'ru', CN: 'zh', TW: 'zh',
-      HK: 'zh', JP: 'ja', KR: 'ko', TH: 'th', VN: 'vi',
-      ID: 'id', MY: 'ms', SG: 'en', IN: 'hi', SA: 'ar',
-      AE: 'ar', EG: 'ar', IL: 'he', TR: 'tr', IR: 'fa',
-      MX: 'es', BR: 'pt', AR: 'es', CL: 'es', CO: 'es',
-      BY: 'ru', UA: 'uk', KZ: 'kk'
-    };
-
-    if (fallbackMap[code]) {
-      return fallbackMap[code];
-    }
-
-    // Default to English if all methods fail
-    return 'en';
-  } catch (error) {
-    console.error('Error converting country code to language code:', error);
-    return 'en';
   }
+
+  return code;
+}
+
+/**
+ * Convert between ISO codes and locale formats
+ */
+export const localeConverter = {
+  // ISO 639-1 language code to native name
+  languageToName: (language: string) => getLanguageName(language),
+
+  // ISO 3166-1 country code to country name
+  countryToName: (country: string) => getCountryName(country),
+
+  // ISO 639-1 language code to ISO 3166-1 country code
+  languageToCountry: (language: string) => getCountryFromLanguage(language),
+
+  // ISO 3166-1 country code to ISO 639-1 language code
+  countryToLanguage: (country: string) => getLanguageFromCountry(country),
+
+  // Convert locale code to language code
+  localeToLanguage: (locale: string) => getLanguageFromLocale(locale),
+
+  // Convert locale code to country code
+  localeToCountry: (locale: string) => getCountryFromLocale(locale),
+
+  // Create locale from language and country
+  createLocale: (language: string, country?: string) => createLocaleCode(language, country),
+
+  // Parse locale into components
+  parseLocale: (locale: string) => parseLocaleCode(locale),
+
+  // Check if language is in our supported list
+  isSupportedLanguage: (language: string) => isLanguageSupported(language)
 };
+
+export default localeConverter;

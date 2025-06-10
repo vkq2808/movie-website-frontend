@@ -1,7 +1,8 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { Movie, useLanguageStore } from '@/zustand'
+import { Movie } from '@/zustand'
 import Link from 'next/link'
+import { useTranslation } from '@/contexts/translation.context'
 
 interface SuggestionsTabProps {
   movie: Movie
@@ -10,11 +11,11 @@ interface SuggestionsTabProps {
 const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
   const [suggestedMovies, setSuggestedMovies] = useState<Movie[]>([])
   const [loading, setLoading] = useState<boolean>(true)
-  const { currentLanguage } = useLanguageStore()
+  const { language, t } = useTranslation()
 
   // Function to get genre name based on current language
   const getGenreName = (genre: any) => {
-    const nameForLanguage = genre.names?.find((n: any) => n.iso_639_1 === currentLanguage.iso_639_1)
+    const nameForLanguage = genre.names?.find((n: any) => n.iso_639_1 === language)
     return nameForLanguage ? nameForLanguage.name : genre.names?.[0]?.name || 'Unknown'
   }
 
@@ -65,7 +66,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
         // Add missing Movie properties
         alternative_titles: [],
         alternative_overviews: [],
-        original_language: currentLanguage.iso_639_1 || 'en',
+        original_language: language || 'en',
         original_title: `Suggested Movie ${index + 1}`,
       }))
 
@@ -89,7 +90,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
             />
           ) : (
             <div className="w-full h-full bg-gray-700 flex items-center justify-center">
-              <span className="text-gray-400">No poster</span>
+              <span className="text-gray-400">{t('No poster')}</span>
             </div>
           )}
 
@@ -110,7 +111,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
             {suggestedMovie.duration && (
               <>
                 <span className="mx-1">•</span>
-                <span>{suggestedMovie.duration} phút</span>
+                <span>{suggestedMovie.duration} {t('minutes')}</span>
               </>
             )}
           </div>
@@ -129,7 +130,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
 
           {/* overview */}
           <p className="text-gray-400 text-xs line-clamp-2">
-            {suggestedMovie.overview || 'No overview available.'}
+            {suggestedMovie.overview || t('No overview available.')}
           </p>
         </div>
       </div>
@@ -139,7 +140,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-white mb-6">Phim đề xuất</h2>
+        <h2 className="text-2xl font-bold text-white mb-6">{t('Suggested Movies')}</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {Array.from({ length: 12 }).map((_, index) => (
             <div key={index} className="bg-gray-800 rounded-lg overflow-hidden animate-pulse">
@@ -159,9 +160,9 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">Phim đề xuất</h2>
+        <h2 className="text-2xl font-bold text-white">{t('Suggested Movies')}</h2>
         <p className="text-gray-400 text-sm">
-          Dựa trên thể loại và đánh giá tương tự
+          {t('Based on similar genres and ratings')}
         </p>
       </div>
 
@@ -174,7 +175,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
 
       {/* More Suggestions Section */}
       <div className="bg-gray-800 rounded-lg p-6">
-        <h3 className="text-xl font-semibold text-white mb-4">Có thể bạn cũng thích</h3>
+        <h3 className="text-xl font-semibold text-white mb-4">{t('You May Also Like')}</h3>
 
         <div className="space-y-3">
           {suggestedMovies.slice(0, 4).map((suggestedMovie, index) => (
@@ -189,7 +190,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">
-                      No image
+                      {t('No image')}
                     </div>
                   )}
                 </div>

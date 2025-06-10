@@ -3,18 +3,19 @@ import React from 'react'
 import { Movie, useLanguageStore } from '@/zustand'
 import { Play, Heart, Share, MessageCircle } from 'lucide-react'
 import { getMovieOverviewByLanguage, getMovieTitleByLanguage } from '@/utils/movie.util'
+import { useTranslation } from '@/contexts/translation.context'
 
 interface MovieHeroProps {
   movie: Movie
 }
 
 const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
-  const { currentLanguage } = useLanguageStore()
+  const { language, t } = useTranslation();
 
   // Function to get genre name based on current language
   const getGenreName = (genre: any) => {
-    const nameForLanguage = genre.names?.find((n: any) => n.iso_639_1 === currentLanguage.iso_639_1)
-    return nameForLanguage ? nameForLanguage.name : genre.names?.[0]?.name || 'Unknown'
+    const nameForLanguage = genre.names?.find((n: any) => n.iso_639_1 === language)
+    return nameForLanguage ? nameForLanguage.name : genre.names?.[0]?.name || t('Unknown')
   }
 
   return (
@@ -47,7 +48,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-700 flex items-center justify-center">
-                    <span className="text-gray-400">No poster</span>
+                    <span className="text-gray-400">{t('No poster')}</span>
                   </div>
                 )}
               </div>
@@ -57,32 +58,32 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
             <div className="flex-1 space-y-6">
               {/* Title */}
               <h1 className="text-5xl font-bold text-white mb-4">
-                {getMovieTitleByLanguage(movie, currentLanguage.iso_639_1)}
+                {getMovieTitleByLanguage(movie, language)}
               </h1>
 
               {/* Action Buttons */}
               <div className="flex items-center gap-4 mb-6">
                 <button className="flex items-center gap-3 bg-yellow-400 text-black px-8 py-3 rounded-full font-semibold hover:bg-yellow-500 transition-colors">
                   <Play className="w-5 h-5" fill="currentColor" />
-                  Xem Ngay
+                  {t('Watch Now')}
                 </button>
 
                 <div className="flex gap-4">
                   <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
                     <Heart className="w-6 h-6 text-white" />
-                    <span className="sr-only">Yêu thích</span>
+                    <span className="sr-only">{t('Add to Favorites')}</span>
                   </button>
                   <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
                     <div className="w-6 h-6 text-white font-bold text-xs flex items-center justify-center">+</div>
-                    <span className="sr-only">Thêm vào</span>
+                    <span className="sr-only">{t('Add to Watchlist')}</span>
                   </button>
                   <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
                     <Share className="w-6 h-6 text-white" />
-                    <span className="sr-only">Chia sẻ</span>
+                    <span className="sr-only">{t('Share')}</span>
                   </button>
                   <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
                     <MessageCircle className="w-6 h-6 text-white" />
-                    <span className="sr-only">Bình luận</span>
+                    <span className="sr-only">{t('Comment')}</span>
                   </button>
                 </div>
               </div>
@@ -93,7 +94,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
                   <span className="bg-yellow-400 text-black px-2 py-1 rounded text-xs font-bold">
                     {movie.vote_average?.toFixed(1) || '?'} ★
                   </span>
-                  <span>Đánh giá</span>
+                  <span>{t('Rating')}</span>
                 </div>
                 <span>•</span>
                 <span>{movie.release_date?.split('-')[0] || 'N/A'}</span>
@@ -105,7 +106,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
               <div className="flex items-center justify-end">
                 <div className="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
                   <span className="text-2xl font-bold">{movie.vote_average?.toFixed(1) || '?'}</span>
-                  <span className="text-sm opacity-75">Đánh giá</span>
+                  <span className="text-sm opacity-75">{t('Rating')}</span>
                 </div>
               </div>
 
@@ -123,7 +124,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
 
               {/* Description */}
               <p className="text-gray-200 text-lg leading-relaxed max-w-3xl">
-                {getMovieOverviewByLanguage(movie, currentLanguage.iso_639_1)}
+                {getMovieOverviewByLanguage(movie, language)}
               </p>
             </div>
           </div>

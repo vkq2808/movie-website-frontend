@@ -3,7 +3,6 @@ import React, { FormEvent } from 'react'
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/zustand/auth.store';
 import { authApi } from '@/apis/auth.api';
-import { useUserStore } from '@/zustand/user.store';
 
 const LoginForm = () => {
   const router = useRouter();
@@ -12,7 +11,7 @@ const LoginForm = () => {
   const [loading, setLoading] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState('');
   const setAuth = useAuthStore(state => state.setAuth);
-  const setUser = useUserStore(state => state.setUser);
+  const setUser = useAuthStore(state => state.setUser);
 
   const handleLoginSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -22,7 +21,7 @@ const LoginForm = () => {
     await authApi.login({ email, password }).then(res => {
       console.log('res', res)
       if (res.status === 200) {
-        setAuth({ accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
+        setAuth({ access_token: res.data.access_token, refresh_token: res.data.refresh_token });
         setUser(res.data.user);
         router.push('/');
       }

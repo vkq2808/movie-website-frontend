@@ -3,6 +3,7 @@ import React from 'react'
 import { PlayIcon, HeartIcon, InfoIcon } from 'lucide-react'
 import { Movie, useLanguageStore } from '@/zustand'
 import { getMovieOverviewByLanguage, getMovieTitleByLanguage } from '@/utils/movie.util'
+import { useTranslation } from '@/contexts/translation.context'
 
 interface MovieHeroProps {
   movie: Movie,
@@ -11,7 +12,7 @@ interface MovieHeroProps {
 const MovieHero: React.FC<MovieHeroProps> = ({
   movie
 }) => {
-  const currentLanguage = useLanguageStore(state => state.currentLanguage)
+  const { language } = useTranslation();
   return (
     <div className="relative w-full h-[80vh] text-white bg-black flex items-center justify-between overflow-hidden px-16">
       {/* Ảnh nền */}
@@ -46,7 +47,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({
 
           {/* content */}
           <div className="space-y-4 relative z-20">
-            <h1 className="text-4xl font-bold">{getMovieTitleByLanguage(movie, currentLanguage.iso_639_1)}</h1>
+            <h1 className="text-4xl font-bold">{getMovieTitleByLanguage(movie, language)}</h1>
 
             <div className="flex flex-wrap gap-2 text-sm mt-4">
               <span className="bg-yellow-400 text-black px-2 py-0.5 rounded">IMDb {movie.rating}</span>
@@ -56,14 +57,14 @@ const MovieHero: React.FC<MovieHeroProps> = ({
             <div className="flex gap-2 flex-wrap mt-4">
               {movie.genres.map((genre, index) => (
                 <span key={index} className="bg-gray-700 text-xs px-2 py-1 rounded">
-                  {genre.names.find((n: any) => n.iso_639_1 === currentLanguage.iso_639_1)?.name || genre.names[0]?.name || 'Unknown'}
+                  {genre.names.find((n: any) => n.iso_639_1 === language)?.name || genre.names[0]?.name || 'Unknown'}
                 </span>
               ))}
             </div>
 
             <div className="mt-4">
               <div className="text-sm text-gray-200 leading-relaxed">
-                <p>{getMovieOverviewByLanguage(movie, currentLanguage.iso_639_1)}</p>
+                <p>{getMovieOverviewByLanguage(movie, language)}</p>
               </div>
             </div>
 

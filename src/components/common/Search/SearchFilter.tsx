@@ -10,7 +10,7 @@ interface FilterOption {
 interface SearchFilterProps {
   title: string
   options: FilterOption[]
-  activeValue: string
+  activeValue: string | string[]
   onChange: (value: string) => void
 }
 
@@ -39,11 +39,11 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
               if (prevButton) prevButton.focus();
             }
           }}
-          className={`px-3 py-1 rounded-lg text-sm ${activeValue === option.id
-              ? 'bg-yellow-500 text-black font-semibold'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+          className={`px-3 py-1 rounded-lg text-sm ${typeof activeValue === 'string' ? activeValue === option.id : Array.isArray(activeValue) && activeValue.includes(option.id)
+            ? 'bg-yellow-500 text-black font-semibold'
+            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
             }`}
-          aria-pressed={activeValue === option.id}
+          aria-pressed={typeof activeValue === 'string' ? activeValue === option.id : Array.isArray(activeValue) && activeValue.includes(option.id)}
           aria-label={`${title} ${option.label}`}
         >
           {option.label}

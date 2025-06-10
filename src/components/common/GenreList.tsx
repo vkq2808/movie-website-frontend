@@ -3,6 +3,7 @@ import { Genre, useGenreStore, useLanguageStore } from '@/zustand';
 import Link from 'next/link';
 import React from 'react';
 import Spinner from './Spinner';
+import { useTranslation } from '@/contexts/translation.context';
 
 interface DisplayGenre extends Genre {
   bgColor: {
@@ -16,29 +17,23 @@ export default function GenreList() {
 
   const genres = useGenreStore((state) => state.genres);
   const fetchGenres = useGenreStore((state) => state.fetchGenres);
-  const { currentLanguage } = useLanguageStore();
+  const { language, t } = useTranslation();
   const [displayGenres, setDisplayGenres] = React.useState<DisplayGenre[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
 
   // Function to get genre name based on current language
   const getGenreName = (genre: Genre) => {
-    const nameForLanguage = genre.names.find(n => n.iso_639_1 === currentLanguage.iso_639_1);
+    if (!genre.names || genre.names.length === 0) {
+      return t('All genres')
+    }
+    const nameForLanguage = genre.names.find(n => n.iso_639_1 === language);
     return nameForLanguage ? nameForLanguage.name : genre.names[0]?.name || 'Unknown';
   };
 
   const defaultGenre =
   {
     id: 'all',
-    names: [
-      {
-        iso_639_1: 'en',
-        name: 'All Genres',
-      },
-      {
-        iso_639_1: 'vi',
-        name: 'Tất cả thể loại',
-      }
-    ],
+    names: [],
     bgColor: {
       r: 0,
       g: 0,
@@ -88,7 +83,7 @@ export default function GenreList() {
     };
 
     initializeGenres();
-  }, [currentLanguage]); // Remove genres and fetchGenres from dependencies
+  }, []); // Remove genres and fetchGenres from dependencies
 
   // Separate effect to handle genres changes
   React.useEffect(() => {
@@ -121,7 +116,7 @@ export default function GenreList() {
           <div className="w-full flex justify-center items-center">
             <div className="flex flex-col items-center">
               <Spinner size="lg" color="text-white" />
-              <p className="mt-4 text-white animate-pulse">Loading genres...</p>
+              <p className="mt-4 text-white animate-pulse">{t('Loading genres...')}</p>
             </div>
           </div>
         </div>
@@ -138,7 +133,7 @@ export default function GenreList() {
           return (
             <Link
               key={genre.id}
-              href={`/genre/${genre.original_id}`}
+              href={`/search?genres=${genre.id}`}
               className={`flex justify-center items-center min-w-[200px] h-[120px] rounded-lg py-6 px-12 hover: opacity-90 transition-opacity`}
               style={{
                 background: `linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, ${bgColor} 30%)`,
