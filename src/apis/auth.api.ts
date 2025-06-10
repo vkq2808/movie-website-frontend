@@ -1,4 +1,4 @@
-import api, { apiEnpoint } from "@/utils/api.util";
+import api, { apiEndpoint } from "@/utils/api.util";
 import { User } from "@/zustand";
 
 export interface LoginData {
@@ -7,13 +7,13 @@ export interface LoginData {
 }
 
 export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
+  access_token: string;
+  refresh_token: string;
   user: User;
 }
 
 const login = async (data: LoginData) => {
-  return api.post<LoginResponse>(`${apiEnpoint.AUTH}/login`, data);
+  return api.post<LoginResponse>(`${apiEndpoint.AUTH}/login`, data);
 }
 
 export interface RegisterData {
@@ -25,7 +25,7 @@ export interface RegisterData {
 };
 
 const register = async (data: RegisterData) => {
-  return api.post(`${apiEnpoint.AUTH}/register`, data);
+  return api.post(`${apiEndpoint.AUTH}/register`, data);
 }
 
 export interface VerifyData {
@@ -34,7 +34,7 @@ export interface VerifyData {
 }
 
 const verify = async (data: VerifyData) => {
-  return api.post(`${apiEnpoint.AUTH}/verify`, data);
+  return api.post(`${apiEndpoint.AUTH}/verify`, data);
 }
 
 export interface ForgetPasswordData {
@@ -42,7 +42,7 @@ export interface ForgetPasswordData {
 }
 
 const forgetPassword = async (data: ForgetPasswordData) => {
-  return api.post(`${apiEnpoint.AUTH}/forget-password`, data);
+  return api.post(`${apiEndpoint.AUTH}/forget-password`, data);
 }
 
 export interface ResetPasswordData {
@@ -53,7 +53,7 @@ export interface ResetPasswordData {
 }
 
 const resetPassword = async (data: ResetPasswordData) => {
-  return api.post(`${apiEnpoint.AUTH}/reset-password`, data);
+  return api.post(`${apiEndpoint.AUTH}/reset-password`, data);
 }
 
 export const authApi = {

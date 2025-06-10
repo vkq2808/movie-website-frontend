@@ -2,16 +2,18 @@
 import React from 'react'
 import Swiper from '../Swiper'
 import { Movie } from '@/zustand'
-import LoadingSpinner from '../LoadingSpinner'
+import { Spinner } from '../'
 import { getTop5Movies } from '@/apis/movie.api'
 import MovieHero from './MovieHero'
 import { useGlobalStore } from '@/zustand/global.store'
+import { useTranslation } from '@/contexts/translation.context'
 
 const MovieSwiper = () => {
   const [loading, setLoading] = React.useState<boolean>(true)
   const [movies, setMovies] = React.useState<Movie[]>([])
   const [error, setError] = React.useState<string | null>(null)
   const setGlobalLoading = useGlobalStore((state) => state.setLoading);
+  const { t } = useTranslation();
 
   const fetchTop5Movies = React.useCallback(async () => {
     try {
@@ -30,37 +32,46 @@ const MovieSwiper = () => {
   React.useEffect(() => {
     fetchTop5Movies()
   }, [fetchTop5Movies])
+
   if (error) {
-    return <div className="text-center">{error}</div>
+    return (
+      <div className="w-full h-[80vh] flex justify-center items-center bg-gray-900">
+        <div className="text-center text-red-500">
+          <p className="text-xl">{error}</p>
+          <p className="text-sm text-gray-400 mt-2">{t('Please try again later')}</p>
+        </div>
+      </div>
+    );
   }
 
   if (loading) {
-    return <div className="text-center w-full h-full flex justify-center items-center">
-      <LoadingSpinner />
-    </div>
+    return (
+      <div className="w-full h-[80vh] flex justify-center items-center bg-gray-900">
+        <div className="flex flex-col items-center">
+          <Spinner size="lg" color="text-yellow-400" />
+          <p className="mt-4 text-white animate-pulse">{t('Loading featured movies...')}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div className="w-full h-[80vh] flex justify-center items-center">
       <CustomSwiper
         autoplay={true}
         autoplayInterval={5000}
         length={movies.length}
       >
-        {movies.map((movie, index) => (
-
-          <MovieHero
-            key={movie.id}
-            title={movie.title}
-            rating={movie.rating}
-            resolution={'HD'}
-            year={movie.releasedDate}
-            episode={'1'}
-            genres={movie.genres.map((genre) => genre.name)}
-            description={movie.description}
-            backgroundImage={`${movie.backdrop?.url}`}
-          />
-        ))}
+        {
+          movies.map((movie, index) => {
+            return (
+              <MovieHero
+                key={movie.id}
+                movie={movie}
+              />
+            );
+          })
+        }
       </CustomSwiper>
     </div>
   )

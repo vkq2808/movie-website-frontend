@@ -1,9 +1,10 @@
 'use client';
-import api, { apiEnpoint } from '@/utils/api.util';
+import api, { apiEndpoint } from '@/utils/api.util';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 
-const VerifyPage: React.FC = () => {
+// Component using useSearchParams
+const VerifyContent: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email');
@@ -16,7 +17,7 @@ const VerifyPage: React.FC = () => {
   const handleSubmitOTP = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await api.post(`${apiEnpoint.AUTH}/verify`, { email, otp });
+      const res = await api.post(`${apiEndpoint.AUTH}/verify`, { email, otp });
       if (res.status === 200) {
         router.push('/auth/login');
       }
@@ -30,7 +31,7 @@ const VerifyPage: React.FC = () => {
     setIsResending(true);
     try {
       if (!email) return;
-      const res = await api.post(`${apiEnpoint.AUTH}/resend-otp`, { email });
+      const res = await api.post(`${apiEndpoint.AUTH}/resend-otp`, { email });
       if (res.status === 200) {
         // Đặt lại timer khi gửi lại OTP thành công
         setCountdown(60);
@@ -109,6 +110,27 @@ const VerifyPage: React.FC = () => {
         )}
       </div>
     </div>
+  );
+};
+
+// Loading component to show while waiting for the content to load
+const LoadingVerify = () => {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">
+      <div className="bg-slate-100 p-8 rounded shadow-md max-w-md w-full">
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Xác thực OTP</h2>
+        <p className="text-center text-gray-600">Đang tải...</p>
+      </div>
+    </div>
+  );
+};
+
+// Main page component with Suspense boundary
+const VerifyPage: React.FC = () => {
+  return (
+    <Suspense fallback={<LoadingVerify />}>
+      <VerifyContent />
+    </Suspense>
   );
 };
 

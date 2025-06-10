@@ -1,4 +1,4 @@
-import api, { apiEnpoint } from '@/utils/api.util'
+import api, { apiEndpoint } from '@/utils/api.util'
 
 export interface Language {
   id: string
@@ -10,7 +10,7 @@ export interface Language {
 
 export async function getAllLanguages(): Promise<Language[]> {
   try {
-    const response = await api.get(`${apiEnpoint.LANGUAGE}`)
+    const response = await api.get(`${apiEndpoint.LANGUAGE}`)
     return response.data
   } catch (error) {
     console.error('Error fetching languages:', error)
@@ -20,7 +20,7 @@ export async function getAllLanguages(): Promise<Language[]> {
 
 export async function getLanguageByIsoCode(isoCode: string): Promise<Language> {
   try {
-    const response = await api.get(`${apiEnpoint.LANGUAGE}/${isoCode}`)
+    const response = await api.get(`${apiEndpoint.LANGUAGE}/${isoCode}`)
     return response.data
   } catch (error) {
     console.error(`Error fetching language with ISO code ${isoCode}:`, error)
@@ -30,7 +30,7 @@ export async function getLanguageByIsoCode(isoCode: string): Promise<Language> {
 
 export async function getPopularLanguages(limit: number = 3): Promise<Language[]> {
   try {
-    const response = await api.get(`${apiEnpoint.LANGUAGE}/popular`, {
+    const response = await api.get(`${apiEndpoint.LANGUAGE}/popular`, {
       params: { limit }
     })
     return response.data

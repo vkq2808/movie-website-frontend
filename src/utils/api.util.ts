@@ -2,7 +2,7 @@
 
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
-export const apiEnpoint = {
+export const apiEndpoint = {
   MOVIE: '/movie',
   GENRE: '/genre',
   IMAGE: '/image',
@@ -46,7 +46,9 @@ const processQueue = (error: any, token: string | null = null) => {
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     config.headers = config.headers || {};
-    const token = JSON.parse(localStorage.getItem('auth') as string)?.accessToken;
+    const savedAuth = localStorage.getItem('auth');
+    const token = savedAuth ? JSON.parse(savedAuth).access_token : null;
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -83,18 +85,19 @@ api.interceptors.response.use(
 
       originalRequest._retry = true;
       isRefreshing = true;
-      const refreshToken = localStorage.getItem('refreshToken');
+      const refresh_token = localStorage.getItem('auth');
+      const token = refresh_token ? JSON.parse(refresh_token).refresh_token : null;
 
       return new Promise((resolve, reject) => {
-        axios.post(`${baseURL}/auth/refresh-token`, { refreshToken })
+        axios.post(`${baseURL}/auth/refresh-token`, { refresh_token })
           .then(({ data }) => {
             const oldAuth = JSON.parse(localStorage.getItem('auth') as string);
-            localStorage.setItem('auth', JSON.stringify({ ...oldAuth, accessToken: data.accessToken, refreshToken: data.refreshToken }));
+            localStorage.setItem('auth', JSON.stringify({ ...oldAuth, access_token: data.access_token, refresh_token: data.refresh_token }));
             if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+              originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
             }
-            api.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
-            processQueue(null, data.accessToken);
+            api.defaults.headers.common['Authorization'] = `Bearer ${data.access_token}`;
+            processQueue(null, data.access_token);
             resolve(axios(originalRequest));
           })
           .catch(err => {

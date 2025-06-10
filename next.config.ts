@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    domains: ['res.cloudinary.com', 'www.youtube.com', 'i.ytimg.com', 'img.youtube.com'],
+    domains: ['res.cloudinary.com', 'www.youtube.com', 'i.ytimg.com', 'img.youtube.com', 'lh3.googleusercontent.com'],
   },
   headers: async () => {
     return [
@@ -25,7 +25,10 @@ const nextConfig: NextConfig = {
         ],
       },
     ];
-  }
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;

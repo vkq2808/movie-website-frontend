@@ -1,7 +1,6 @@
 'use client'
 import { baseURL } from '@/utils/api.util';
 import { useAuthStore } from '@/zustand/auth.store';
-import Link from 'next/link';
 import React from 'react'
 import { FaGoogle, FaFacebook } from 'react-icons/fa';
 import { ClipLoader } from 'react-spinners';
@@ -9,7 +8,7 @@ import { ClipLoader } from 'react-spinners';
 const LoginOauth2 = () => {
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const auth = useAuthStore(state => state.auth);
+  const auth = useAuthStore(state => state);
 
   const handleGoogleOauth2Login = () => {
     // setIsLoading(true);
@@ -22,11 +21,11 @@ const LoginOauth2 = () => {
   }
 
   React.useEffect(() => {
-    if (auth.accessToken) {
+    if (auth.access_token) {
       setIsLoading(false);
       window.location.href = '/';
     }
-  }, [auth.accessToken]);
+  }, [auth.access_token]);
 
   return (
     isLoading ?

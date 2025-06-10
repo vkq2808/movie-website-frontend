@@ -1,16 +1,23 @@
 import { MovieSwiper, GenreList, LanguageMovieSelector } from "@/components/common";
+import TranslatingH1 from "@/components/common/TranslatingHtmlTag/TranslatingH1";
 
 export default function Home() {
-
   return (
-    <main className="flex flex-col items-center justify-center w-full min-h-[70vh] bg-black ">
-      <div className="w-full h-fit flex justify-center items-center">
+    <main className="flex flex-col w-full bg-black">
+      {/* Movie Hero Section - Fixed height for consistency */}
+      <div className="w-full h-[80vh] flex justify-center items-center">
         <MovieSwiper />
       </div>
-      <GenreList />
-      <div className="min-h-screen bg-gray-900 text-white py-8 w-full">
+
+      {/* Genre List Section - Fixed height during loading */}
+      <div className="w-full bg-black">
+        <GenreList />
+      </div>
+
+      {/* Language Movies Section - Consistent styling */}
+      <div className="w-full bg-black text-white py-8">
         <div className="w-full container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-8 text-center">Discover Movies By Language</h1>
+          <TranslatingH1 className="text-4xl font-bold mb-8 text-center">Discover Movies By Language</TranslatingH1>
 
           {/* LanguageMovieSelector component with predefined languages */}
           <LanguageMovieSelector

@@ -1,13 +1,13 @@
 'use client'
-import api, { apiEnpoint } from '@/utils/api.util';
+import api, { apiEndpoint } from '@/utils/api.util';
 import { useAuthStore } from '@/zustand/auth.store';
-import { useUserStore } from '@/zustand/user.store';
 import { useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, Suspense } from 'react';
 
-const GoogleOAuth2CallBackPage = () => {
+// Component that uses useSearchParams
+const GoogleOAuth2Content = () => {
   const setAuth = useAuthStore(state => state.setAuth);
-  const setUser = useUserStore(state => state.setUser);
+  const setUser = useAuthStore(state => state.setUser);
   const searchParams = useSearchParams();
 
   // Effect lấy dữ liệu callback từ URL và gọi API
@@ -18,22 +18,44 @@ const GoogleOAuth2CallBackPage = () => {
     const prompt = searchParams.get('prompt');
 
     if (code && scope) {
+      console.log('Google OAuth2 Callback Params:', { code, scope, authUser, prompt });
+      // Log the setAuth function to see if it's defined correctly
+      console.log('setAuth function:', setAuth);
+
       api
-        .get(`${apiEnpoint.AUTH}/google-oauth2/callback`, {
+        .get(`${apiEndpoint.AUTH}/google-oauth2/callback`, {
           params: { code, scope, authUser, prompt }
-        })
-        .then((res) => {
+        }).then((res) => {
           if (res.status === 200) {
-            setAuth({ accessToken: res.data.accessToken, refreshToken: res.data.refreshToken });
-            setUser(res.data.user);
-            window.close();
+
+            try {
+              if (res.data.user) {
+                setUser(res.data.user);
+                console.log('After setUser - success');
+              } else {
+                console.warn('No user data in response');
+              }
+            } catch (error) {
+              console.error('Error in setUser:', error);
+            }
+
+            try {
+              setAuth({ access_token: res.data.access_token, refresh_token: res.data.refresh_token });
+              console.log('After setAuth - success');
+            } catch (error) {
+              console.error('Error in setAuth:', error);
+            }
+
+            setTimeout(() => {
+              window.close();
+            }, 1000); // Close after 1 second to ensure state updates
           }
         })
         .catch((err) => {
           console.error(err);
         });
     }
-  }, [searchParams, setAuth]);
+  }, [searchParams, setAuth, setUser]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
@@ -44,6 +66,29 @@ const GoogleOAuth2CallBackPage = () => {
         </p>
       </div>
     </div>
+  );
+};
+
+// Loading component to show while waiting for the content to load
+const LoadingCallback = () => {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+      <div className="bg-slate-100 p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 className="text-3xl font-bold text-center">Google OAuth2 Callback</h1>
+        <p className="text-center">
+          Đang xử lý đăng nhập Google...
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// Main page component with Suspense boundary
+const GoogleOAuth2CallBackPage = () => {
+  return (
+    <Suspense fallback={<LoadingCallback />}>
+      <GoogleOAuth2Content />
+    </Suspense>
   );
 };
 

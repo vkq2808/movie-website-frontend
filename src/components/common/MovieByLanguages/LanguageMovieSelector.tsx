@@ -5,6 +5,8 @@ import { getMoviesByLanguage } from '@/apis/movie.api'
 import { Language, getAllLanguages, getPopularLanguages } from '@/apis/language.api'
 import MovieCard from './MovieCard'
 import LoadingSpinner from '../LoadingSpinner'
+import { useTranslation } from '@/contexts/translation.context'
+import { TranslationKey } from '@/utils/translation.util'
 
 /**
  * LanguageMovieSelector component
@@ -47,6 +49,7 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
   const [moviesByLanguage, setMoviesByLanguage] = useState<MoviesByLanguage[]>([])
   const [languages, setLanguages] = useState<Language[]>([])
   const [error, setError] = useState<string | null>(null)
+  const { t } = useTranslation()
 
   // Refs for scrolling movie sections
   const scrollContainerRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -189,20 +192,20 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
         <p className="text-xl">{error}</p>
-        <p className="text-sm text-gray-400 mt-2">Please try again later</p>
+        <p className="text-sm text-gray-400 mt-2">{t('Please try again later')}</p>
       </div>
     )
   }
 
   return (
-    <div className="w-full container mx-auto px-4 py-8" style={{ width }}>
-      <h2 className="text-3xl font-bold text-white mb-8">{title}</h2>
+    <div className="w-full container mx-auto px-4 py-8 min-h-[600px]" style={{ width }}>
+      <h2 className="text-3xl font-bold text-white mb-8">{t(title as TranslationKey) || title}</h2>
 
       {languagesLoading ? (
-        <div className="w-full flex justify-center items-center h-64">
+        <div className="w-full flex justify-center items-center h-96">
           <div className="w-full flex flex-col items-center">
             <LoadingSpinner />
-            <p className="mt-4 text-gray-300 animate-pulse">Loading languages...</p>
+            <p className="mt-4 text-gray-300 animate-pulse">{t('Loading languages...')}</p>
           </div>
         </div>
       ) : (
@@ -211,49 +214,33 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
             <div key={item.language.iso_639_1} className="language-section w-full">
               <div className="w-full flex items-center justify-between mb-4">
                 <h3 className="text-2xl font-bold text-white">
-                  {item.language.name || item.language.english_name} Movies
+                  {(item.language.name || item.language.english_name + ' ' + 'Movies')}
                 </h3>
 
                 {/* Navigation controls */}
-                <div className="w-full flex space-x-2">
-                  <button
-                    onClick={() => scrollLeft(index)}
-                    className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors duration-300"
-                    aria-label="Scroll left"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => scrollRight(index)}
-                    className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors duration-300"
-                    aria-label="Scroll right"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
+                <div className="flex space-x-2">
+                  <NaviagationLeftButton onClick={() => scrollLeft(index)} />
+                  <NavigationRightButton onClick={() => scrollRight(index)} />
                 </div>
               </div>
 
               {item.loading ? (
-                <div className="bg-gray-800/30 rounded-lg h-72 flex justify-center items-center w-full">
+                <div className="bg-gray-800/30 rounded-lg h-113 flex justify-center items-center w-full">
                   <div className="flex flex-col items-center w-full">
                     <LoadingSpinner />
-                    <p className="mt-4 text-gray-300 animate-pulse">Loading {item.language.name || item.language.english_name} movies...</p>
+                    <p className="mt-4 text-gray-300 animate-pulse">{t('Loading')} {item.language.name || item.language.english_name} {t('movies...')}</p>
                   </div>
                 </div>
               ) : item.movies.length === 0 ? (
-                <div className="text-center text-gray-300 py-12 bg-gray-800/30 rounded-lg border border-gray-700">
+                <div className="text-center text-gray-300 py-12 bg-gray-800/30 rounded-lg border border-gray-700 h-80 flex flex-col justify-center items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 4v16M17 4v16M3 8h18M3 16h18" />
                   </svg>
-                  <p className="text-xl">No movies found for {item.language.name || item.language.english_name}</p>
+                  <p className="text-xl">{t('No movies found for')} {item.language.name || item.language.english_name}</p>
                 </div>
               ) : (
                 <div
-                  className="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar"
+                  className="flex space-x-4 overflow-x-auto hide-scrollbar min-h-[320px]"
                   ref={(el) => { scrollContainerRefs.current[index] = el }}
                 >
                   {item.movies.map((movie) => (
@@ -270,5 +257,28 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
     </div>
   )
 }
+
+const NaviagationLeftButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors duration-300"
+    aria-label="Scroll left"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+)
+const NavigationRightButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors duration-300"
+    aria-label="Scroll right"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+)
 
 export default LanguageMovieSelector

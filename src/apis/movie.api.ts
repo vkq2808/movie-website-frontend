@@ -1,8 +1,8 @@
-import api, { apiEnpoint } from '@/utils/api.util'
+import api, { apiEndpoint } from '@/utils/api.util'
 import { Movie } from '@/zustand'
 
 export async function getTop5Movies(): Promise<Movie[]> {
-  const response = await api.get<Movie[]>(`${apiEnpoint.MOVIE}/slides`)
+  const response = await api.get<Movie[]>(`${apiEndpoint.MOVIE}/slides`)
   if (response.status !== 200) {
     throw new Error('Failed to fetch movies')
   }
@@ -10,7 +10,7 @@ export async function getTop5Movies(): Promise<Movie[]> {
 }
 
 export async function getMovieById(id: string) {
-  const response = await api.get(`${apiEnpoint.MOVIE}/${id}`)
+  const response = await api.get(`${apiEndpoint.MOVIE}/${id}`)
   if (response.status !== 200) {
     throw new Error('Failed to fetch movie details')
   }
@@ -20,7 +20,7 @@ export async function getMovieById(id: string) {
 export async function getMovieAlternativeTitles(movieId: string) {
   try {
     const response = await api.get(
-      `${apiEnpoint.MOVIE}/${movieId}/alternative-titles`
+      `${apiEndpoint.MOVIE}/${movieId}/alternative-titles`
     )
     return response.data
   } catch (error) {
@@ -32,7 +32,7 @@ export async function getMovieAlternativeTitles(movieId: string) {
 export async function updateMovieAlternativeTitles(movieId: string) {
   try {
     const response = await api.post(
-      `${apiEnpoint.MOVIE}/${movieId}/update-alternative-titles`
+      `${apiEndpoint.MOVIE}/${movieId}/update-alternative-titles`
     )
     return response.data
   } catch (error) {
@@ -44,7 +44,7 @@ export async function updateMovieAlternativeTitles(movieId: string) {
 export async function importMovieAlternativeTitles(movieId: string, tmdbId: number) {
   try {
     const response = await api.post(
-      `${apiEnpoint.MOVIE}/${movieId}/import-alternative-titles`,
+      `${apiEndpoint.MOVIE}/${movieId}/import-alternative-titles`,
       { tmdbId }
     )
     return response.data
@@ -56,7 +56,7 @@ export async function importMovieAlternativeTitles(movieId: string, tmdbId: numb
 
 export async function createMovie(movieData: any) {
   try {
-    const response = await api.post(`${apiEnpoint.MOVIE}`, movieData)
+    const response = await api.post(`${apiEndpoint.MOVIE}`, movieData)
     return response.data
   } catch (error) {
     console.error('Error creating movie:', error)
@@ -66,7 +66,7 @@ export async function createMovie(movieData: any) {
 
 export async function updateMovie(movieId: string, movieData: any) {
   try {
-    const response = await api.post(`${apiEnpoint.MOVIE}/${movieId}`, movieData)
+    const response = await api.post(`${apiEndpoint.MOVIE}/${movieId}`, movieData)
     return response.data
   } catch (error) {
     console.error('Error updating movie:', error)
@@ -77,7 +77,7 @@ export async function updateMovie(movieId: string, movieData: any) {
 export async function addLanguageToMovie(movieId: string, languageIsoCode: string) {
   try {
     const response = await api.post(
-      `${apiEnpoint.MOVIE}/${movieId}/languages/add`,
+      `${apiEndpoint.MOVIE}/${movieId}/languages/add`,
       {
         languageIsoCode,
       }
@@ -92,7 +92,7 @@ export async function addLanguageToMovie(movieId: string, languageIsoCode: strin
 export async function removeLanguageFromMovie(movieId: string, languageIsoCode: string) {
   try {
     const response = await api.post(
-      `${apiEnpoint.MOVIE}/${movieId}/languages/remove`,
+      `${apiEndpoint.MOVIE}/${movieId}/languages/remove`,
       {
         languageIsoCode,
       }
@@ -106,7 +106,7 @@ export async function removeLanguageFromMovie(movieId: string, languageIsoCode: 
 
 export async function getMoviesByLanguage(languageIsoCode: string, page: number = 1, limit: number = 10) {
   try {
-    const response = await api.get(`${apiEnpoint.MOVIE}`, {
+    const response = await api.get(`${apiEndpoint.MOVIE}`, {
       params: {
         page,
         limit,
