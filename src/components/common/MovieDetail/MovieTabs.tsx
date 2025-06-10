@@ -8,7 +8,7 @@ interface MovieTabsProps {
   movie: Movie
 }
 
-type TabType = 'tapphim' | 'gallery' | 'dienvier' | 'dexuat'
+type TabType = 'episode-tab' | 'gallery-tab' | 'cast-tab' | 'suggestion-tab'
 
 const MovieTabs: React.FC<MovieTabsProps> = ({ movie }) => {
   const { language, t } = useTranslation()
