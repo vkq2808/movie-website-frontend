@@ -1,5 +1,4 @@
 import { MovieSwiper, GenreList, LanguageMovieSelector } from "@/components/common";
-import TranslatingH1 from "@/components/common/TranslatingHtmlTag/TranslatingH1";
 
 export default function Home() {
   return (
@@ -17,7 +16,7 @@ export default function Home() {
       {/* Language Movies Section - Consistent styling */}
       <div className="w-full bg-black text-white py-8">
         <div className="w-full container mx-auto px-4">
-          <TranslatingH1 className="text-4xl font-bold mb-8 text-center">Discover Movies By Language</TranslatingH1>
+          <h1 className="text-4xl font-bold mb-8 text-center">Khám phá phim theo ngôn ngữ</h1>
 
           {/* LanguageMovieSelector component with predefined languages */}
           <LanguageMovieSelector

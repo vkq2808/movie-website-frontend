@@ -5,22 +5,14 @@ import { useRouter } from "next/navigation";
 import { Genre, useAuthStore, useGenreStore } from "@/zustand";
 import { ChevronDownIcon, SearchIcon, UserIcon, Globe2Icon } from "lucide-react";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
-import { useGlobalStore } from "@/zustand/global.store";
-import { useLanguageStore, SUPPORTED_LANGUAGES } from "@/zustand";
-import LanguageSwitcher from "./LanguageSwitcher";
-import { useTranslation } from "@/contexts/translation.context";
+import { useLanguage } from "@/contexts/language.context";
 
 const Header = () => {
-  const auth = useAuthStore(state => state);
   const handleLogout = useAuthStore(state => state.logout);
-  const fetchUser = useAuthStore(state => state.fetchUser);
-  const user = useAuthStore(state => state.user);
-
   const genres = useGenreStore(state => state.genres);
   const [displayGenres, setDisplayGenres] = React.useState<Genre[]>([]);
-  const fetchGenres = useGenreStore(state => state.fetchGenres);
-  const [search, setSearch] = React.useState('');
-  const { language, t } = useTranslation();
+  const fetchGenres = useGenreStore(state => state.fetchGenres); const [search, setSearch] = React.useState('');
+  const { language } = useLanguage();
   const router = useRouter();
 
   // Function to get genre name based on current language
@@ -28,13 +20,6 @@ const Header = () => {
     const nameForLanguage = genre.names.find(n => n.iso_639_1 === language);
     return nameForLanguage ? nameForLanguage.name : genre.names[0]?.name || 'Unknown';
   };
-
-  React.useEffect(() => {
-    if (auth.access_token) {
-      console.log('Access token found:', auth.access_token);
-      fetchUser();
-    }
-  }, [auth.access_token]);
 
   React.useEffect(() => {
     if (genres.length > 0) {
@@ -61,12 +46,11 @@ const Header = () => {
               if (search.trim()) {
                 router.push(`/search?q=${encodeURIComponent(search.trim())}`);
               }
-            }}>
-              <input
+            }}>              <input
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder={t('Search movies, actors')}
+                placeholder="Tìm kiếm phim, diễn viên"
                 className="w-full h-10 pl-10 pr-10 rounded placeholder-neutral-50 focus:outline-none bg-gray-800/70"
               />
               <button type="submit" className="absolute right-3 top-2.5">
@@ -76,24 +60,28 @@ const Header = () => {
           </div>
 
           {/* Mega menu "Thể loại" */}
-          <Popover className="relative">
-            <PopoverButton className="flex items-center space-x-1cursor-pointer focus:outline-none min-w-24">
-              <span>{t('Genres')}</span>
-              <ChevronDownIcon className="w-4 h-4" />
-            </PopoverButton>
+          <Popover className="relative">            <PopoverButton className="flex items-center space-x-1 cursor-pointer focus:outline-none min-w-24">
+            <span>Thể loại</span>
+            <ChevronDownIcon className="w-4 h-4" />
+          </PopoverButton>
             <PopoverPanel className="absolute z-10 mt-2 w-screen max-w-lg pr-8 bg-gray-800 p-4 rounded shadow-lg focus:outline-none">
-              <div className="grid grid-cols-4 gap-6">
-                {genres.map(g => (
-                  <Link
-                    className="block px-2 py-1 w-32 hover:bg-gray-700 text-center break-words hyphens-auto overflow-hidden hover:z-10 hover:scale-110 transition-all"
-                    key={g.id}
-                    href={`/search?genres=${g.id}`}
-                    title={getGenreName(g)}
-                  >
-                    {getGenreName(g)}
-                  </Link>
-                ))}
-              </div>
+              {({ close }) => (
+                <div className="grid grid-cols-4 gap-6">
+                  {genres.map(g => (
+                    <Link
+                      className="block px-2 py-1 w-32 hover:bg-gray-700 text-center break-words hyphens-auto overflow-hidden hover:z-10 hover:scale-110 transition-all"
+                      key={g.id}
+                      href={`/search?genres=${g.id}`}
+                      title={getGenreName(g)}
+                      onClick={() => {
+                        close();
+                      }}
+                    >
+                      {getGenreName(g)}
+                    </Link>
+                  ))}
+                </div>
+              )}
             </PopoverPanel>
           </Popover>
         </nav>
@@ -101,30 +89,52 @@ const Header = () => {
         {/* Mobile menu button and user */}
         <div className="flex items-center gap-4">
           {/* Language Selector */}
-          <LanguageSwitcher className="hidden lg:block" />
+          {/* <LanguageSwitcher className="hidden lg:block" /> */}
 
           {/* User Section */}
           <div className="flex items-center lg:hidden space-x-4">
             <UserIcon className="w-6 h-6" />
           </div>
-          {user ? (
-            <>
-              <Link href="/profile" className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors">
-                <img src={user.photo_url} alt={t('Profile')} className="w-8 h-8 rounded-full" />
-              </Link>
-              <div className="cursor-pointer text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors" onClick={handleLogout}>
-                {t('Logout')}
-              </div>
-            </>
-          ) : (
-            <Link href="/auth/login" className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors">
-              {t('Login')}
-            </Link>
-          )}
+          <UserInformation />
         </div>
       </div >
     </header >
   );
 };
+
+const UserInformation = () => {
+  const user = useAuthStore(state => state.user);
+  const fetchUser = useAuthStore(state => state.fetchUser);
+  const handleLogout = useAuthStore(state => state.logout);
+
+  React.useEffect(() => {
+    if (!user) {
+      fetchUser();
+    }
+  }, [user, fetchUser]);
+
+  return (
+    <div className="flex items-center space-x-4">
+      {user ? (
+        <>
+          <img src={user.photo_url} alt="User Avatar" className="w-8 h-8 rounded-full" />
+          <Link href="/profile" className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors">
+            {user.username || user.email}
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors"
+          >
+            Đăng xuất
+          </button>
+        </>
+      ) : (
+        <Link href="/auth/login" className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors">
+          Đăng nhập
+        </Link>
+      )}
+    </div>
+  );
+}
 
 export default Header;

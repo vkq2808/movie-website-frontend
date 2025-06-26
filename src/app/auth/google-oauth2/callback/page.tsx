@@ -20,37 +20,30 @@ const GoogleOAuth2Content = () => {
     if (code && scope) {
       console.log('Google OAuth2 Callback Params:', { code, scope, authUser, prompt });
       // Log the setAuth function to see if it's defined correctly
-      console.log('setAuth function:', setAuth);
 
-      api
-        .get(`${apiEndpoint.AUTH}/google-oauth2/callback`, {
-          params: { code, scope, authUser, prompt }
-        }).then((res) => {
-          if (res.status === 200) {
+      api.get(`${apiEndpoint.AUTH}/google-oauth2/callback`, {
+        params: { code, scope, authUser, prompt }
+      }).then((res) => {
+        if (res.status === 200) {
 
-            try {
-              if (res.data.user) {
-                setUser(res.data.user);
-                console.log('After setUser - success');
-              } else {
-                console.warn('No user data in response');
-              }
-            } catch (error) {
-              console.error('Error in setUser:', error);
+          try {
+            if (res.data.user) {
+              setAuth({ access_token: res.data.access_token, refresh_token: res.data.refresh_token, user: res.data.user });
+              console.log('User set successfully');
+            } else {
+              console.warn('No user data in response');
             }
-
-            try {
-              setAuth({ access_token: res.data.access_token, refresh_token: res.data.refresh_token });
-              console.log('After setAuth - success');
-            } catch (error) {
-              console.error('Error in setAuth:', error);
-            }
-
-            setTimeout(() => {
-              window.close();
-            }, 1000); // Close after 1 second to ensure state updates
+          } catch (error) {
+            console.error('Error setting user:', error);
           }
-        })
+
+          console.log('Google OAuth2 Callback Response:', res.data);
+
+          setTimeout(() => {
+            window.close();
+          }, 1000);
+        }
+      })
         .catch((err) => {
           console.error(err);
         });
