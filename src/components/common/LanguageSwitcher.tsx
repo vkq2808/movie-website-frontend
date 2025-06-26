@@ -1,4 +1,4 @@
-import { useTranslation } from '@/contexts/translation.context';
+import { useLanguage } from '@/contexts/language.context';
 import { LANGUAGE_NAMES, SupportedLanguage } from '@/utils/locale.util';
 import React from 'react';
 interface LanguageSwitcherProps {
@@ -9,7 +9,7 @@ interface LanguageSwitcherProps {
  * A component that allows users to switch between supported languages
  */
 const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ className = '' }) => {
-  const { language, setLanguage } = useTranslation();
+  const { language, setLanguage } = useLanguage();
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setLanguage(e.target.value as SupportedLanguage);

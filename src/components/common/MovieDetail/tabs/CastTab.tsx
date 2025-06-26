@@ -1,14 +1,12 @@
 'use client'
 import React from 'react'
 import { Movie } from '@/zustand'
-import { useTranslation } from '@/contexts/translation.context'
 
 interface CastTabProps {
   movie: Movie
 }
 
 const CastTab: React.FC<CastTabProps> = ({ movie }) => {
-  const { t } = useTranslation()
 
   // Demo cast data - replace with actual cast data from your API
   const democast = [
@@ -91,7 +89,7 @@ const CastTab: React.FC<CastTabProps> = ({ movie }) => {
     <div className="space-y-8">
       {/* Cast Section */}
       <div>
-        <h2 className="text-2xl font-bold text-white mb-6">{t('Cast')}</h2>
+        <h2 className="text-2xl font-bold text-white mb-6">Diễn viên</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {democast.map((actor) => (
             <CastMemberCard
@@ -105,7 +103,7 @@ const CastTab: React.FC<CastTabProps> = ({ movie }) => {
 
       {/* Crew Section */}
       <div>
-        <h2 className="text-2xl font-bold text-white mb-6">{t('Crew')}</h2>
+        <h2 className="text-2xl font-bold text-white mb-6">Đoàn làm phim</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {demoCrew.map((crewMember) => (
             <CastMemberCard
@@ -119,30 +117,30 @@ const CastTab: React.FC<CastTabProps> = ({ movie }) => {
 
       {/* Additional Info */}
       <div className="bg-gray-800 rounded-lg p-6">
-        <h3 className="text-xl font-semibold text-white mb-4">{t('Production Information')}</h3>
+        <h3 className="text-xl font-semibold text-white mb-4">Thông tin sản xuất</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h4 className="text-white font-medium mb-2">{t('Director')}</h4>
-            <p className="text-gray-400">{t('Director Name')}</p>
+            <h4 className="text-white font-medium mb-2">Đạo diễn</h4>
+            <p className="text-gray-400">Tên đạo diễn</p>
           </div>
           <div>
-            <h4 className="text-white font-medium mb-2">{t('Producer')}</h4>
-            <p className="text-gray-400">{t('Producer Name')}</p>
+            <h4 className="text-white font-medium mb-2">Nhà sản xuất</h4>
+            <p className="text-gray-400">Tên nhà sản xuất</p>
           </div>
           <div>
-            <h4 className="text-white font-medium mb-2">{t('Writer')}</h4>
-            <p className="text-gray-400">{t('Writer Name')}</p>
+            <h4 className="text-white font-medium mb-2">Biên kịch</h4>
+            <p className="text-gray-400">Tên biên kịch</p>
           </div>
           <div>
-            <h4 className="text-white font-medium mb-2">{t('Composer')}</h4>
-            <p className="text-gray-400">{t('Composer Name')}</p>
+            <h4 className="text-white font-medium mb-2">Nhạc sĩ</h4>
+            <p className="text-gray-400">Tên nhạc sĩ</p>
           </div>
         </div>
       </div>
 
       {/* Character Details */}
       <div className="space-y-4">
-        <h3 className="text-xl font-semibold text-white">{t('Character Details')}</h3>
+        <h3 className="text-xl font-semibold text-white">Chi tiết nhân vật</h3>
         {democast.slice(0, 3).map((actor) => (
           <div key={actor.id} className="bg-gray-800 rounded-lg p-4">
             <div className="flex gap-4">
@@ -151,9 +149,9 @@ const CastTab: React.FC<CastTabProps> = ({ movie }) => {
               </div>
               <div className="flex-1">
                 <h4 className="text-white font-medium">{actor.name}</h4>
-                <p className="text-yellow-400 text-sm mb-2">{t('as')} {actor.character}</p>
+                <p className="text-yellow-400 text-sm mb-2">trong vai {actor.character}</p>
                 <p className="text-gray-400 text-sm">
-                  {t('No details available.')}
+                  Không có thông tin chi tiết.
                 </p>
               </div>
             </div>

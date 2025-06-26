@@ -3,7 +3,7 @@ import React from 'react'
 import { PlayIcon, HeartIcon, InfoIcon } from 'lucide-react'
 import { Movie, useLanguageStore } from '@/zustand'
 import { getMovieOverviewByLanguage, getMovieTitleByLanguage } from '@/utils/movie.util'
-import { useTranslation } from '@/contexts/translation.context'
+import { useLanguage } from '@/contexts/language.context'
 
 interface MovieHeroProps {
   movie: Movie,
@@ -12,7 +12,7 @@ interface MovieHeroProps {
 const MovieHero: React.FC<MovieHeroProps> = ({
   movie
 }) => {
-  const { language } = useTranslation();
+  const { language } = useLanguage();
   return (
     <div className="relative w-full h-[80vh] text-white bg-black flex items-center justify-between overflow-hidden px-16">
       {/* Ảnh nền */}

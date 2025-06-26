@@ -5,7 +5,6 @@ import { getMovieById } from '@/apis/movie.api'
 import MovieHero from './MovieHero'
 import MovieTabs from './MovieTabs'
 import Spinner from '../Spinner'
-import { useTranslation } from '@/contexts/translation.context'
 
 interface MovieDetailPageProps {
   movieId: string
@@ -15,7 +14,6 @@ const MovieDetailPage: React.FC<MovieDetailPageProps> = ({ movieId }) => {
   const [movie, setMovie] = useState<Movie | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
-  const { language, t } = useTranslation()
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -43,7 +41,7 @@ const MovieDetailPage: React.FC<MovieDetailPageProps> = ({ movieId }) => {
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="flex flex-col items-center">
           <Spinner size="lg" color="text-yellow-400" />
-          <p className="mt-4 text-white animate-pulse">{t('Loading movie details...')}</p>
+          <p className="mt-4 text-white animate-pulse">Đang tải thông tin phim...</p>
         </div>
       </div>
     )
@@ -53,8 +51,8 @@ const MovieDetailPage: React.FC<MovieDetailPageProps> = ({ movieId }) => {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center text-red-500">
-          <p className="text-xl">{error || t('Movie not found')}</p>
-          <p className="text-sm text-gray-400 mt-2">{t('Please try again later')}</p>
+          <p className="text-xl">{error || 'Không tìm thấy phim'}</p>
+          <p className="text-sm text-gray-400 mt-2">Vui lòng thử lại sau</p>
         </div>
       </div>
     )
