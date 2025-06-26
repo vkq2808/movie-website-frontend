@@ -19,11 +19,11 @@ const LoginForm = () => {
     setLoading(true);
 
     await authApi.login({ email, password }).then(res => {
-      console.log('res', res)
       if (res.status === 200) {
-        setAuth({ access_token: res.data.access_token, refresh_token: res.data.refresh_token });
-        setUser(res.data.user);
-        router.push('/');
+        setAuth({ access_token: res.data.access_token, refresh_token: res.data.refresh_token, user: res.data.user })
+          .then(() => {
+            router.push('/');
+          });
       }
     }).catch(err => {
       setErrorMsg('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
