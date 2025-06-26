@@ -49,7 +49,7 @@ const VerifyContent: React.FC = () => {
       router.push('/auth/register');
     }
     setIsLoading(false);
-  }, [email]);
+  }, [email, router]);
 
   // Hiệu ứng đếm ngược cho nút gửi lại OTP
   useEffect(() => {

@@ -1,5 +1,5 @@
 'use client';
-import React, { ReactEventHandler } from 'react';
+import React from 'react';
 import LoadingSpinner from '../LoadingSpinner';
 
 interface NoControlVideoPlayerProps {
@@ -56,19 +56,21 @@ const NoControlVideoPlayer: React.FC<NoControlVideoPlayerProps> = ({
   };
 
   React.useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.addEventListener('loadeddata', handleLoadedData);
+    const video = videoRef.current;
+    if (video) {
+      video.addEventListener('loadeddata', handleLoadedData);
     }
     return () => {
-      if (videoRef.current) {
-        videoRef.current.removeEventListener('loadeddata', handleLoadedData);
+      if (video) {
+        video.removeEventListener('loadeddata', handleLoadedData);
       }
     };
   }, []);
 
   React.useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.load();
+    const video = videoRef.current;
+    if (video) {
+      video.load();
     }
   }, [src]);
 

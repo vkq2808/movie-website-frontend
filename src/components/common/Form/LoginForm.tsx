@@ -11,7 +11,6 @@ const LoginForm = () => {
   const [loading, setLoading] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState('');
   const setAuth = useAuthStore(state => state.setAuth);
-  const setUser = useAuthStore(state => state.setUser);
 
   const handleLoginSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -27,6 +26,7 @@ const LoginForm = () => {
       }
     }).catch(err => {
       setErrorMsg('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+      console.error('Login error:', err);
     }).finally(() => {
       setLoading(false);
     });

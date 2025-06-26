@@ -1,12 +1,4 @@
-interface Model {
-}
-
-interface BaseModelWithoutId extends Model {
-  created_at: string;
-  updated_at: string;
-}
-
-interface BaseModelWithId extends Model {
+interface BaseModelWithId {
   id: string;
   created_at: string;
   updated_at: string;
@@ -44,6 +36,15 @@ export interface Movie extends BaseModelWithId {
   alternative_overviews: AlternativeOverview[];
   original_language: string;
   original_title: string;
+  cast?: Actor[];
+}
+
+export interface Actor extends BaseModelWithId {
+  name: string;
+  profile_path: string;
+  character: string;
+  birthday: Date;
+  profileImage: string;
 }
 
 export interface Video extends BaseModelWithId {
@@ -74,7 +75,7 @@ export interface Genre extends BaseModelWithId {
   }[]
 }
 
-export interface Language extends Model {
+export interface Language {
   iso_639_1: string;
   name: string;
 };

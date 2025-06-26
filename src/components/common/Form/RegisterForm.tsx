@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import { useState } from 'react';
-import api from '@/utils/api.util';
 import { useRouter } from 'next/navigation';
 import { authApi, RegisterData } from '@/apis/auth.api';
 
@@ -25,9 +24,7 @@ const RegisterForm: React.FC = () => {
     e.preventDefault();
 
     const isValid = await validateData();
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+    if (!isValid) {
       return;
     }
 

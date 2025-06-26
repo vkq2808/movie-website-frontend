@@ -30,7 +30,7 @@ const MovieLanguages: React.FC<MovieLanguagesProps> = ({ movieId, onLanguagesUpd
   const [languageCode, setLanguageCode] = useState('');
   const [isAdding, setIsAdding] = useState(false);
 
-  const fetchMovie = async () => {
+  const fetchMovie = React.useCallback(async () => {
     try {
       setLoading(true);
       const movieData = await getMovieById(movieId);
@@ -40,13 +40,13 @@ const MovieLanguages: React.FC<MovieLanguagesProps> = ({ movieId, onLanguagesUpd
     } finally {
       setLoading(false);
     }
-  };
+  }, [movieId]);
 
   useEffect(() => {
     if (movieId) {
       fetchMovie();
     }
-  }, [movieId]);
+  }, [movieId, fetchMovie]);
 
   const handleAddLanguage = async () => {
     if (!languageCode || !movieId) return;

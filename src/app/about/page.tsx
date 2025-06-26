@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from 'react';
 
 const AboutPage: React.FC = () => {
@@ -81,7 +82,7 @@ const MemberCard: React.FC<MemberCardProps> = ({ fullname, role, hobbies, avatar
   return (
     <div className={`bg-[var(--color-neutral-300)] text-[var(--color-neutral-800)] shadow-lg rounded-lg py-6 w-full ${className}`}>
       <div className="flex items-center justify-center mb-4 select-none">
-        <img src={avatar} alt={fullname} className="w-24 h-24 md:w-48 md:h-48 rounded-full" />
+        <Image src={avatar} alt={fullname} className="w-24 h-24 md:w-48 md:h-48 rounded-full" />
       </div>
       <div className="px-6">
         <h3 className="text-2xl font-bold mb-2">{fullname}</h3>

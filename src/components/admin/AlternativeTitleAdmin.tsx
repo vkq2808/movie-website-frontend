@@ -32,6 +32,7 @@ const AlternativeTitleAdmin: React.FC<AlternativeTitleAdminProps> = ({
         text: 'Failed to update alternative titles',
         type: 'error'
       });
+      console.error('Error updating alternative titles:', error);
     } finally {
       setLoading(false);
     }
@@ -57,6 +58,7 @@ const AlternativeTitleAdmin: React.FC<AlternativeTitleAdminProps> = ({
         text: 'Failed to import alternative titles',
         type: 'error'
       });
+      console.error('Error importing alternative titles:', error);
     } finally {
       setLoading(false);
     }

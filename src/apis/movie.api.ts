@@ -1,3 +1,4 @@
+import { CreateMovieDto, UpdateMovieDto } from '@/dto/movie.dto'
 import api, { apiEndpoint } from '@/utils/api.util'
 import { Movie } from '@/zustand'
 
@@ -54,7 +55,7 @@ export async function importMovieAlternativeTitles(movieId: string, tmdbId: numb
   }
 }
 
-export async function createMovie(movieData: any) {
+export async function createMovie(movieData: CreateMovieDto) {
   try {
     const response = await api.post(`${apiEndpoint.MOVIE}`, movieData)
     return response.data
@@ -64,7 +65,7 @@ export async function createMovie(movieData: any) {
   }
 }
 
-export async function updateMovie(movieId: string, movieData: any) {
+export async function updateMovie(movieId: string, movieData: UpdateMovieDto) {
   try {
     const response = await api.post(`${apiEndpoint.MOVIE}/${movieId}`, movieData)
     return response.data

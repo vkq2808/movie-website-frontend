@@ -3,6 +3,7 @@ import React from 'react'
 import { Movie } from '@/zustand'
 import Link from 'next/link'
 import { Star } from 'lucide-react'
+import Image from 'next/image'
 
 interface SearchMovieCardProps {
   movie: Movie
@@ -15,7 +16,7 @@ const SearchMovieCard: React.FC<SearchMovieCardProps> = ({ movie }) => {
         {/* Movie Poster */}
         <div className="aspect-[2/3] bg-gray-800">
           {movie.poster ? (
-            <img
+            <Image
               src={movie.poster.url}
               alt={movie.poster.alt || movie.title}
               className="w-full h-full object-cover"

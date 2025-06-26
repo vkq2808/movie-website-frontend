@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
     ];
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    dirs: ['src/app', 'src/components', 'src/zustand', 'src/apis', 'src/hooks', 'src/contexts', 'src/constants', 'src/dto'],
   },
 };
 

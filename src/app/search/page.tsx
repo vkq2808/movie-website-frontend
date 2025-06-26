@@ -16,7 +16,7 @@ interface SearchResult {
     limit: number;
     totalCount: number;
     totalPages: number;
-    appliedFilters: Record<string, any>;
+    appliedFilters: Record<string, string | string[]>;
   }
 }
 
@@ -117,7 +117,7 @@ const SearchContent = () => {
       setLoading(true)
       setError(null)
       try {        // Convert active filters to API parameters
-        const params: Record<string, any> = {
+        const params: Record<string, string | number> = {
           title: query,
           limit: 24,
           page: currentPage
@@ -192,7 +192,7 @@ const SearchContent = () => {
         ...(queryGenres ? { genres: queryGenres.split(',') } : {})
       }))
     }
-  }, [genres, searchParams])
+  }, [genres, searchParams, language])
 
   return (
     <div className="bg-slate-100 min-h-screen">

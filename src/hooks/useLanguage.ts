@@ -52,6 +52,7 @@ export const useLanguagePreference = (
       const storedLang = localStorage.getItem('language');
       return storedLang ? (storedLang as SupportedLanguage) : initialLanguage;
     } catch (error) {
+      console.error('Failed to retrieve language preference from localStorage:', error);
       return initialLanguage;
     }
   });
@@ -71,4 +72,6 @@ export const useLanguagePreference = (
   return [language, setLanguage];
 };
 
-export default { useDetectLanguage, useLanguagePreference };
+const languageHooks = { useDetectLanguage, useLanguagePreference };
+
+export default languageHooks;

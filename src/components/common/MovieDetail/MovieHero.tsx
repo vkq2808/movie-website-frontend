@@ -1,9 +1,10 @@
 'use client'
 import React from 'react'
-import { Movie, useLanguageStore } from '@/zustand'
+import { Genre, Movie } from '@/zustand'
 import { Play, Heart, Share, MessageCircle } from 'lucide-react'
 import { getMovieOverviewByLanguage, getMovieTitleByLanguage } from '@/utils/movie.util'
 import { useLanguage } from '@/contexts/language.context'
+import Image from 'next/image'
 
 interface MovieHeroProps {
   movie: Movie
@@ -13,8 +14,8 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
   const { language } = useLanguage();
 
   // Function to get genre name based on current language
-  const getGenreName = (genre: any) => {
-    const nameForLanguage = genre.names?.find((n: any) => n.iso_639_1 === language)
+  const getGenreName = (genre: Genre) => {
+    const nameForLanguage = genre.names?.find((n) => n.iso_639_1 === language)
     return nameForLanguage ? nameForLanguage.name : genre.names?.[0]?.name || 'Không xác định'
   }
 
@@ -22,7 +23,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
     <div className="relative w-full h-screen overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
-        <img
+        <Image
           src={movie.backdrop?.url || movie.poster?.url}
           alt={movie.backdrop?.alt || movie.title}
           className="w-full h-full object-cover"
@@ -41,7 +42,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
             <div className="flex-shrink-0">
               <div className="w-64 h-96 rounded-lg overflow-hidden shadow-2xl">
                 {movie.poster ? (
-                  <img
+                  <Image
                     src={movie.poster.url}
                     alt={movie.poster.alt || movie.title}
                     className="w-full h-full object-cover"

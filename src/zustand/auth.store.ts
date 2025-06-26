@@ -33,19 +33,13 @@ export const useAuthStore = create<AuthStore>(
     },
     setUser: (user: User) => set((state) => ({ ...state, user })),
     fetchUser: async () => {
-      try {
-        if (!get().access_token) {
-          return
-        }
-        const res = await api.get<User>(`${apiEndpoint.AUTH}/me`);
-        set((state) => ({ ...state, user: res.data }));
-      } catch (error: any) {
-        console.error('Error fetching user:', error);
-        // Clear auth data if it's an authentication error
-        if (error?.response?.status === 401 || error?.response?.status === 409) {
-          set({ access_token: undefined, refresh_token: undefined, user: undefined });
-        }
-        throw error;
+      if (!get().access_token) {
+        return
       }
+      const res = await api.get<User>(`${apiEndpoint.AUTH}/me`).catch((err) => {
+        console.error('Error fetching user:', err)
+        return { data: undefined }
+      });
+      set((state) => ({ ...state, user: res.data }));
     }
   }), { name: 'auth' }));

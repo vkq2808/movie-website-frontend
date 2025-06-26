@@ -1,5 +1,5 @@
 'use client';
-import { Genre, useGenreStore, useLanguageStore } from '@/zustand';
+import { Genre, useGenreStore } from '@/zustand';
 import Link from 'next/link';
 import React from 'react';
 import Spinner from './Spinner';
@@ -30,19 +30,19 @@ export default function GenreList() {
     return nameForLanguage ? nameForLanguage.name : genre.names[0]?.name || 'Unknown';
   };
 
-  const defaultGenre =
-  {
-    id: 'all',
-    names: [],
-    bgColor: {
-      r: 0,
-      g: 0,
-      b: 0,
-    },
-    original_id: '',
-    created_at: '',
-    updated_at: '',
-  }
+  const defaultGenre = React.useMemo(() => (
+    {
+      id: 'all',
+      names: [],
+      bgColor: {
+        r: 0,
+        g: 0,
+        b: 0,
+      },
+      original_id: '',
+      created_at: '',
+      updated_at: '',
+    }), []);
 
   React.useEffect(() => {
     const initializeGenres = async () => {
@@ -83,7 +83,7 @@ export default function GenreList() {
     };
 
     initializeGenres();
-  }, []); // Remove genres and fetchGenres from dependencies
+  }, [defaultGenre, fetchGenres, genres]);
 
   // Separate effect to handle genres changes
   React.useEffect(() => {
@@ -107,7 +107,7 @@ export default function GenreList() {
       setDisplayGenres(newDisplayGenres);
       setLoading(false);
     }
-  }, [genres]); // Only genres as dependency
+  }, [genres, defaultGenre]);
 
   if (loading) {
     return (

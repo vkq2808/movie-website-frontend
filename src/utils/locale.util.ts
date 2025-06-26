@@ -246,7 +246,7 @@ export function getCountryName(countryCode: string): string {
       const name = regionNames.of(code);
       if (name) return name;
     } catch (e) {
-      // Continue to fallback
+      console.log(e);
     }
   }
 

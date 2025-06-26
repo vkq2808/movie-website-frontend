@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { User, Movie } from '@/zustand/types';
+import { User } from '@/zustand/types';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { MovieCard } from '@/components/common';
 import { Heart as HeartIcon, History as HistoryIcon, Wallet as WalletIcon, Settings as SettingsIcon } from 'lucide-react';
@@ -74,7 +74,7 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
                   <HeartIcon size={48} className="text-slate-600 mb-4" />
                   <h3 className="text-lg font-medium mb-2">No favorites yet</h3>
                   <p className="text-slate-400 max-w-md">
-                    You haven't added any movies to your favorites yet. Browse movies and click the heart icon to add them to your favorites.
+                    You haven&lsquo;t added any movies to your favorites yet. Browse movies and click the heart icon to add them to your favorites.
                   </p>
                 </div>
               )}

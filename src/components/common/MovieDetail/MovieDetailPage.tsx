@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { Movie, useLanguageStore } from '@/zustand'
+import { Movie } from '@/zustand'
 import { getMovieById } from '@/apis/movie.api'
 import MovieHero from './MovieHero'
 import MovieTabs from './MovieTabs'

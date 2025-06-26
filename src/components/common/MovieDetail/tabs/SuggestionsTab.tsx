@@ -1,8 +1,9 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { Movie } from '@/zustand'
+import { Genre, Movie } from '@/zustand'
 import Link from 'next/link'
 import { useLanguage } from '@/contexts/language.context'
+import Image from 'next/image'
 
 interface SuggestionsTabProps {
   movie: Movie
@@ -14,8 +15,8 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
   const { language } = useLanguage()
 
   // Function to get genre name based on current language
-  const getGenreName = (genre: any) => {
-    const nameForLanguage = genre.names?.find((n: any) => n.iso_639_1 === language)
+  const getGenreName = (genre: Genre) => {
+    const nameForLanguage = genre.names?.find((n) => n.iso_639_1 === language)
     return nameForLanguage ? nameForLanguage.name : genre.names?.[0]?.name || 'Unknown'
   }
 
@@ -75,7 +76,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
     }
 
     fetchSuggestedMovies()
-  }, [movie])
+  }, [movie, language])
 
   const MovieCard = ({ suggestedMovie }: { suggestedMovie: Movie }) => (
     <Link href={`/movie/${suggestedMovie.id}`}>
@@ -83,7 +84,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
         {/* Movie Poster */}
         <div className="relative aspect-[2/3] overflow-hidden">
           {suggestedMovie.poster ? (
-            <img
+            <Image
               src={suggestedMovie.poster.url}
               alt={suggestedMovie.poster.alt || suggestedMovie.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -178,12 +179,12 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
         <h3 className="text-xl font-semibold text-white mb-4">Bạn có thể thích</h3>
 
         <div className="space-y-3">
-          {suggestedMovies.slice(0, 4).map((suggestedMovie, index) => (
+          {suggestedMovies.slice(0, 4).map((suggestedMovie) => (
             <Link key={suggestedMovie.id} href={`/movie/${suggestedMovie.id}`}>
               <div className="flex gap-4 p-3 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer">
                 <div className="w-16 h-24 bg-gray-700 rounded overflow-hidden flex-shrink-0">
                   {suggestedMovie.poster ? (
-                    <img
+                    <Image
                       src={suggestedMovie.poster.url}
                       alt={suggestedMovie.title}
                       className="w-full h-full object-cover"

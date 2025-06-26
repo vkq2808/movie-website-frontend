@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
-import { Movie } from '@/zustand'
+import { Actor, Movie } from '@/zustand'
+import Image from 'next/image'
 
 interface CastTabProps {
   movie: Movie
@@ -9,7 +10,7 @@ interface CastTabProps {
 const CastTab: React.FC<CastTabProps> = ({ movie }) => {
 
   // Demo cast data - replace with actual cast data from your API
-  const democast = [
+  const democast = movie.cast || [
     {
       id: '1',
       name: 'Main Actor 1',
@@ -63,11 +64,15 @@ const CastTab: React.FC<CastTabProps> = ({ movie }) => {
     },
   ]
 
-  const CastMemberCard = ({ person, role }: { person: any, role: string }) => (
+  const CastMemberCard = ({ person, role }: {
+    person: Actor | {
+      id: string, name: string, profileImage?: string | null, character?: string, job?: string
+    }, role: string
+  }) => (
     <div className="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition-colors">
       <div className="aspect-[3/4] bg-gray-700">
         {person.profileImage ? (
-          <img
+          <Image
             src={person.profileImage}
             alt={person.name}
             className="w-full h-full object-cover"

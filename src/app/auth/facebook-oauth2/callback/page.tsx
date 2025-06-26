@@ -1,7 +1,6 @@
 'use client'
 import api, { apiEndpoint } from '@/utils/api.util';
 import { useAuthStore } from '@/zustand/auth.store';
-import { access } from 'fs';
 import { useSearchParams } from 'next/navigation';
 import React, { Suspense } from 'react'
 

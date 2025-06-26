@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import { PlayIcon, HeartIcon, InfoIcon } from 'lucide-react'
-import { Movie, useLanguageStore } from '@/zustand'
+import { Movie } from '@/zustand'
 import { getMovieOverviewByLanguage, getMovieTitleByLanguage } from '@/utils/movie.util'
 import { useLanguage } from '@/contexts/language.context'
 
@@ -57,7 +57,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({
             <div className="flex gap-2 flex-wrap mt-4">
               {movie.genres.map((genre, index) => (
                 <span key={index} className="bg-gray-700 text-xs px-2 py-1 rounded">
-                  {genre.names.find((n: any) => n.iso_639_1 === language)?.name || genre.names[0]?.name || 'Unknown'}
+                  {genre.names.find((n) => n.iso_639_1 === language)?.name || genre.names[0]?.name || 'Unknown'}
                 </span>
               ))}
             </div>

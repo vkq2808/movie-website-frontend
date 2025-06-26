@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { Movie } from '@/zustand'
 import { X } from 'lucide-react'
+import Image from 'next/image'
 
 interface GalleryTabProps {
   movie: Movie
@@ -47,7 +48,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
               className="relative aspect-video rounded-lg overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-200 justify-center items-center flex"
               onClick={() => openModal(image.url)}
             >
-              <img
+              <Image
                 src={image.url}
                 alt={image.alt || `Gallery image ${index + 1}`}
                 className="max-w-full max-h-full object-cover rounded-lg"
@@ -80,7 +81,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
           {/* Demo screenshots - replace with actual data */}
           {movie.backdrop && (
             <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden">
-              <img
+              <Image
                 src={movie.backdrop.url}
                 alt="Screenshot"
                 className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200"
@@ -106,7 +107,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
         <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
           {movie.poster && (
             <div className="aspect-[2/3] bg-gray-800 rounded-lg overflow-hidden">
-              <img
+              <Image
                 src={movie.poster.url}
                 alt="Movie poster"
                 className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200"
@@ -139,7 +140,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
             >
               <X className="w-8 h-8" />
             </button>
-            <img
+            <Image
               src={selectedImage}
               alt="Full size"
               className="max-w-screen max-h-screen object-contain"

@@ -1,9 +1,10 @@
 'use client'
 import React from 'react'
-import { Movie, useLanguageStore } from '@/zustand'
+import { Movie } from '@/zustand'
 import Link from 'next/link'
 import { getMovieTitleByLanguage } from '@/utils/movie.util'
 import { useLanguage } from '@/contexts/language.context'
+import Image from 'next/image'
 
 interface MovieCardProps {
   movie: Movie
@@ -18,7 +19,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         {/* Movie poster */}
         <div className="relative aspect-[2/3] overflow-hidden">
           {movie.poster && (
-            <img
+            <Image
               src={movie.poster.url}
               alt={movie.poster.alt || movie.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

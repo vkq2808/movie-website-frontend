@@ -1,6 +1,5 @@
 'use client'
 import React from 'react'
-import { useLanguageStore } from '@/zustand'
 
 interface FilterOption {
   id: string

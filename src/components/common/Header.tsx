@@ -3,15 +3,16 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Genre, useAuthStore, useGenreStore } from "@/zustand";
-import { ChevronDownIcon, SearchIcon, UserIcon, Globe2Icon } from "lucide-react";
+import { ChevronDownIcon, SearchIcon, UserIcon } from "lucide-react";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { useLanguage } from "@/contexts/language.context";
+import Image from "next/image";
 
 const Header = () => {
-  const handleLogout = useAuthStore(state => state.logout);
   const genres = useGenreStore(state => state.genres);
   const [displayGenres, setDisplayGenres] = React.useState<Genre[]>([]);
-  const fetchGenres = useGenreStore(state => state.fetchGenres); const [search, setSearch] = React.useState('');
+  const fetchGenres = useGenreStore(state => state.fetchGenres);
+  const [search, setSearch] = React.useState('');
   const { language } = useLanguage();
   const router = useRouter();
 
@@ -23,13 +24,13 @@ const Header = () => {
 
   React.useEffect(() => {
     if (genres.length > 0) {
-      let newDisplayGenres: Genre[] = [];
+      const newDisplayGenres: Genre[] = [];
       newDisplayGenres.push(...genres);
       setDisplayGenres(newDisplayGenres);
     } else {
       fetchGenres();
     }
-  }, [genres.length, fetchGenres]);
+  }, [genres.length, fetchGenres, genres]);
 
   return (
     <header className="bg-gradient-to-b from-slate-900 to-transparent fixed top-0 left-0 right-0 z-5000 text-neutral-50">
@@ -67,7 +68,7 @@ const Header = () => {
             <PopoverPanel className="absolute z-10 mt-2 w-screen max-w-lg pr-8 bg-gray-800 p-4 rounded shadow-lg focus:outline-none">
               {({ close }) => (
                 <div className="grid grid-cols-4 gap-6">
-                  {genres.map(g => (
+                  {displayGenres.map(g => (
                     <Link
                       className="block px-2 py-1 w-32 hover:bg-gray-700 text-center break-words hyphens-auto overflow-hidden hover:z-10 hover:scale-110 transition-all"
                       key={g.id}
@@ -117,7 +118,7 @@ const UserInformation = () => {
     <div className="flex items-center space-x-4">
       {user ? (
         <>
-          <img src={user.photo_url} alt="User Avatar" className="w-8 h-8 rounded-full" />
+          <Image src={user.photo_url} alt="User Avatar" className="w-8 h-8 rounded-full" />
           <Link href="/profile" className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors">
             {user.username || user.email}
           </Link>

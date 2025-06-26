@@ -26,7 +26,7 @@ const LoginOauth2 = () => {
       setIsLoading(false);
       router.push('/');
     }
-  }, [auth.access_token]);
+  }, [auth.access_token, router]);
 
   return (
     isLoading ?

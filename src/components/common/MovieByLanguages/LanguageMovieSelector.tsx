@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Movie } from '@/zustand'
 import { getMoviesByLanguage } from '@/apis/movie.api'
-import { Language, getAllLanguages, getPopularLanguages } from '@/apis/language.api'
+import { Language, getPopularLanguages } from '@/apis/language.api'
 import MovieCard from './MovieCard'
 import LoadingSpinner from '../LoadingSpinner'
 
@@ -45,7 +45,6 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
 }) => {
   const [languagesLoading, setLanguagesLoading] = useState<boolean>(true)
   const [moviesByLanguage, setMoviesByLanguage] = useState<MoviesByLanguage[]>([])
-  const [languages, setLanguages] = useState<Language[]>([])
   const [error, setError] = useState<string | null>(null)
 
   // Refs for scrolling movie sections
@@ -92,7 +91,6 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
         const popularLanguages = await getPopularLanguages(languageLimit)
 
         if (popularLanguages && popularLanguages.length > 0) {
-          setLanguages(popularLanguages)
 
           // Initialize moviesByLanguage with all languages
           const initialMoviesByLanguage = popularLanguages.map(language => ({
@@ -111,7 +109,6 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
             { id: '4', iso_639_1: 'fr', name: 'French', english_name: 'French' },
             { id: '5', iso_639_1: 'es', name: 'Spanish', english_name: 'Spanish' }
           ]
-          setLanguages(defaultLanguages)
 
           // Initialize with default languages
           const initialMoviesByLanguage = defaultLanguages.map(language => ({
@@ -134,7 +131,6 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
           { id: '4', iso_639_1: 'fr', name: 'French', english_name: 'French' },
           { id: '5', iso_639_1: 'es', name: 'Spanish', english_name: 'Spanish' }
         ]
-        setLanguages(defaultLanguages)
 
         // Initialize with default languages
         const initialMoviesByLanguage = defaultLanguages.map(language => ({
@@ -160,7 +156,7 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
         fetchMoviesForLanguage(item.language, index)
       })
     }
-  }, [moviesByLanguage.length, languagesLoading, fetchMoviesForLanguage])
+  }, [moviesByLanguage.length, languagesLoading, fetchMoviesForLanguage, moviesByLanguage])
 
   // Scroll functions for the movie rows
   const scrollLeft = (index: number) => {
