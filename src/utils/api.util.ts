@@ -11,9 +11,9 @@ export const apiEndpoint = {
   LANGUAGE: '/language',
 }
 
-// Mở rộng interface InternalAxiosRequestConfig để thêm thuộc tính _retry
+// Mở rộng interface InternalAxiosRequestConfig để thêm thuộc tính __retry
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
-  _retry?: boolean;
+  __retry?: boolean;
 }
 
 export const baseURL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000/api';
@@ -50,18 +50,12 @@ api.interceptors.request.use(
     const token = savedAuth ? JSON.parse(savedAuth).access_token : null;
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.setAuthorization(`Bearer ${token}`);
     }
     return config;
   },
   error => Promise.reject(error)
 );
-
-axios.interceptors.request.use((req) => {
-  console.log('Method:', req.method?.toUpperCase()); // method (GET, POST, PUT, ...)
-  console.log('URL:', req.url); // URL của request
-  return req;
-});
 
 // Interceptor cho response để xử lý lỗi 401 và tự động refresh token
 api.interceptors.response.use(
@@ -69,24 +63,35 @@ api.interceptors.response.use(
   (error: AxiosError) => {
     const originalRequest = error.config as CustomAxiosRequestConfig;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Handle 409 errors (Invalid Token)
+    if (error.response?.status === 409) {
+      return Promise.reject(error);
+    }
+
+    if (error.response?.status === 401 && !originalRequest.__retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
           .then(token => {
             if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
+              originalRequest.headers.setAuthorization(`Bearer ${token}`);
             }
             return axios(originalRequest);
           })
           .catch(err => Promise.reject(err));
       }
-
-      originalRequest._retry = true;
+      originalRequest.__retry = true;
       isRefreshing = true;
-      const refresh_token = localStorage.getItem('auth');
-      const token = refresh_token ? JSON.parse(refresh_token).refresh_token : null;
+      const auth = localStorage.getItem('auth');
+      const refresh_token = auth ? JSON.parse(auth).refresh_token : null;
+
+      // If no refresh token is available, redirect to login
+      if (!refresh_token) {
+        isRefreshing = false;
+        localStorage.removeItem('auth');
+        return Promise.reject(new Error('No refresh token available'));
+      }
 
       return new Promise((resolve, reject) => {
         axios.post(`${baseURL}/auth/refresh-token`, { refresh_token })
@@ -94,7 +99,7 @@ api.interceptors.response.use(
             const oldAuth = JSON.parse(localStorage.getItem('auth') as string);
             localStorage.setItem('auth', JSON.stringify({ ...oldAuth, access_token: data.access_token, refresh_token: data.refresh_token }));
             if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
+              originalRequest.headers.setAuthorization(`Bearer ${data.access_token}`);
             }
             api.defaults.headers.common['Authorization'] = `Bearer ${data.access_token}`;
             processQueue(null, data.access_token);

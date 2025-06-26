@@ -8,7 +8,7 @@ export interface AuthStore {
   refresh_token: string | undefined,
   user: User | undefined
   ,
-  setAuth: ({ access_token, refresh_token }: { access_token: string | undefined, refresh_token: string | undefined }) => void;
+  setAuth: ({ access_token, refresh_token, user }: { access_token: string | undefined, refresh_token: string | undefined, user: User }) => Promise<void>;
   setAccessToken: (access_token: string) => void;
   setUser: (user: User) => void;
   fetchUser: () => Promise<void>;
@@ -16,15 +16,15 @@ export interface AuthStore {
 }
 
 export const useAuthStore = create<AuthStore>(
-  persistNSync((set) => ({
+  persistNSync((set, get) => ({
     access_token: undefined,
     refresh_token: undefined,
-    user: undefined
-    , setAuth: ({ access_token, refresh_token }) => {
+    user: undefined,
+    setAuth: async ({ access_token, refresh_token, user }) => {
       set({
         access_token: access_token || undefined,
         refresh_token: refresh_token || undefined,
-        user: undefined
+        user: user
       });
     },
     setAccessToken: (access_token) => set((state) => ({ ...state, access_token })),
@@ -34,10 +34,18 @@ export const useAuthStore = create<AuthStore>(
     setUser: (user: User) => set((state) => ({ ...state, user })),
     fetchUser: async () => {
       try {
+        if (!get().access_token) {
+          return
+        }
         const res = await api.get<User>(`${apiEndpoint.AUTH}/me`);
         set((state) => ({ ...state, user: res.data }));
-      } catch (error) {
-        console.error(error);
+      } catch (error: any) {
+        console.error('Error fetching user:', error);
+        // Clear auth data if it's an authentication error
+        if (error?.response?.status === 401 || error?.response?.status === 409) {
+          set({ access_token: undefined, refresh_token: undefined, user: undefined });
+        }
+        throw error;
       }
     }
   }), { name: 'auth' }));

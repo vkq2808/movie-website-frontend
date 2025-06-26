@@ -1,6 +1,7 @@
 'use client'
 import api, { apiEndpoint } from '@/utils/api.util';
 import { useAuthStore } from '@/zustand/auth.store';
+import { access } from 'fs';
 import { useSearchParams } from 'next/navigation';
 import React, { Suspense } from 'react'
 
@@ -24,26 +25,16 @@ function FacebookOauth2Content() {
 
             try {
               if (res.data.user) {
-                setUser(res.data.user);
-                console.log('User set successfully');
+                console.log(res.data.access_token, res.data.refresh_token, res.data.user);
+                setAuth({ access_token: res.data.access_token, refresh_token: res.data.refresh_token, user: res.data.user }).then(() => {
+                  window.close();
+                });
               } else {
                 console.warn('No user data in response');
               }
             } catch (error) {
               console.error('Error setting user:', error);
             }
-
-
-            try {
-              setAuth({ access_token: res.data.access_token, refresh_token: res.data.refresh_token });
-              console.log('Auth set successfully');
-            } catch (error) {
-              console.error('Error setting auth:', error);
-            }
-
-            setTimeout(() => {
-              window.close();
-            }, 1000); // Close after 1 second to ensure state updates
           }
         })
         .catch((err) => {
