@@ -5,8 +5,6 @@ import { getMoviesByLanguage } from '@/apis/movie.api'
 import { Language, getAllLanguages, getPopularLanguages } from '@/apis/language.api'
 import MovieCard from './MovieCard'
 import LoadingSpinner from '../LoadingSpinner'
-import { useTranslation } from '@/contexts/translation.context'
-import { TranslationKey } from '@/utils/translation.util'
 
 /**
  * LanguageMovieSelector component
@@ -49,7 +47,6 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
   const [moviesByLanguage, setMoviesByLanguage] = useState<MoviesByLanguage[]>([])
   const [languages, setLanguages] = useState<Language[]>([])
   const [error, setError] = useState<string | null>(null)
-  const { t } = useTranslation()
 
   // Refs for scrolling movie sections
   const scrollContainerRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -192,20 +189,20 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
         <p className="text-xl">{error}</p>
-        <p className="text-sm text-gray-400 mt-2">{t('Please try again later')}</p>
+        <p className="text-sm text-gray-400 mt-2">Vui lòng thử lại sau</p>
       </div>
     )
   }
 
   return (
     <div className="w-full container mx-auto px-4 py-8 min-h-[600px]" style={{ width }}>
-      <h2 className="text-3xl font-bold text-white mb-8">{t(title as TranslationKey) || title}</h2>
+      <h2 className="text-3xl font-bold text-white mb-8">{title}</h2>
 
       {languagesLoading ? (
         <div className="w-full flex justify-center items-center h-96">
           <div className="w-full flex flex-col items-center">
             <LoadingSpinner />
-            <p className="mt-4 text-gray-300 animate-pulse">{t('Loading languages...')}</p>
+            <p className="mt-4 text-gray-300 animate-pulse">Đang tải ngôn ngữ...</p>
           </div>
         </div>
       ) : (
@@ -228,7 +225,7 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
                 <div className="bg-gray-800/30 rounded-lg h-113 flex justify-center items-center w-full">
                   <div className="flex flex-col items-center w-full">
                     <LoadingSpinner />
-                    <p className="mt-4 text-gray-300 animate-pulse">{t('Loading')} {item.language.name || item.language.english_name} {t('movies...')}</p>
+                    <p className="mt-4 text-gray-300 animate-pulse">Đang tải phim {item.language.name || item.language.english_name}...</p>
                   </div>
                 </div>
               ) : item.movies.length === 0 ? (
@@ -236,7 +233,7 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 4v16M17 4v16M3 8h18M3 16h18" />
                   </svg>
-                  <p className="text-xl">{t('No movies found for')} {item.language.name || item.language.english_name}</p>
+                  <p className="text-xl">Không tìm thấy phim cho {item.language.name || item.language.english_name}</p>
                 </div>
               ) : (
                 <div

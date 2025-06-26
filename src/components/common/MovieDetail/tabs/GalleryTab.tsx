@@ -2,14 +2,12 @@
 import React, { useState } from 'react'
 import { Movie } from '@/zustand'
 import { X } from 'lucide-react'
-import { useTranslation } from '@/contexts/translation.context'
 
 interface GalleryTabProps {
   movie: Movie
 }
 
 const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
-  const { t } = useTranslation()
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
   // Create a gallery array from movie images
@@ -39,7 +37,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-white mb-6">{t('Gallery')}</h2>
+      <h2 className="text-2xl font-bold text-white mb-6">Thư viện ảnh</h2>
 
       {galleryImages.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -64,20 +62,20 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
               key={`placeholder-${index}`}
               className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center"
             >
-              <span className="text-gray-500">{t('No image available')}</span>
+              <span className="text-gray-500">Không có hình ảnh</span>
             </div>
           ))}
         </div>
       ) : (
         <div className="text-center py-12">
           <div className="text-6xl text-gray-600 mb-4">🖼</div>
-          <p className="text-gray-400 text-lg">{t('No gallery images available')}</p>
+          <p className="text-gray-400 text-lg">Không có hình ảnh thư viện</p>
         </div>
       )}
 
       {/* Screenshots Section */}
       <div className="space-y-4">
-        <h3 className="text-xl font-semibold text-white">{t('Screenshots')}</h3>
+        <h3 className="text-xl font-semibold text-white">Ảnh chụp màn hình</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {/* Demo screenshots - replace with actual data */}
           {movie.backdrop && (
@@ -96,7 +94,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
               key={`screenshot-${index}`}
               className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center"
             >
-              <span className="text-gray-500 text-xs">{t('Screenshot')} {index + 2}</span>
+              <span className="text-gray-500 text-xs">Ảnh chụp {index + 2}</span>
             </div>
           ))}
         </div>
@@ -104,7 +102,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
 
       {/* Posters Section */}
       <div className="space-y-4">
-        <h3 className="text-xl font-semibold text-white">{t('Posters')}</h3>
+        <h3 className="text-xl font-semibold text-white">Poster</h3>
         <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
           {movie.poster && (
             <div className="aspect-[2/3] bg-gray-800 rounded-lg overflow-hidden">
@@ -122,7 +120,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
               key={`poster-${index}`}
               className="aspect-[2/3] bg-gray-800 rounded-lg flex items-center justify-center"
             >
-              <span className="text-gray-500 text-xs text-center">{t('Poster')} {index + 2}</span>
+              <span className="text-gray-500 text-xs text-center">Poster {index + 2}</span>
             </div>
           ))}
         </div>

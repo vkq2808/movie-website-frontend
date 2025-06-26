@@ -7,7 +7,7 @@ import SearchMovieCard from '@/components/common/Search/SearchMovieCard'
 import SearchFilter from '@/components/common/Search/SearchFilter'
 import { useAuthStore } from '@/zustand'
 import { saveSearchHistory } from '@/apis/search-history.api'
-import { useTranslation } from '@/contexts/translation.context'
+import { useLanguage } from '@/contexts/language.context'
 
 interface SearchResult {
   data: Movie[];
@@ -22,7 +22,7 @@ interface SearchResult {
 
 // Component that uses useSearchParams
 const SearchContent = () => {
-  const { language, t } = useTranslation();
+  const { language } = useLanguage();
   const genres = useGenreStore(state => state.genres)
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
@@ -43,30 +43,30 @@ const SearchContent = () => {
   // Set up filters based on the UI requirements
   const [filterOptions, setFilterOptions] = useState({
     countries: [
-      { id: '', label: language === 'en' ? 'All' : 'Tất cả' },
-      { id: 'us', label: language === 'en' ? 'US' : 'Mỹ' },
+      { id: '', label: 'Tất cả' },
+      { id: 'us', label: 'Mỹ' },
       { id: 'ca', label: 'Canada' },
-      { id: 'kr', label: language === 'en' ? 'South Korea' : 'Hàn Quốc' },
-      { id: 'hk', label: language === 'en' ? 'Hong Kong' : 'Hồng Kông' },
-      { id: 'jp', label: language === 'en' ? 'Japan' : 'Nhật Bản' },
-      { id: 'fr', label: language === 'en' ? 'France' : 'Pháp' },
-      { id: 'th', label: language === 'en' ? 'Thailand' : 'Thái Lan' },
-      { id: 'cn', label: language === 'en' ? 'China' : 'Trung Quốc' },
-      { id: 'de', label: language === 'en' ? 'Germany' : 'Đức' }
+      { id: 'kr', label: 'Hàn Quốc' },
+      { id: 'hk', label: 'Hồng Kông' },
+      { id: 'jp', label: 'Nhật Bản' },
+      { id: 'fr', label: 'Pháp' },
+      { id: 'th', label: 'Thái Lan' },
+      { id: 'cn', label: 'Trung Quốc' },
+      { id: 'de', label: 'Đức' }
     ],
     classifications: [
-      { id: '', label: language === 'en' ? 'All' : 'Tất cả' },
-      { id: 'p', label: language === 'en' ? 'General (P)' : 'Phổ biến (P)' },
-      { id: 'k', label: language === 'en' ? 'Kids (K)' : 'Trẻ em (K)' },
+      { id: '', label: 'Tất cả' },
+      { id: 'p', label: 'Phổ biến (P)' },
+      { id: 'k', label: 'Trẻ em (K)' },
       { id: 't13', label: 'T13' },
       { id: 't16', label: 'T16' },
       { id: 't18', label: 'T18' }
     ],
     genres: [
-      { id: 'all', label: t('All genres') },
+      { id: 'all', label: 'Tất cả thể loại' },
     ],
     years: [
-      { id: '', label: language === 'en' ? 'All' : 'Tất cả' },
+      { id: '', label: 'Tất cả' },
       { id: '2025', label: '2025' },
       { id: '2024', label: '2024' },
       { id: '2023', label: '2023' },
@@ -80,11 +80,11 @@ const SearchContent = () => {
       { id: '2015', label: '2015' },
     ],
     sortOptions: [
-      { id: 'relevance', label: language === 'en' ? 'Relevance' : 'Liên quan' },
-      { id: 'newest', label: language === 'en' ? 'Newest' : 'Mới nhất' },
-      { id: 'views', label: language === 'en' ? 'Most viewed' : 'Lượt xem' },
+      { id: 'relevance', label: 'Liên quan' },
+      { id: 'newest', label: 'Mới nhất' },
+      { id: 'views', label: 'Lượt xem' },
       { id: 'imdb', label: 'IMDb' },
-      { id: 'popularity', label: language === 'en' ? 'Popularity' : 'Phổ biến' },
+      { id: 'popularity', label: 'Phổ biến' },
     ]
   });
 
@@ -154,7 +154,7 @@ const SearchContent = () => {
         console.error("Error fetching search results:", error)
         const errorMessage = error instanceof Error
           ? error.message
-          : t('An unexpected error occurred while fetching search results. Please try again later.')
+          : 'Đã xảy ra lỗi không mong muốn khi tìm kiếm kết quả. Vui lòng thử lại sau.'
         setError(errorMessage)
         setResults(null)
       } finally {
@@ -177,7 +177,7 @@ const SearchContent = () => {
       setFilterOptions(prev => ({
         ...prev,
         genres: [
-          { id: 'all', label: t('All genres') },
+          { id: 'all', label: 'Tất cả thể loại' },
           ...genres.map(genre => ({
             id: genre.id,
             label: genre.names.find(n => n.iso_639_1 === language)?.name || genre.id
@@ -192,7 +192,7 @@ const SearchContent = () => {
         ...(queryGenres ? { genres: queryGenres.split(',') } : {})
       }))
     }
-  }, [genres, t])
+  }, [genres, searchParams])
 
   return (
     <div className="bg-slate-100 min-h-screen">
@@ -201,44 +201,44 @@ const SearchContent = () => {
           {/* Search Header */}
           <div className="mb-8">
             <h1 className="text-2xl font-bold mb-2">
-              {query && `${t('Search results for')}: "${query}"`}
+              {query && `Kết quả tìm kiếm cho: "${query}"`}
             </h1>
             <p className="text-gray-400">
-              {query && `${results?.meta.totalCount || 0} ${t('results found')}`}
+              {query && `${results?.meta.totalCount || 0} kết quả được tìm thấy`}
             </p>
           </div>        {/* Filter Section */}
           <div className="mb-8 space-y-6 bg-gray-900 p-4 rounded-lg overflow-x-auto scrollbar-thin">
             <div className="space-y-4 min-w-[600px]">
               <SearchFilter
-                title={t('Country')}
+                title="Quốc gia"
                 options={filterOptions.countries}
                 activeValue={activeFilters.country}
                 onChange={(value) => handleFilterChange('country', value)}
               />
 
               <SearchFilter
-                title={t('Rating')}
+                title="Xếp hạng"
                 options={filterOptions.classifications}
                 activeValue={activeFilters.classification}
                 onChange={(value) => handleFilterChange('classification', value)}
               />
 
               <SearchFilter
-                title={t('Genre')}
+                title="Thể loại"
                 options={filterOptions.genres}
                 activeValue={activeFilters.genres}
                 onChange={(value) => handleFilterChange('genres', value)}
               />
 
               <SearchFilter
-                title={t('Year')}
+                title="Năm"
                 options={filterOptions.years}
                 activeValue={activeFilters.year}
                 onChange={(value) => handleFilterChange('year', value)}
               />
 
               <SearchFilter
-                title={t('Sort by')}
+                title="Sắp xếp theo"
                 options={filterOptions.sortOptions}
                 activeValue={activeFilters.sortBy}
                 onChange={(value) => handleFilterChange('sortBy', value)}
@@ -253,14 +253,14 @@ const SearchContent = () => {
             <div className="text-center py-16">
               <div className="text-6xl mb-4">⚠️</div>
               <h2 className="text-2xl font-bold mb-2">
-                {language === 'en' ? 'Error' : 'Lỗi'}
+                Lỗi
               </h2>
               <p className="text-gray-400 mb-4">{error}</p>
               <button
                 onClick={() => window.location.reload()}
                 className="px-4 py-2 bg-yellow-500 text-black font-semibold rounded hover:bg-yellow-600 transition-colors"
               >
-                {t('Try Again')}
+                Thử lại
               </button>
             </div>
           ) : results?.data && results.data.length > 0 ? (<>
@@ -282,7 +282,7 @@ const SearchContent = () => {
                       ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
                       : 'bg-gray-800 text-white hover:bg-gray-700'
                     }`}
-                  aria-label={t('Previous page')}
+                  aria-label="Trang trước"
                 >
                   &lt;
                 </button>
@@ -342,7 +342,7 @@ const SearchContent = () => {
                       ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
                       : 'bg-gray-800 text-white hover:bg-gray-700'
                     }`}
-                  aria-label={t('Next page')}
+                  aria-label="Trang sau"
                 >
                   &gt;
                 </button>
@@ -353,10 +353,10 @@ const SearchContent = () => {
             <div className="text-center py-16">
               <div className="text-6xl mb-4">🎬</div>
               <h2 className="text-2xl font-bold mb-2">
-                {language === 'en' ? 'No results found' : 'Không tìm thấy kết quả'}
+                Không tìm thấy kết quả
               </h2>
               <p className="text-gray-400">
-                {t('Try adjusting your search or filters to find what you\'re looking for')}
+                Thử điều chỉnh tìm kiếm hoặc bộ lọc để tìm thấy những gì bạn đang tìm kiếm
               </p>
             </div>
           )}
@@ -372,7 +372,7 @@ const SearchLoading = () => {
     <div className="bg-slate-100 min-h-screen p-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-4">
-          <h1 className="text-2xl font-bold">Loading search results...</h1>
+          <h1 className="text-2xl font-bold">Đang tải kết quả tìm kiếm...</h1>
           <div className="animate-pulse mt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {[...Array(8)].map((_, i) => (

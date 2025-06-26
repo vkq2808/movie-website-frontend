@@ -3,7 +3,7 @@ import { Genre, useGenreStore, useLanguageStore } from '@/zustand';
 import Link from 'next/link';
 import React from 'react';
 import Spinner from './Spinner';
-import { useTranslation } from '@/contexts/translation.context';
+import { useLanguage } from '@/contexts/language.context';
 
 interface DisplayGenre extends Genre {
   bgColor: {
@@ -17,14 +17,14 @@ export default function GenreList() {
 
   const genres = useGenreStore((state) => state.genres);
   const fetchGenres = useGenreStore((state) => state.fetchGenres);
-  const { language, t } = useTranslation();
+  const { language } = useLanguage();
   const [displayGenres, setDisplayGenres] = React.useState<DisplayGenre[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
 
   // Function to get genre name based on current language
   const getGenreName = (genre: Genre) => {
     if (!genre.names || genre.names.length === 0) {
-      return t('All genres')
+      return 'Tất cả thể loại'
     }
     const nameForLanguage = genre.names.find(n => n.iso_639_1 === language);
     return nameForLanguage ? nameForLanguage.name : genre.names[0]?.name || 'Unknown';
@@ -116,7 +116,7 @@ export default function GenreList() {
           <div className="w-full flex justify-center items-center">
             <div className="flex flex-col items-center">
               <Spinner size="lg" color="text-white" />
-              <p className="mt-4 text-white animate-pulse">{t('Loading genres...')}</p>
+              <p className="mt-4 text-white animate-pulse">Đang tải thể loại...</p>
             </div>
           </div>
         </div>

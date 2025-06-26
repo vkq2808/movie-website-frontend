@@ -3,14 +3,14 @@ import React from 'react'
 import { Movie, useLanguageStore } from '@/zustand'
 import Link from 'next/link'
 import { getMovieTitleByLanguage } from '@/utils/movie.util'
-import { useTranslation } from '@/contexts/translation.context'
+import { useLanguage } from '@/contexts/language.context'
 
 interface MovieCardProps {
   movie: Movie
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
-  const { language, t } = useTranslation();
+  const { language } = useLanguage();
 
   return (
     <Link href={`/movie/${movie.id}`}>
@@ -26,7 +26,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
           )}
           {!movie.poster && (
             <div className="w-full h-full bg-gray-700 flex items-center justify-center">
-              <span className="text-gray-400">{t('No image available')}</span>
+              <span className="text-gray-400">Không có hình ảnh</span>
             </div>
           )}
 
@@ -58,7 +58,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
 
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <span className="text-white font-bold px-4 py-2 bg-yellow-400 rounded-full">{t('View Details')}</span>
+          <span className="text-white font-bold px-4 py-2 bg-yellow-400 rounded-full">Xem chi tiết</span>
         </div>
       </div>
     </Link>
