@@ -3,7 +3,15 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    domains: ['res.cloudinary.com', 'www.youtube.com', 'i.ytimg.com', 'img.youtube.com', 'lh3.googleusercontent.com', "platform-lookaside.fbsbx.com", "*"],
+    domains: [
+      'res.cloudinary.com',
+      'www.youtube.com',
+      'i.ytimg.com',
+      'img.youtube.com',
+      'lh3.googleusercontent.com',
+      "platform-lookaside.fbsbx.com",
+      "image.tmdb.org"
+    ],
   },
   headers: async () => {
     return [

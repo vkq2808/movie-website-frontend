@@ -50,7 +50,18 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
   // Refs for scrolling movie sections
   const scrollContainerRefs = useRef<(HTMLDivElement | null)[]>([])
 
+  // Track which languages have been fetched to prevent infinite loops
+  const fetchedLanguagesRef = useRef<Set<string>>(new Set())
+
   const fetchMoviesForLanguage = useCallback(async (language: Language, index: number) => {
+    // Check if this language has already been fetched
+    if (fetchedLanguagesRef.current.has(language.iso_639_1)) {
+      return;
+    }
+
+    // Mark this language as being fetched
+    fetchedLanguagesRef.current.add(language.iso_639_1);
+
     try {
       // Update the specific language's loading state
       setMoviesByLanguage(current =>
@@ -100,6 +111,9 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
           }))
 
           setMoviesByLanguage(initialMoviesByLanguage)
+
+          // Clear the fetched languages ref when new languages are loaded
+          fetchedLanguagesRef.current.clear();
         } else {
           // Fallback to default languages if API returns empty
           const defaultLanguages = [
@@ -118,6 +132,9 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
           }))
 
           setMoviesByLanguage(initialMoviesByLanguage)
+
+          // Clear the fetched languages ref when new languages are loaded
+          fetchedLanguagesRef.current.clear();
         }
       } catch (error) {
         console.error('Error fetching popular languages:', error)
@@ -140,6 +157,9 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
         }))
 
         setMoviesByLanguage(initialMoviesByLanguage)
+
+        // Clear the fetched languages ref when new languages are loaded
+        fetchedLanguagesRef.current.clear();
       } finally {
         setLanguagesLoading(false)
       }
@@ -156,7 +176,7 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
         fetchMoviesForLanguage(item.language, index)
       })
     }
-  }, [moviesByLanguage.length, languagesLoading, fetchMoviesForLanguage, moviesByLanguage])
+  }, [moviesByLanguage.length, languagesLoading, fetchMoviesForLanguage])
 
   // Scroll functions for the movie rows
   const scrollLeft = (index: number) => {

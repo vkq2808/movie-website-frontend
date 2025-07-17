@@ -23,6 +23,8 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
               src={movie.poster.url}
               alt={movie.poster.alt || movie.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              width={200}
+              height={300}
             />
           )}
           {!movie.poster && (
