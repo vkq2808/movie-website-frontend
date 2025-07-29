@@ -8,15 +8,15 @@ import SearchFilter from '@/components/common/Search/SearchFilter'
 import { useAuthStore } from '@/zustand'
 import { saveSearchHistory } from '@/apis/search-history.api'
 import { useLanguage } from '@/contexts/language.context'
+import { PaginatedApiResponse } from '@/types/api.response'
 
 interface SearchResult {
   data: Movie[];
-  meta: {
+  pagination: {
     page: number;
     limit: number;
-    totalCount: number;
+    total: number;
     totalPages: number;
-    appliedFilters: Record<string, string | string[]>;
   }
 }
 
@@ -143,7 +143,7 @@ const SearchContent = () => {
           params.sort_order = 'DESC'
         }
 
-        const response = await api.get(`${apiEndpoint.MOVIE}`, { params })
+        const response = await api.get<PaginatedApiResponse<Movie>>(`${apiEndpoint.MOVIE}`, { params })
         setResults(response.data)
 
         // Save search query to history if user is logged in
@@ -204,7 +204,7 @@ const SearchContent = () => {
               {query && `Kết quả tìm kiếm cho: "${query}"`}
             </h1>
             <p className="text-gray-400">
-              {query && `${results?.meta.totalCount || 0} kết quả được tìm thấy`}
+              {query && `${results?.pagination.total || 0} kết quả được tìm thấy`}
             </p>
           </div>        {/* Filter Section */}
           <div className="mb-8 space-y-6 bg-gray-900 p-4 rounded-lg overflow-x-auto scrollbar-thin">
@@ -271,7 +271,7 @@ const SearchContent = () => {
                 </div>
               ))}
             </div>{/* Pagination */}
-            {results.meta.totalPages > 1 && (
+            {results.pagination.totalPages > 1 && (
               <div className="flex justify-center mt-8 gap-2">
                 {/* Previous page button */}
                 <button
@@ -288,15 +288,15 @@ const SearchContent = () => {
                 </button>
 
                 {/* Page numbers */}
-                {Array.from({ length: Math.min(5, results.meta.totalPages) }).map((_, i) => {
+                {Array.from({ length: Math.min(5, results.pagination.totalPages) }).map((_, i) => {
                   // Calculate which page numbers to show
                   let pageNum;
-                  if (results.meta.totalPages <= 5) {
+                  if (results.pagination.totalPages <= 5) {
                     pageNum = i + 1;
                   } else if (currentPage <= 3) {
                     pageNum = i + 1;
-                  } else if (currentPage >= results.meta.totalPages - 2) {
-                    pageNum = results.meta.totalPages - 4 + i;
+                  } else if (currentPage >= results.pagination.totalPages - 2) {
+                    pageNum = results.pagination.totalPages - 4 + i;
                   } else {
                     pageNum = currentPage - 2 + i;
                   }
@@ -318,27 +318,27 @@ const SearchContent = () => {
                 })}
 
                 {/* Ellipsis for many pages */}
-                {results.meta.totalPages > 5 && currentPage < results.meta.totalPages - 2 && (
+                {results.pagination.totalPages > 5 && currentPage < results.pagination.totalPages - 2 && (
                   <span className="flex items-center justify-center px-2">...</span>
                 )}
 
                 {/* Last page button for many pages */}
-                {results.meta.totalPages > 5 && currentPage < results.meta.totalPages - 2 && (
+                {results.pagination.totalPages > 5 && currentPage < results.pagination.totalPages - 2 && (
                   <button
-                    onClick={() => setCurrentPage(results.meta.totalPages)}
+                    onClick={() => setCurrentPage(results.pagination.totalPages)}
                     className="w-10 h-10 rounded-full bg-gray-800 text-white hover:bg-gray-700"
-                    aria-label={`Page ${results.meta.totalPages}`}
+                    aria-label={`Page ${results.pagination.totalPages}`}
                   >
-                    {results.meta.totalPages}
+                    {results.pagination.totalPages}
                   </button>
                 )}
 
                 {/* Next page button */}
                 <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, results.meta.totalPages))}
-                  disabled={currentPage === results.meta.totalPages}
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, results.pagination.totalPages))}
+                  disabled={currentPage === results.pagination.totalPages}
                   className={`w-10 h-10 rounded-full flex items-center justify-center
-                      ${currentPage === results.meta.totalPages
+                      ${currentPage === results.pagination.totalPages
                       ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
                       : 'bg-gray-800 text-white hover:bg-gray-700'
                     }`}

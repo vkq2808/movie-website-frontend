@@ -1,13 +1,20 @@
 import api from '@/utils/api.util'
+import { ApiResponse } from '@/types/api.response'
+
+export interface SearchHistoryEntry {
+  id: string
+  search_query: string
+  searched_at: string
+}
 
 /**
  * Save a search query to the user's search history
  * @param searchQuery The search query to save
  * @returns The created search history entry
  */
-export async function saveSearchHistory(searchQuery: string) {
+export async function saveSearchHistory(searchQuery: string): Promise<ApiResponse<SearchHistoryEntry> | null> {
   try {
-    const response = await api.post(`/search-history`, { search_query: searchQuery })
+    const response = await api.post<ApiResponse<SearchHistoryEntry>>(`/search-history`, { search_query: searchQuery })
     return response.data
   } catch (error) {
     console.error('Error saving search history:', error)
@@ -20,13 +27,13 @@ export async function saveSearchHistory(searchQuery: string) {
  * Get the user's search history
  * @returns Array of search history entries
  */
-export async function getSearchHistory() {
+export async function getSearchHistory(): Promise<ApiResponse<SearchHistoryEntry[]>> {
   try {
-    const response = await api.get(`/search-history`)
+    const response = await api.get<ApiResponse<SearchHistoryEntry[]>>(`/search-history`)
     return response.data
   } catch (error) {
     console.error('Error fetching search history:', error)
-    return []
+    throw error
   }
 }
 
@@ -35,9 +42,9 @@ export async function getSearchHistory() {
  * @param id The ID of the search history entry to delete
  * @returns The deleted search history entry
  */
-export async function deleteSearchHistory(id: string) {
+export async function deleteSearchHistory(id: string): Promise<ApiResponse<SearchHistoryEntry>> {
   try {
-    const response = await api.delete(`/search-history/${id}`)
+    const response = await api.delete<ApiResponse<SearchHistoryEntry>>(`/search-history/${id}`)
     return response.data
   } catch (error) {
     console.error('Error deleting search history:', error)
@@ -49,9 +56,9 @@ export async function deleteSearchHistory(id: string) {
  * Clear all search history for the current user
  * @returns Success status
  */
-export async function clearSearchHistory() {
+export async function clearSearchHistory(): Promise<ApiResponse<{ cleared: boolean }>> {
   try {
-    const response = await api.delete(`/search-history/clear`)
+    const response = await api.delete<ApiResponse<{ cleared: boolean }>>(`/search-history/clear`)
     return response.data
   } catch (error) {
     console.error('Error clearing search history:', error)

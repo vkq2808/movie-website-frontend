@@ -99,12 +99,12 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
       try {
         setLanguagesLoading(true)
         // Fetch the popular languages based on movie count
-        const popularLanguages = await getPopularLanguages(languageLimit)
+        const response = await getPopularLanguages(languageLimit)
 
-        if (popularLanguages && popularLanguages.length > 0) {
+        if (response.data && response.data.length > 0) {
 
           // Initialize moviesByLanguage with all languages
-          const initialMoviesByLanguage = popularLanguages.map(language => ({
+          const initialMoviesByLanguage = response.data.map(language => ({
             language,
             movies: [],
             loading: true

@@ -16,9 +16,9 @@ const MovieSwiper = () => {
   const fetchTop5Movies = React.useCallback(async () => {
     try {
       setGlobalLoading(true);
-      const top5Movies = await getTop5Movies();
-      setMovies(top5Movies)
-      console.log('Top 5 Movies:', top5Movies)
+      const response = await getTop5Movies();
+      setMovies(response.data)
+      console.log('Top 5 Movies:', response.data)
     } catch (error) {
       setError('Failed to fetch movies')
       console.error('Error fetching top 5 movies:', error)

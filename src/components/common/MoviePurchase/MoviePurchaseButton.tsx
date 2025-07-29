@@ -83,16 +83,20 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
 
       // Show success message (you can customize this)
       alert(`Successfully purchased "${movie.title}" for $${movie.price}!`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Purchase error:', error);
 
       // Handle specific error messages
-      if (error.response?.data?.message) {
-        setError(error.response.data.message);
-      } else if (error.message.includes('already purchased')) {
+      if (error && typeof error === 'object' && 'response' in error &&
+        error.response && typeof error.response === 'object' && 'data' in error.response &&
+        error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+        setError(error.response.data.message as string);
+      } else if (error && typeof error === 'object' && 'message' in error &&
+        typeof error.message === 'string' && error.message.includes('already purchased')) {
         setError('You already own this movie');
         setOwnsMovie(true);
-      } else if (error.message.includes('Insufficient')) {
+      } else if (error && typeof error === 'object' && 'message' in error &&
+        typeof error.message === 'string' && error.message.includes('Insufficient')) {
         setError('Insufficient wallet balance');
       } else {
         setError('Failed to purchase movie. Please try again.');

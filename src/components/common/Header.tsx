@@ -30,7 +30,7 @@ const Header = () => {
     } else {
       fetchGenres();
     }
-  }, [genres.length, fetchGenres, genres]);
+  }, [genres.length, fetchGenres]);
 
   return (
     <header className="bg-gradient-to-b from-slate-900 to-transparent fixed top-0 left-0 right-0 z-5000 text-neutral-50">

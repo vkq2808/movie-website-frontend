@@ -83,7 +83,7 @@ export default function GenreList() {
     };
 
     initializeGenres();
-  }, [defaultGenre, fetchGenres, genres]);
+  }, [defaultGenre, fetchGenres]);
 
   // Separate effect to handle genres changes
   React.useEffect(() => {

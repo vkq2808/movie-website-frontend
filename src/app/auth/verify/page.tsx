@@ -1,5 +1,6 @@
 'use client';
 import api, { apiEndpoint } from '@/utils/api.util';
+import { authApi } from '@/apis/auth.api';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 
@@ -17,8 +18,8 @@ const VerifyContent: React.FC = () => {
   const handleSubmitOTP = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await api.post(`${apiEndpoint.AUTH}/verify`, { email, otp });
-      if (res.status === 200) {
+      const res = await authApi.verify({ email: email || '', otp });
+      if (res.success) {
         router.push('/auth/login');
       }
     } catch (err) {

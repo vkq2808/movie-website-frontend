@@ -1,4 +1,5 @@
 import api, { apiEndpoint } from '@/utils/api.util'
+import { ApiResponse } from '@/types/api.response'
 
 export interface Language {
   id: string
@@ -8,9 +9,9 @@ export interface Language {
   movie_count?: number
 }
 
-export async function getAllLanguages(): Promise<Language[]> {
+export async function getAllLanguages(): Promise<ApiResponse<Language[]>> {
   try {
-    const response = await api.get(`${apiEndpoint.LANGUAGE}`)
+    const response = await api.get<ApiResponse<Language[]>>(`${apiEndpoint.LANGUAGE}`)
     return response.data
   } catch (error) {
     console.error('Error fetching languages:', error)
@@ -18,9 +19,9 @@ export async function getAllLanguages(): Promise<Language[]> {
   }
 }
 
-export async function getLanguageByIsoCode(isoCode: string): Promise<Language> {
+export async function getLanguageByIsoCode(isoCode: string): Promise<ApiResponse<Language>> {
   try {
-    const response = await api.get(`${apiEndpoint.LANGUAGE}/${isoCode}`)
+    const response = await api.get<ApiResponse<Language>>(`${apiEndpoint.LANGUAGE}/${isoCode}`)
     return response.data
   } catch (error) {
     console.error(`Error fetching language with ISO code ${isoCode}:`, error)
@@ -28,9 +29,9 @@ export async function getLanguageByIsoCode(isoCode: string): Promise<Language> {
   }
 }
 
-export async function getPopularLanguages(limit: number = 3): Promise<Language[]> {
+export async function getPopularLanguages(limit: number = 3): Promise<ApiResponse<Language[]>> {
   try {
-    const response = await api.get(`${apiEndpoint.LANGUAGE}/popular`, {
+    const response = await api.get<ApiResponse<Language[]>>(`${apiEndpoint.LANGUAGE}/popular`, {
       params: { limit }
     })
     return response.data

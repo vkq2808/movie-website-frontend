@@ -1,13 +1,8 @@
 import api, { apiEndpoint } from '@/utils/api.util';
+import { ApiResponse } from '@/types/api.response';
 
 export interface WalletBalance {
   balance: number;
-}
-
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
 }
 
 // Get user's wallet balance

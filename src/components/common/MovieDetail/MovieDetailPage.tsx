@@ -20,9 +20,9 @@ const MovieDetailPage: React.FC<MovieDetailPageProps> = ({ movieId }) => {
       try {
         setLoading(true)
         setError(null)
-        const movieData = await getMovieById(movieId)
-        console.log('Fetched movie data:', movieData)
-        setMovie(movieData)
+        const response = await getMovieById(movieId)
+        console.log('Fetched movie data:', response.data)
+        setMovie(response.data)
       } catch (error) {
         console.error('Error fetching movie details:', error)
         setError('Failed to load movie details')

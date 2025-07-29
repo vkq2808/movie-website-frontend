@@ -72,9 +72,15 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
       if (onBalanceUpdate) {
         onBalanceUpdate(newBalance);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error adding balance:', error);
-      setError(error.response?.data?.message || 'Failed to add balance');
+      if (error && typeof error === 'object' && 'response' in error &&
+        error.response && typeof error.response === 'object' && 'data' in error.response &&
+        error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+        setError(error.response.data.message as string);
+      } else {
+        setError('Failed to add balance');
+      }
     } finally {
       setIsAddingBalance(false);
     }

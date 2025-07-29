@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Genre } from './types';
 import api, { apiEndpoint } from '@/utils/api.util';
-
+import { ApiResponse } from '@/types/api.response';
 
 type GenreStore = {
   genres: Genre[];
@@ -14,8 +14,8 @@ export const useGenreStore = create<GenreStore>((set) => ({
   setGenres: (genres) => set({ genres }),
   fetchGenres: async () => {
     try {
-      const res = await api.get<Genre[]>(apiEndpoint.GENRE);
-      set({ genres: res.data });
+      const res = await api.get<ApiResponse<Genre[]>>(apiEndpoint.GENRE);
+      set({ genres: res.data.data });
     } catch (error) {
       console.error('Failed to fetch genres:', error);
     }

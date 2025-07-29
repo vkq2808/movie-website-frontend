@@ -1,4 +1,5 @@
 import api, { apiEndpoint } from '@/utils/api.util';
+import { ApiResponse } from '@/types/api.response';
 
 export interface PurchaseMovieDto {
   movie_id: string;
@@ -11,12 +12,6 @@ export interface MoviePurchaseResponse {
   purchase_price: number;
   purchased_at: string;
   created_at: string;
-}
-
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
 }
 
 // Purchase a movie

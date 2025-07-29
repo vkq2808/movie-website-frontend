@@ -33,8 +33,8 @@ const MovieLanguages: React.FC<MovieLanguagesProps> = ({ movieId, onLanguagesUpd
   const fetchMovie = React.useCallback(async () => {
     try {
       setLoading(true);
-      const movieData = await getMovieById(movieId);
-      setMovie(movieData);
+      const response = await getMovieById(movieId);
+      setMovie(response.data as unknown as Movie);
     } catch (error) {
       console.error('Error fetching movie:', error);
     } finally {

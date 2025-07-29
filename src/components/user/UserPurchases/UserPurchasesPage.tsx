@@ -16,9 +16,15 @@ const UserPurchasesPage: React.FC = () => {
         setIsLoading(true);
         const response = await getUserPurchases();
         setPurchases(response.data);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Error fetching purchases:', error);
-        setError(error.response?.data?.message || 'Failed to load purchases');
+        if (error && typeof error === 'object' && 'response' in error &&
+          error.response && typeof error.response === 'object' && 'data' in error.response &&
+          error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+          setError(error.response.data.message as string);
+        } else {
+          setError('Failed to load purchases');
+        }
       } finally {
         setIsLoading(false);
       }
