@@ -32,6 +32,7 @@ export interface Movie extends BaseModelWithId {
   videos: Video[];
   vote_average: number;
   vote_count: number;
+  price: number;
   alternative_titles: AlternativeTitle[];
   alternative_overviews: AlternativeOverview[];
   original_language: string;

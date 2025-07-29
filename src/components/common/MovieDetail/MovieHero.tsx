@@ -5,6 +5,7 @@ import { Play, Heart, Share, MessageCircle } from 'lucide-react'
 import { getMovieOverviewByLanguage, getMovieTitleByLanguage } from '@/utils/movie.util'
 import { useLanguage } from '@/contexts/language.context'
 import Image from 'next/image'
+import MoviePurchaseButton from '@/components/common/MoviePurchase/MoviePurchaseButton'
 
 interface MovieHeroProps {
   movie: Movie
@@ -27,6 +28,8 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
           src={movie.backdrop?.url || movie.poster?.url}
           alt={movie.backdrop?.alt || movie.title}
           className="w-full h-full object-cover"
+          width={1920}
+          height={1080}
         />
 
         {/* Gradient Overlays */}
@@ -46,6 +49,8 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
                     src={movie.poster.url}
                     alt={movie.poster.alt || movie.title}
                     className="w-full h-full object-cover"
+                    width={256}
+                    height={384}
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-700 flex items-center justify-center">
@@ -63,29 +68,41 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
               </h1>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-4 mb-6">
-                <button className="flex items-center gap-3 bg-yellow-400 text-black px-8 py-3 rounded-full font-semibold hover:bg-yellow-500 transition-colors">
-                  <Play className="w-5 h-5" fill="currentColor" />
-                  Xem ngay
-                </button>
+              <div className="flex items-start gap-6 mb-6">
+                {/* Left side - Play and social buttons */}
+                <div className="flex items-center gap-4">
+                  {/* <button className="flex items-center gap-3 bg-yellow-400 text-black px-8 py-3 rounded-full font-semibold hover:bg-yellow-500 transition-colors">
+                    <Play className="w-5 h-5" fill="currentColor" />
+                    Xem ngay
+                  </button> */}
+                  <div className="flex-shrink-0 w-72">
+                    <MoviePurchaseButton
+                      movie={movie}
+                      onPurchaseSuccess={() => {
+                        // Optionally refresh movie data or show success message
+                        console.log('Movie purchased successfully!');
+                      }}
+                    />
+                  </div>
 
-                <div className="flex gap-4">
-                  <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
-                    <Heart className="w-6 h-6 text-white" />
-                    <span className="sr-only">Thêm vào yêu thích</span>
-                  </button>
-                  <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
-                    <div className="w-6 h-6 text-white font-bold text-xs flex items-center justify-center">+</div>
-                    <span className="sr-only">Thêm vào danh sách xem</span>
-                  </button>
-                  <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
-                    <Share className="w-6 h-6 text-white" />
-                    <span className="sr-only">Chia sẻ</span>
-                  </button>
-                  <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
-                    <MessageCircle className="w-6 h-6 text-white" />
-                    <span className="sr-only">Bình luận</span>
-                  </button>
+                  <div className="flex gap-4">
+                    <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
+                      <Heart className="w-6 h-6 text-white" />
+                      <span className="sr-only">Thêm vào yêu thích</span>
+                    </button>
+                    <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
+                      <div className="w-6 h-6 text-white font-bold text-xs flex items-center justify-center">+</div>
+                      <span className="sr-only">Thêm vào danh sách xem</span>
+                    </button>
+                    <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
+                      <Share className="w-6 h-6 text-white" />
+                      <span className="sr-only">Chia sẻ</span>
+                    </button>
+                    <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
+                      <MessageCircle className="w-6 h-6 text-white" />
+                      <span className="sr-only">Bình luận</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 

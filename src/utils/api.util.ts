@@ -4,6 +4,8 @@ import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'ax
 
 export const apiEndpoint = {
   MOVIE: '/movie',
+  MOVIE_PURCHASE: '/movie-purchases',
+  WALLET: '/wallet',
   GENRE: '/genre',
   IMAGE: '/image',
   AUTH: '/auth',

@@ -5,11 +5,14 @@ import { useRouter } from 'next/navigation';
 import React from 'react'
 import { FaGoogle, FaFacebook } from 'react-icons/fa';
 import { ClipLoader } from 'react-spinners';
+import { useSearchParams } from 'next/navigation';
 
 const LoginOauth2 = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const auth = useAuthStore(state => state);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from');
 
   const handleGoogleOauth2Login = () => {
     // setIsLoading(true);
@@ -24,7 +27,7 @@ const LoginOauth2 = () => {
   React.useEffect(() => {
     if (auth.access_token) {
       setIsLoading(false);
-      router.push('/');
+      router.push(from || '/');
     }
   }, [auth.access_token, router]);
 
