@@ -61,6 +61,13 @@ export interface GenerateRecommendationsResponse {
   updated: number;
 }
 
+export interface TrendingRecommendationsResponse {
+  movies: Movie[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 // Get personalized recommendations
 export async function getRecommendations(
   filters: RecommendationFilters = {}
@@ -115,8 +122,8 @@ export async function getRecommendationStats(): Promise<ApiResponse<Recommendati
 export async function getTrendingRecommendations(
   limit: number = 20,
   page: number = 1
-): Promise<ApiResponse<{ movies: Movie[]; total: number; page: number; limit: number }>> {
-  const response = await api.get<ApiResponse<{ movies: Movie[]; total: number; page: number; limit: number }>>(
+): Promise<ApiResponse<TrendingRecommendationsResponse>> {
+  const response = await api.get<ApiResponse<TrendingRecommendationsResponse>>(
     `${apiEndpoint.RECOMMENDATIONS}/trending?limit=${limit}&page=${page}`
   );
   return response.data;

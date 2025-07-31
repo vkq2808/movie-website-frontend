@@ -29,6 +29,10 @@ export interface AddWatchHistoryRequest {
   progress: number;
 }
 
+export interface WatchProgressResponse {
+  progress: number;
+}
+
 // Add or update watch history
 export async function addWatchHistory(
   movieId: string,
@@ -65,8 +69,8 @@ export async function getRecentlyWatched(
 // Get watch progress for a specific movie
 export async function getWatchProgress(
   movieId: string
-): Promise<ApiResponse<{ progress: number }>> {
-  const response = await api.get<ApiResponse<{ progress: number }>>(
+): Promise<ApiResponse<WatchProgressResponse>> {
+  const response = await api.get<ApiResponse<WatchProgressResponse>>(
     `${apiEndpoint.WATCH_HISTORY}/progress/${movieId}`
   );
   return response.data;

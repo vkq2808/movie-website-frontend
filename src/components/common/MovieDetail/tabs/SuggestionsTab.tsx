@@ -69,6 +69,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
         alternative_overviews: [],
         original_language: language || 'en',
         original_title: `Suggested Movie ${index + 1}`,
+        price: 9.99 + (index % 3), // Add the missing price field
       }))
 
       setSuggestedMovies(demoMovies)

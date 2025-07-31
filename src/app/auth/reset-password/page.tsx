@@ -64,7 +64,7 @@ const ResetPasswordContent = () => {
 
     setTimeout(() => {
       authApi.resetPassword(resetPasswordData).then((res) => {
-        if (res.status === 200) {
+        if (res.success) {
           router.push('/auth/login');
         }
       }).catch((error) => {

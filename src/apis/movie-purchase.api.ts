@@ -14,6 +14,10 @@ export interface MoviePurchaseResponse {
   created_at: string;
 }
 
+export interface MovieOwnershipResponse {
+  owns_movie: boolean;
+}
+
 // Purchase a movie
 export async function purchaseMovie(movieId: string): Promise<ApiResponse<MoviePurchaseResponse>> {
   const response = await api.post<ApiResponse<MoviePurchaseResponse>>(
@@ -32,8 +36,8 @@ export async function getUserPurchases(): Promise<ApiResponse<MoviePurchaseRespo
 }
 
 // Check if user owns a specific movie
-export async function checkMovieOwnership(movieId: string): Promise<ApiResponse<{ owns_movie: boolean }>> {
-  const response = await api.get<ApiResponse<{ owns_movie: boolean }>>(
+export async function checkMovieOwnership(movieId: string): Promise<ApiResponse<MovieOwnershipResponse>> {
+  const response = await api.get<ApiResponse<MovieOwnershipResponse>>(
     `${apiEndpoint.MOVIE_PURCHASE}/check/${movieId}`
   );
   return response.data;

@@ -18,7 +18,7 @@ const LoginForm = () => {
     setLoading(true);
 
     await authApi.login({ email, password }).then(res => {
-      if (res.status === 200) {
+      if (res.success) {
         setAuth({ access_token: res.data.access_token, refresh_token: res.data.refresh_token, user: res.data.user })
           .then(() => {
             router.push('/');

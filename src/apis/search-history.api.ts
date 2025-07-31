@@ -7,6 +7,10 @@ export interface SearchHistoryEntry {
   searched_at: string
 }
 
+export interface ClearSearchHistoryResponse {
+  cleared: boolean
+}
+
 /**
  * Save a search query to the user's search history
  * @param searchQuery The search query to save
@@ -45,7 +49,7 @@ export async function deleteSearchHistory(id: string): Promise<ApiResponse<Searc
  * Clear all search history for the current user
  * @returns Success status
  */
-export async function clearSearchHistory(): Promise<ApiResponse<{ cleared: boolean }>> {
-  const response = await api.delete<ApiResponse<{ cleared: boolean }>>(`/search-history/clear`)
+export async function clearSearchHistory(): Promise<ApiResponse<ClearSearchHistoryResponse>> {
+  const response = await api.delete<ApiResponse<ClearSearchHistoryResponse>>(`/search-history/clear`)
   return response.data
 }

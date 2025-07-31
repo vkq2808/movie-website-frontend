@@ -1,17 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { getMovieAlternativeTitles } from '@/apis/movie.api';
+import { AlternativeTitle } from '@/apis/alternative-title.api';
 
 interface AlternativeTitleProps {
   movieId: string;
-}
-
-interface AlternativeTitle {
-  id: string;
-  title: string;
-  countryCode: string;
-  type?: string;
-  created_at: string;
-  updated_at: string;
 }
 
 const AlternativeTitlesList: React.FC<AlternativeTitleProps> = ({ movieId }) => {
@@ -66,7 +58,6 @@ const AlternativeTitlesList: React.FC<AlternativeTitleProps> = ({ movieId }) => 
             {titles.map((title) => (
               <tr key={title.id} className="hover:bg-gray-700">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{title.title}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{title.countryCode}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{title.type || 'Alternative'}</td>
               </tr>
             ))}

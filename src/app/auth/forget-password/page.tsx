@@ -31,7 +31,7 @@ const ForgetPasswordPage = () => {
 
     setTimeout(() => {
       authApi.forgetPassword({ email }).then((res) => {
-        if (res.status === 200) {
+        if (res.success) {
           router.push('/auth/reset-password?email=' + email);
         }
       }).catch((error) => {

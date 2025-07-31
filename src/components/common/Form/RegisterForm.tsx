@@ -29,7 +29,7 @@ const RegisterForm: React.FC = () => {
     }
 
     await authApi.register(formData).then(res => {
-      if (res.status === 201) {
+      if (res.success) {
         router.push(`/auth/verify?email=${formData.email}`);
       }
     }).catch(err => {
