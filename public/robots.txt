@@ -1,0 +1,22 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://moviestream.com/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+Disallow: /_next/
+Disallow: /static/
+
+# Allow important pages
+Allow: /movies/
+Allow: /search/
+Allow: /genres/
+Allow: /about/
+
+# Crawl-delay for better server performance
+Crawl-delay: 1

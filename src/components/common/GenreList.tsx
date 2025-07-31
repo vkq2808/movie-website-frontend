@@ -111,7 +111,7 @@ export default function GenreList() {
 
   if (loading) {
     return (
-      <div className="w-full bg-gradient-to-b from-transparent to-black">
+      <div className="w-full">
         <div className="flex gap-12 flex-wrap py-4 px-8 min-h-[180px]">
           <div className="w-full flex justify-center items-center">
             <div className="flex flex-col items-center">
@@ -125,7 +125,7 @@ export default function GenreList() {
   }
 
   return (
-    <div className="w-full bg-gradient-to-b from-transparent to-black">
+    <div className="w-full">
       <div className="flex gap-12 flex-wrap py-4 px-8 min-h-[180px]">
         {displayGenres.length > 0 && displayGenres.map((genre) => {
           const bgColor = `rgb(${genre.bgColor.r}, ${genre.bgColor.g}, ${genre.bgColor.b})`;

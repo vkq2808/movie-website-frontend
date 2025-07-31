@@ -11,6 +11,7 @@ import LoadingSpinner from "./LoadingSpinner";
 import LanguageMovieSelector from "./MovieByLanguages/LanguageMovieSelector";
 import Spinner from "./Spinner";
 import MovieCard from "./MovieCard";
+import RecommendationSection from "./RecommendationSection";
 
 
 export {
@@ -22,5 +23,6 @@ export {
   LanguageMovieSelector,
   LoadingSpinner,
   MovieCard,
-  Spinner
+  Spinner,
+  RecommendationSection
 };

@@ -11,11 +11,14 @@ export const apiEndpoint = {
   AUTH: '/auth',
   USER: '/user',
   LANGUAGE: '/language',
+  RECOMMENDATIONS: '/recommendations',
+  WATCH_HISTORY: '/watch-history',
 }
 
 // Mở rộng interface InternalAxiosRequestConfig để thêm thuộc tính __retry
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   __retry?: boolean;
+  __requiresAuth?: boolean;
 }
 
 export const baseURL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000/api';
@@ -46,7 +49,7 @@ const processQueue = (error: any, token: string | null = null) => {
 
 // Interceptor cho request: khởi tạo headers nếu chưa có và thêm access token
 api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
+  (config: CustomAxiosRequestConfig) => {
     config.headers = config.headers || {};
     const savedAuth = localStorage.getItem('auth');
     const token = savedAuth ? JSON.parse(savedAuth).access_token : null;
@@ -54,6 +57,10 @@ api.interceptors.request.use(
     if (token) {
       config.headers.setAuthorization(`Bearer ${token}`);
     }
+
+    // Add a flag to indicate if this request had auth when sent
+    config.__requiresAuth = !!token;
+
     return config;
   },
   error => Promise.reject(error)
@@ -71,6 +78,11 @@ api.interceptors.response.use(
     }
 
     if (error.response?.status === 401 && !originalRequest.__retry) {
+      // If the request was made without auth initially, don't try to refresh
+      if (!originalRequest.__requiresAuth) {
+        return Promise.reject(new Error('Authentication required'));
+      }
+
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -83,16 +95,17 @@ api.interceptors.response.use(
           })
           .catch(err => Promise.reject(err));
       }
+
       originalRequest.__retry = true;
       isRefreshing = true;
       const auth = localStorage.getItem('auth');
       const refresh_token = auth ? JSON.parse(auth).refresh_token : null;
 
-      // If no refresh token is available, redirect to login
+      // If no refresh token is available, don't log error for unauthenticated requests
       if (!refresh_token) {
         isRefreshing = false;
         localStorage.removeItem('auth');
-        return Promise.reject(new Error('No refresh token available'));
+        return Promise.reject(new Error('Authentication required'));
       }
 
       return new Promise((resolve, reject) => {
@@ -108,8 +121,10 @@ api.interceptors.response.use(
             resolve(axios(originalRequest));
           })
           .catch(err => {
-            processQueue(err, null);
-            reject(err);
+            // Clear auth and don't log refresh errors
+            localStorage.removeItem('auth');
+            processQueue(new Error('Authentication required'), null);
+            reject(new Error('Authentication required'));
           })
           .finally(() => {
             isRefreshing = false;
@@ -122,3 +137,31 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+// Generic error handler for API calls
+export const handleApiError = (error: any, context?: string): Error => {
+  // Don't log authentication errors to console
+  if (error.message === 'Authentication required') {
+    return new Error('Please log in to access this feature');
+  }
+
+  // Only log unexpected errors
+  if (error.response?.status !== 401) {
+    console.error(`API Error${context ? ` in ${context}` : ''}:`, error);
+  }
+
+  // Return user-friendly error messages
+  if (error.response?.status === 403) {
+    return new Error('You do not have permission to access this resource');
+  }
+
+  if (error.response?.status === 404) {
+    return new Error('The requested resource was not found');
+  }
+
+  if (error.response?.status >= 500) {
+    return new Error('Server error. Please try again later');
+  }
+
+  return error;
+};
