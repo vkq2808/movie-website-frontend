@@ -83,7 +83,7 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
         )
       );
     } catch (error) {
-      console.error(`Error fetching movies for ${language.name}:`, error);
+      // Error is already handled by axios interceptors
       // Update with empty movies but mark as not loading
       setMoviesByLanguage(current =>
         current.map((item, i) =>
@@ -137,7 +137,6 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
           fetchedLanguagesRef.current.clear();
         }
       } catch (error) {
-        console.error('Error fetching popular languages:', error)
         setError('Failed to fetch languages')
 
         // Fallback to default languages if API fails

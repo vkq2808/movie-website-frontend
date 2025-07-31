@@ -23,7 +23,7 @@ const AlternativeTitleAdmin: React.FC<AlternativeTitleAdminProps> = ({
       setMessage(null);
       const result = await updateMovieAlternativeTitles(movieId);
       setMessage({
-        text: `Successfully updated with ${result.count || 0} alternative titles`,
+        text: `Successfully updated with ${result.data?.count || 0} alternative titles`,
         type: 'success'
       });
       if (onUpdate) onUpdate();
@@ -32,7 +32,6 @@ const AlternativeTitleAdmin: React.FC<AlternativeTitleAdminProps> = ({
         text: 'Failed to update alternative titles',
         type: 'error'
       });
-      console.error('Error updating alternative titles:', error);
     } finally {
       setLoading(false);
     }
@@ -49,7 +48,7 @@ const AlternativeTitleAdmin: React.FC<AlternativeTitleAdminProps> = ({
       setMessage(null);
       const result = await importMovieAlternativeTitles(movieId, Number(tmdbId));
       setMessage({
-        text: `Successfully imported ${result.titles?.length || 0} alternative titles`,
+        text: `Successfully imported ${result.data?.titles?.length || 0} alternative titles`,
         type: 'success'
       });
       if (onUpdate) onUpdate();
@@ -58,7 +57,6 @@ const AlternativeTitleAdmin: React.FC<AlternativeTitleAdminProps> = ({
         text: 'Failed to import alternative titles',
         type: 'error'
       });
-      console.error('Error importing alternative titles:', error);
     } finally {
       setLoading(false);
     }

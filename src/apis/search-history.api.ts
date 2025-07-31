@@ -17,7 +17,6 @@ export async function saveSearchHistory(searchQuery: string): Promise<ApiRespons
     const response = await api.post<ApiResponse<SearchHistoryEntry>>(`/search-history`, { search_query: searchQuery })
     return response.data
   } catch (error) {
-    console.error('Error saving search history:', error)
     // Fail silently - we don't want to interrupt the user's search experience
     return null
   }
@@ -28,13 +27,8 @@ export async function saveSearchHistory(searchQuery: string): Promise<ApiRespons
  * @returns Array of search history entries
  */
 export async function getSearchHistory(): Promise<ApiResponse<SearchHistoryEntry[]>> {
-  try {
-    const response = await api.get<ApiResponse<SearchHistoryEntry[]>>(`/search-history`)
-    return response.data
-  } catch (error) {
-    console.error('Error fetching search history:', error)
-    throw error
-  }
+  const response = await api.get<ApiResponse<SearchHistoryEntry[]>>(`/search-history`)
+  return response.data
 }
 
 /**
@@ -43,13 +37,8 @@ export async function getSearchHistory(): Promise<ApiResponse<SearchHistoryEntry
  * @returns The deleted search history entry
  */
 export async function deleteSearchHistory(id: string): Promise<ApiResponse<SearchHistoryEntry>> {
-  try {
-    const response = await api.delete<ApiResponse<SearchHistoryEntry>>(`/search-history/${id}`)
-    return response.data
-  } catch (error) {
-    console.error('Error deleting search history:', error)
-    throw error
-  }
+  const response = await api.delete<ApiResponse<SearchHistoryEntry>>(`/search-history/${id}`)
+  return response.data
 }
 
 /**
@@ -57,11 +46,6 @@ export async function deleteSearchHistory(id: string): Promise<ApiResponse<Searc
  * @returns Success status
  */
 export async function clearSearchHistory(): Promise<ApiResponse<{ cleared: boolean }>> {
-  try {
-    const response = await api.delete<ApiResponse<{ cleared: boolean }>>(`/search-history/clear`)
-    return response.data
-  } catch (error) {
-    console.error('Error clearing search history:', error)
-    throw error
-  }
+  const response = await api.delete<ApiResponse<{ cleared: boolean }>>(`/search-history/clear`)
+  return response.data
 }

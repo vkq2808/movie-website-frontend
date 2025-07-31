@@ -46,7 +46,6 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
         console.log('Wallet balance:', balanceResponse);
         setWalletBalance(balanceResponse.data.balance);
       } catch (error) {
-        console.error('Error checking initial state:', error);
         setError('Failed to load purchase information');
       } finally {
         setIsLoading(false);
@@ -84,8 +83,6 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
       // Show success message (you can customize this)
       alert(`Successfully purchased "${movie.title}" for $${movie.price}!`);
     } catch (error: unknown) {
-      console.error('Purchase error:', error);
-
       // Handle specific error messages
       if (error && typeof error === 'object' && 'response' in error &&
         error.response && typeof error.response === 'object' && 'data' in error.response &&

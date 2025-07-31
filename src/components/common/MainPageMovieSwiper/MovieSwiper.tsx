@@ -21,7 +21,6 @@ const MovieSwiper = () => {
       console.log('Top 5 Movies:', response.data)
     } catch (error) {
       setError('Failed to fetch movies')
-      console.error('Error fetching top 5 movies:', error)
     } finally {
       setLoading(false)
       setGlobalLoading(false);

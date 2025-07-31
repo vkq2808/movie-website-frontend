@@ -32,7 +32,6 @@ const MovieCardWithPurchase: React.FC<MovieCardWithPurchaseProps> = ({
           const response = await checkMovieOwnership(movie.id);
           setOwnsMovie(response.data.owns_movie);
         } catch (error) {
-          console.error('Error checking movie ownership:', error);
           // Fail silently for ownership check
         } finally {
           setIsCheckingOwnership(false);

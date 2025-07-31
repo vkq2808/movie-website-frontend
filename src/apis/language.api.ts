@@ -10,33 +10,18 @@ export interface Language {
 }
 
 export async function getAllLanguages(): Promise<ApiResponse<Language[]>> {
-  try {
-    const response = await api.get<ApiResponse<Language[]>>(`${apiEndpoint.LANGUAGE}`)
-    return response.data
-  } catch (error) {
-    console.error('Error fetching languages:', error)
-    throw error
-  }
+  const response = await api.get<ApiResponse<Language[]>>(`${apiEndpoint.LANGUAGE}`)
+  return response.data
 }
 
 export async function getLanguageByIsoCode(isoCode: string): Promise<ApiResponse<Language>> {
-  try {
-    const response = await api.get<ApiResponse<Language>>(`${apiEndpoint.LANGUAGE}/${isoCode}`)
-    return response.data
-  } catch (error) {
-    console.error(`Error fetching language with ISO code ${isoCode}:`, error)
-    throw error
-  }
+  const response = await api.get<ApiResponse<Language>>(`${apiEndpoint.LANGUAGE}/${isoCode}`)
+  return response.data
 }
 
 export async function getPopularLanguages(limit: number = 3): Promise<ApiResponse<Language[]>> {
-  try {
-    const response = await api.get<ApiResponse<Language[]>>(`${apiEndpoint.LANGUAGE}/popular`, {
-      params: { limit }
-    })
-    return response.data
-  } catch (error) {
-    console.error('Error fetching popular languages:', error)
-    throw error
-  }
+  const response = await api.get<ApiResponse<Language[]>>(`${apiEndpoint.LANGUAGE}/popular`, {
+    params: { limit }
+  })
+  return response.data
 }

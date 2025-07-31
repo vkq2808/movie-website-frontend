@@ -116,7 +116,6 @@ const nextConfig: NextConfig = {
   output: 'standalone',
 
   // PWA and performance optimizations
-  swcMinify: true,
   poweredByHeader: false,
 
   // Redirects for SEO

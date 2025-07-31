@@ -10,11 +10,6 @@ export async function getWalletBalance(): Promise<ApiResponse<WalletBalance>> {
   const response = await api.get<ApiResponse<WalletBalance>>(
     `${apiEndpoint.WALLET}/balance`
   );
-
-  if (response.status !== 200) {
-    throw new Error('Failed to fetch wallet balance');
-  }
-
   return response.data;
 }
 
@@ -24,10 +19,5 @@ export async function addBalance(amount: number): Promise<ApiResponse<WalletBala
     `${apiEndpoint.WALLET}/add-balance`,
     { amount }
   );
-
-  if (response.status !== 200) {
-    throw new Error('Failed to add balance');
-  }
-
   return response.data;
 }

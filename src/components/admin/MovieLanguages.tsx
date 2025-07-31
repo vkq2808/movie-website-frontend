@@ -36,7 +36,7 @@ const MovieLanguages: React.FC<MovieLanguagesProps> = ({ movieId, onLanguagesUpd
       const response = await getMovieById(movieId);
       setMovie(response.data as unknown as Movie);
     } catch (error) {
-      console.error('Error fetching movie:', error);
+      // Error is already handled by axios interceptors
     } finally {
       setLoading(false);
     }
@@ -58,7 +58,7 @@ const MovieLanguages: React.FC<MovieLanguagesProps> = ({ movieId, onLanguagesUpd
       await fetchMovie();
       if (onLanguagesUpdated) onLanguagesUpdated();
     } catch (error) {
-      console.error('Error adding language:', error);
+      // Error is already handled by axios interceptors
     } finally {
       setIsAdding(false);
     }
@@ -72,7 +72,7 @@ const MovieLanguages: React.FC<MovieLanguagesProps> = ({ movieId, onLanguagesUpd
       await fetchMovie();
       if (onLanguagesUpdated) onLanguagesUpdated();
     } catch (error) {
-      console.error('Error removing language:', error);
+      // Error is already handled by axios interceptors
     }
   };
 

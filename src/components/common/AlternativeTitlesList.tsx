@@ -24,11 +24,10 @@ const AlternativeTitlesList: React.FC<AlternativeTitleProps> = ({ movieId }) => 
       try {
         setLoading(true);
         const data = await getMovieAlternativeTitles(movieId);
-        setTitles(data);
+        setTitles(data.data);
         setError(null);
       } catch (err) {
         setError('Failed to load alternative titles');
-        console.error(err);
       } finally {
         setLoading(false);
       }

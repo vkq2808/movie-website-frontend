@@ -1,4 +1,4 @@
-import api, { apiEndpoint, handleApiError } from '@/utils/api.util';
+import api, { apiEndpoint } from '@/utils/api.util';
 import { ApiResponse, PaginatedApiResponse } from '@/types/api.response';
 import { Movie } from '@/zustand';
 
@@ -65,72 +65,50 @@ export interface GenerateRecommendationsResponse {
 export async function getRecommendations(
   filters: RecommendationFilters = {}
 ): Promise<ApiResponse<RecommendationsListResponse>> {
-  try {
-    const params = new URLSearchParams();
+  const params = new URLSearchParams();
 
-    if (filters.type) params.append('type', filters.type);
-    if (filters.limit) params.append('limit', filters.limit.toString());
-    if (filters.page) params.append('page', filters.page.toString());
-    if (filters.exclude_watched !== undefined) params.append('exclude_watched', filters.exclude_watched.toString());
-    if (filters.exclude_purchased !== undefined) params.append('exclude_purchased', filters.exclude_purchased.toString());
-    if (filters.min_score !== undefined) params.append('min_score', filters.min_score.toString());
-
-    if (filters.genres && filters.genres.length > 0) {
-      filters.genres.forEach(genre => params.append('genres[]', genre));
-    }
-
-    if (filters.languages && filters.languages.length > 0) {
-      filters.languages.forEach(lang => params.append('languages[]', lang));
-    }
-
-    const url = `${apiEndpoint.RECOMMENDATIONS}${params.toString() ? `?${params.toString()}` : ''}`;
-    const response = await api.get<ApiResponse<RecommendationsListResponse>>(url);
-
-    if (response.status !== 200) {
-      throw new Error('Failed to fetch recommendations');
-    }
-
-    return response.data;
-  } catch (error: any) {
-    throw handleApiError(error, 'getRecommendations');
+  if (filters.type) {
+    params.append('type', filters.type);
   }
+
+  if (filters.limit) {
+    params.append('limit', filters.limit.toString());
+  }
+
+  if (filters.page) {
+    params.append('page', filters.page.toString());
+  }
+
+  if (filters.genres && filters.genres.length > 0) {
+    filters.genres.forEach(genre => params.append('genres[]', genre));
+  }
+
+  if (filters.languages && filters.languages.length > 0) {
+    filters.languages.forEach(lang => params.append('languages[]', lang));
+  }
+
+  const url = `${apiEndpoint.RECOMMENDATIONS}${params.toString() ? `?${params.toString()}` : ''}`;
+  const response = await api.get<ApiResponse<RecommendationsListResponse>>(url);
+  return response.data;
 }
 
 // Generate new recommendations
 export async function generateRecommendations(
   options: GenerateRecommendationsRequest = {}
 ): Promise<ApiResponse<GenerateRecommendationsResponse>> {
-  try {
-    const response = await api.post<ApiResponse<GenerateRecommendationsResponse>>(
-      `${apiEndpoint.RECOMMENDATIONS}/generate`,
-      options
-    );
-
-    if (response.status !== 200 && response.status !== 201) {
-      throw new Error('Failed to generate recommendations');
-    }
-
-    return response.data;
-  } catch (error: any) {
-    throw handleApiError(error, 'generateRecommendations');
-  }
+  const response = await api.post<ApiResponse<GenerateRecommendationsResponse>>(
+    `${apiEndpoint.RECOMMENDATIONS}/generate`,
+    options
+  );
+  return response.data;
 }
 
 // Get recommendation statistics
 export async function getRecommendationStats(): Promise<ApiResponse<RecommendationStats>> {
-  try {
-    const response = await api.get<ApiResponse<RecommendationStats>>(
-      `${apiEndpoint.RECOMMENDATIONS}/stats`
-    );
-
-    if (response.status !== 200) {
-      throw new Error('Failed to fetch recommendation stats');
-    }
-
-    return response.data;
-  } catch (error: any) {
-    throw handleApiError(error, 'getRecommendationStats');
-  }
+  const response = await api.get<ApiResponse<RecommendationStats>>(
+    `${apiEndpoint.RECOMMENDATIONS}/stats`
+  );
+  return response.data;
 }
 
 // Get trending recommendations (public)
@@ -138,19 +116,10 @@ export async function getTrendingRecommendations(
   limit: number = 20,
   page: number = 1
 ): Promise<ApiResponse<{ movies: Movie[]; total: number; page: number; limit: number }>> {
-  try {
-    const response = await api.get<ApiResponse<{ movies: Movie[]; total: number; page: number; limit: number }>>(
-      `${apiEndpoint.RECOMMENDATIONS}/trending?limit=${limit}&page=${page}`
-    );
-
-    if (response.status !== 200) {
-      throw new Error('Failed to fetch trending recommendations');
-    }
-
-    return response.data;
-  } catch (error: any) {
-    throw handleApiError(error, 'getTrendingRecommendations');
-  }
+  const response = await api.get<ApiResponse<{ movies: Movie[]; total: number; page: number; limit: number }>>(
+    `${apiEndpoint.RECOMMENDATIONS}/trending?limit=${limit}&page=${page}`
+  );
+  return response.data;
 }
 
 // Get content-based recommendations

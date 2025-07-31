@@ -20,11 +20,6 @@ export async function purchaseMovie(movieId: string): Promise<ApiResponse<MovieP
     `${apiEndpoint.MOVIE_PURCHASE}`,
     { movie_id: movieId }
   );
-
-  if (response.status !== 201) {
-    throw new Error('Failed to purchase movie');
-  }
-
   return response.data;
 }
 
@@ -33,11 +28,6 @@ export async function getUserPurchases(): Promise<ApiResponse<MoviePurchaseRespo
   const response = await api.get<ApiResponse<MoviePurchaseResponse[]>>(
     `${apiEndpoint.MOVIE_PURCHASE}`
   );
-
-  if (response.status !== 200) {
-    throw new Error('Failed to fetch user purchases');
-  }
-
   return response.data;
 }
 
@@ -46,11 +36,6 @@ export async function checkMovieOwnership(movieId: string): Promise<ApiResponse<
   const response = await api.get<ApiResponse<{ owns_movie: boolean }>>(
     `${apiEndpoint.MOVIE_PURCHASE}/check/${movieId}`
   );
-
-  if (response.status !== 200) {
-    throw new Error('Failed to check movie ownership');
-  }
-
   return response.data;
 }
 
@@ -59,10 +44,5 @@ export async function getPurchaseDetails(purchaseId: string): Promise<ApiRespons
   const response = await api.get<ApiResponse<MoviePurchaseResponse>>(
     `${apiEndpoint.MOVIE_PURCHASE}/${purchaseId}`
   );
-
-  if (response.status !== 200) {
-    throw new Error('Failed to fetch purchase details');
-  }
-
   return response.data;
 }

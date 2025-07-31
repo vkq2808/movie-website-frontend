@@ -17,7 +17,6 @@ const UserPurchasesPage: React.FC = () => {
         const response = await getUserPurchases();
         setPurchases(response.data);
       } catch (error: unknown) {
-        console.error('Error fetching purchases:', error);
         if (error && typeof error === 'object' && 'response' in error &&
           error.response && typeof error.response === 'object' && 'data' in error.response &&
           error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {

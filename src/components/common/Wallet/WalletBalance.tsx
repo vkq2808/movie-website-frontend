@@ -41,7 +41,6 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
         onBalanceUpdate(newBalance);
       }
     } catch (error) {
-      console.error('Error fetching wallet balance:', error);
       setError('Failed to load wallet balance');
     } finally {
       setIsLoading(false);
@@ -73,7 +72,6 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
         onBalanceUpdate(newBalance);
       }
     } catch (error: unknown) {
-      console.error('Error adding balance:', error);
       if (error && typeof error === 'object' && 'response' in error &&
         error.response && typeof error.response === 'object' && 'data' in error.response &&
         error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
