@@ -97,7 +97,7 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({
       } else {
         setError('Failed to load recommendations')
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle authentication errors gracefully - fetch trending instead
       if (isAuthError(error)) {
         try {

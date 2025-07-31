@@ -7,10 +7,12 @@ import RecommendationSection from './RecommendationSection'
 import LoadingSpinner from './LoadingSpinner'
 import { RefreshCw, TrendingUp, Users, Target, Zap, Eye, Clock, Star } from 'lucide-react'
 
+import { WatchStats } from '@/apis/watch-history.api'
+
 const RecommendationDashboard: React.FC = () => {
   const [stats, setStats] = useState<RecommendationStats | null>(null)
   const [recentlyWatched, setRecentlyWatched] = useState<Movie[]>([])
-  const [watchStats, setWatchStats] = useState<any>(null)
+  const [watchStats, setWatchStats] = useState<WatchStats | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [generatingRecs, setGeneratingRecs] = useState<boolean>(false)
   const [activeTab, setActiveTab] = useState<'hybrid' | 'content_based' | 'collaborative' | 'trending'>('hybrid')
@@ -194,8 +196,8 @@ const RecommendationDashboard: React.FC = () => {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === tab
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-gray-700'
                   }`}
               >
                 {getTabIcon(tab)}

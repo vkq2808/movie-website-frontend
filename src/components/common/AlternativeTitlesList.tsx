@@ -50,7 +50,7 @@ const AlternativeTitlesList: React.FC<AlternativeTitleProps> = ({ movieId }) => 
           <thead className="bg-gray-900">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Title</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Country</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Language</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Type</th>
             </tr>
           </thead>
@@ -58,6 +58,7 @@ const AlternativeTitlesList: React.FC<AlternativeTitleProps> = ({ movieId }) => 
             {titles.map((title) => (
               <tr key={title.id} className="hover:bg-gray-700">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{title.title}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{title.iso_639_1}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{title.type || 'Alternative'}</td>
               </tr>
             ))}

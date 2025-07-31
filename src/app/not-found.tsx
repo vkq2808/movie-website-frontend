@@ -24,8 +24,8 @@ export default function NotFound() {
             Page Not Found
           </h2>
           <p className="text-gray-300 text-lg mb-6">
-            Oops! The page you're looking for seems to have disappeared into the void.
-            But don't worry, there are plenty of amazing movies waiting for you!
+            Oops! The page you&apos;re looking for seems to have disappeared into the void.
+            But don&apos;t worry, there are plenty of amazing movies waiting for you!
           </p>
         </div>
 
