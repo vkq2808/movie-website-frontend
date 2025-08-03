@@ -28,6 +28,25 @@ export const getAuthToken = (): string | null => {
   }
 };
 
+export const getUser = (): any | null => {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const auth = localStorage.getItem('auth');
+    if (!auth) return null;
+
+    const { user } = JSON.parse(auth);
+    return user || null;
+  } catch {
+    return null;
+  }
+};
+
+export const isAdmin = (): boolean => {
+  const user = getUser();
+  return user?.role === 'admin';
+};
+
 export const clearAuth = (): void => {
   if (typeof window === 'undefined') return;
 

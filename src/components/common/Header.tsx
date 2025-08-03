@@ -150,6 +150,11 @@ const UserInformation = () => {
           <Link href="/profile" className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors">
             {user.username || user.email}
           </Link>
+          {user.role === 'admin' && (
+            <Link href="/admin" className="text-lg font-medium text-blue-400 hover:text-blue-300 transition-colors">
+              Admin
+            </Link>
+          )}
           <button
             onClick={handleLogout}
             className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors"
