@@ -94,6 +94,18 @@ export async function getRecommendations(
     filters.languages.forEach(lang => params.append('languages[]', lang));
   }
 
+  if (filters.exclude_watched !== undefined) {
+    params.append('exclude_watched', filters.exclude_watched.toString());
+  }
+
+  if (filters.exclude_purchased !== undefined) {
+    params.append('exclude_purchased', filters.exclude_purchased.toString());
+  }
+
+  if (filters.min_score !== undefined) {
+    params.append('min_score', filters.min_score.toString());
+  }
+
   const url = `${apiEndpoint.RECOMMENDATIONS}${params.toString() ? `?${params.toString()}` : ''}`;
   const response = await api.get<ApiResponse<RecommendationsListResponse>>(url);
   return response.data;
@@ -120,12 +132,32 @@ export async function getRecommendationStats(): Promise<ApiResponse<Recommendati
 
 // Get trending recommendations (public)
 export async function getTrendingRecommendations(
-  limit: number = 20,
-  page: number = 1
-): Promise<ApiResponse<TrendingRecommendationsResponse>> {
-  const response = await api.get<ApiResponse<TrendingRecommendationsResponse>>(
-    `${apiEndpoint.RECOMMENDATIONS}/trending?limit=${limit}&page=${page}`
-  );
+  filters: RecommendationFilters = {}
+): Promise<ApiResponse<RecommendationsListResponse>> {
+  const params = new URLSearchParams();
+
+  if (filters.limit) {
+    params.append('limit', filters.limit.toString());
+  }
+
+  if (filters.page) {
+    params.append('page', filters.page.toString());
+  }
+
+  if (filters.exclude_watched !== undefined) {
+    params.append('exclude_watched', filters.exclude_watched.toString());
+  }
+
+  if (filters.exclude_purchased !== undefined) {
+    params.append('exclude_purchased', filters.exclude_purchased.toString());
+  }
+
+  if (filters.min_score !== undefined) {
+    params.append('min_score', filters.min_score.toString());
+  }
+
+  const url = `${apiEndpoint.RECOMMENDATIONS}/trending${params.toString() ? `?${params.toString()}` : ''}`;
+  const response = await api.get<ApiResponse<RecommendationsListResponse>>(url);
   return response.data;
 }
 

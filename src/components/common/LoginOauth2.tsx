@@ -24,12 +24,16 @@ const LoginOauth2 = () => {
     window.open(`${baseURL}` + '/auth/facebook-oauth2', 'newwindow', 'width=500, height=600');
   }
 
+  const handleReturnToUrl = () => {
+    setIsLoading(false);
+    router.push(from || '/');
+  }
+
   React.useEffect(() => {
     if (auth.access_token) {
-      setIsLoading(false);
-      router.push(from || '/');
+      handleReturnToUrl();
     }
-  }, [auth.access_token, router]);
+  }, [auth.access_token, router, from]);
 
   return (
     isLoading ?

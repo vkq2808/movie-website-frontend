@@ -1,11 +1,12 @@
 'use client'
 import React from 'react'
 import { Genre, Movie } from '@/zustand'
-import { Play, Heart, Share, MessageCircle } from 'lucide-react'
+import { Play, Heart, Share, MessageCircle, PlusCircle } from 'lucide-react'
 import { getMovieOverviewByLanguage, getMovieTitleByLanguage } from '@/utils/movie.util'
 import { useLanguage } from '@/contexts/language.context'
 import Image from 'next/image'
 import MoviePurchaseButton from '@/components/common/MoviePurchase/MoviePurchaseButton'
+import { maximizeTextLength } from '@/utils/string.util'
 
 interface MovieHeroProps {
   movie: Movie
@@ -13,6 +14,27 @@ interface MovieHeroProps {
 
 const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
   const { language } = useLanguage();
+
+  const handleLikeButtonClick = () => {
+    // Handle like button click logic here
+    console.log('Like button clicked');
+  }
+
+  const handleAddToWatchlistClick = () => {
+    // Handle add to watchlist logic here
+    console.log('Add to watchlist clicked');
+  }
+
+  const handleShareClick = () => {
+    // Handle share logic here
+    console.log('Share clicked');
+  }
+
+  const handleCommentClick = () => {
+    // Handle comment logic here
+    console.log('Comment clicked');
+  }
+
 
   // Function to get genre name based on current language
   const getGenreName = (genre: Genre) => {
@@ -40,7 +62,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
       {/* Content */}
       <div className="relative z-10 h-full flex items-end">
         <div className="container mx-auto px-8 pb-32">
-          <div className="flex gap-8 items-end">
+          <div className="flex gap-8 items-start">
             {/* Movie Poster */}
             <div className="flex-shrink-0">
               <div className="w-64 h-96 rounded-lg overflow-hidden shadow-2xl">
@@ -71,7 +93,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
               <div className="flex items-start gap-6 mb-6">
                 {/* Left side - Play and social buttons */}
                 <div className="flex items-center gap-4">
-                  {/* <button className="flex items-center gap-3 bg-yellow-400 text-black px-8 py-3 rounded-full font-semibold hover:bg-yellow-500 transition-colors">
+                  {/* <button className="flex items-center gap-3 bg-yellow-400 text-black px-8 py-3 rounded-full font-semibold hover:bg-yellow-500 transition-colors cursor-pointer">
                     <Play className="w-5 h-5" fill="currentColor" />
                     Xem ngay
                   </button> */}
@@ -86,22 +108,31 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
                   </div>
 
                   <div className="flex gap-4">
-                    <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
-                      <Heart className="w-6 h-6 text-white" />
-                      <span className="sr-only">Thêm vào yêu thích</span>
+                    <button
+                      className="p-3 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors cursor-pointer"
+                      onClick={handleLikeButtonClick}
+                    >
+                      <Heart className="w-5 h-5 text-red-500" />
                     </button>
-                    <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
-                      <div className="w-6 h-6 text-white font-bold text-xs flex items-center justify-center">+</div>
-                      <span className="sr-only">Thêm vào danh sách xem</span>
+                    <button
+                      className="p-3 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors cursor-pointer"
+                      onClick={handleAddToWatchlistClick}
+                    >
+                      <PlusCircle className="w-5 h-5 text-blue-500" />
                     </button>
-                    <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
-                      <Share className="w-6 h-6 text-white" />
-                      <span className="sr-only">Chia sẻ</span>
+                    <button
+                      className="p-3 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors cursor-pointer"
+                      onClick={handleShareClick}
+                    >
+                      <Share className="w-5 h-5 text-green-500" />
                     </button>
-                    <button className="p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors">
-                      <MessageCircle className="w-6 h-6 text-white" />
-                      <span className="sr-only">Bình luận</span>
+                    <button
+                      className="p-3 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors cursor-pointer"
+                      onClick={handleCommentClick}
+                    >
+                      <MessageCircle className="w-5 h-5 text-yellow-500" />
                     </button>
+
                   </div>
                 </div>
               </div>
@@ -120,14 +151,6 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
                 <span>{movie.duration ? `${movie.duration} phút` : 'N/A'}</span>
               </div>
 
-              {/* Rating Badge */}
-              <div className="flex items-center justify-end">
-                <div className="bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-                  <span className="text-2xl font-bold">{movie.vote_average?.toFixed(1) || '?'}</span>
-                  <span className="text-sm opacity-75">Đánh giá</span>
-                </div>
-              </div>
-
               {/* Genres */}
               <div className="flex flex-wrap gap-2">
                 {movie.genres?.slice(0, 4).map((genre) => (
@@ -142,13 +165,13 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
 
               {/* Description */}
               <p className="text-gray-200 text-lg leading-relaxed max-w-3xl">
-                {getMovieOverviewByLanguage(movie, language)}
+                {maximizeTextLength(getMovieOverviewByLanguage(movie, language), 640)}
               </p>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   )
 }
 

@@ -8,6 +8,7 @@ import React, { useEffect, Suspense } from 'react';
 const GoogleOAuth2Content = () => {
   const setAuth = useAuthStore(state => state.setAuth);
   const setUser = useAuthStore(state => state.setUser);
+  const auth = useAuthStore(state => state);
   const searchParams = useSearchParams();
 
   // Effect lấy dữ liệu callback từ URL và gọi API
@@ -25,23 +26,8 @@ const GoogleOAuth2Content = () => {
         params: { code, scope, authUser, prompt }
       }).then((res) => {
         if (res.status === 200) {
-
-          try {
-            if (res.data.user) {
-              setAuth({ access_token: res.data.access_token, refresh_token: res.data.refresh_token, user: res.data.user });
-              console.log('User set successfully');
-            } else {
-              console.warn('No user data in response');
-            }
-          } catch (error) {
-            console.error('Error setting user:', error);
-          }
-
+          setAuth({ access_token: res.data.data.access_token, refresh_token: res.data.data.refresh_token, user: res.data.data.user });
           console.log('Google OAuth2 Callback Response:', res.data);
-
-          setTimeout(() => {
-            window.close();
-          }, 1000);
         }
       })
         .catch((err) => {
@@ -49,6 +35,12 @@ const GoogleOAuth2Content = () => {
         });
     }
   }, [searchParams, setAuth, setUser]);
+
+  useEffect(() => {
+    if (auth.access_token) {
+      window.close();
+    }
+  }, [auth.access_token]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">

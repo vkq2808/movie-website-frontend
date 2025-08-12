@@ -89,6 +89,9 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
               src={suggestedMovie.poster.url}
               alt={suggestedMovie.poster.alt || suggestedMovie.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              width={suggestedMovie.poster.width || 300}
+              height={suggestedMovie.poster.height || 450}
+              loading="lazy"
             />
           ) : (
             <div className="w-full h-full bg-gray-700 flex items-center justify-center">
@@ -189,6 +192,9 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
                       src={suggestedMovie.poster.url}
                       alt={suggestedMovie.title}
                       className="w-full h-full object-cover"
+                      width={suggestedMovie.poster.width || 300}
+                      height={suggestedMovie.poster.height || 450}
+                      loading="lazy"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">

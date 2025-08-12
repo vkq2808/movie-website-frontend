@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Movie } from '@/zustand'
 import { getMoviesByLanguage } from '@/apis/movie.api'
 import { Language, getPopularLanguages } from '@/apis/language.api'
-import MovieCard from './MovieCard'
+import MovieCard from '@/components/common/MovieCard'
 import LoadingSpinner from '../LoadingSpinner'
 
 /**

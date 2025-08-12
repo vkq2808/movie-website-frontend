@@ -8,6 +8,7 @@ import LoadingSpinner from './LoadingSpinner'
 import { RefreshCw, TrendingUp, Users, Target, Zap, Eye, Clock, Star } from 'lucide-react'
 
 import { WatchStats } from '@/apis/watch-history.api'
+import Image from 'next/image'
 
 const RecommendationDashboard: React.FC = () => {
   const [stats, setStats] = useState<RecommendationStats | null>(null)
@@ -171,10 +172,13 @@ const RecommendationDashboard: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {recentlyWatched.map((movie) => (
                 <div key={movie.id} className="relative group">
-                  <img
+                  <Image
                     src={movie.poster?.url || '/placeholder-movie.jpg'}
                     alt={movie.title}
                     className="w-full aspect-[2/3] object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+                    width={300}
+                    height={450}
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-300 rounded-lg" />
                   <div className="absolute bottom-2 left-2 right-2">

@@ -4,6 +4,7 @@ import { PlayIcon, HeartIcon, InfoIcon } from 'lucide-react'
 import { Movie } from '@/zustand'
 import { getMovieOverviewByLanguage, getMovieTitleByLanguage } from '@/utils/movie.util'
 import { useLanguage } from '@/contexts/language.context'
+import { useRouter } from 'next/navigation'
 
 interface MovieHeroProps {
   movie: Movie,
@@ -12,6 +13,22 @@ interface MovieHeroProps {
 const MovieHero: React.FC<MovieHeroProps> = ({
   movie
 }) => {
+  const router = useRouter();
+
+  const handlePlayButtonClick = () => {
+    // Handle play button click logic here
+    console.log('Play button clicked for movie:', movie.title);
+  }
+
+  const handleLikeButtonClick = () => {
+    // Handle like button click logic here
+    console.log('Like button clicked for movie:', movie.title);
+  }
+
+  const handleInfoButtonClick = () => {
+    router.push(`/movie/${movie.id}`);
+  }
+
   const { language } = useLanguage();
   return (
     <div className="relative w-full h-[80vh] text-white bg-black flex items-center justify-between overflow-hidden px-16">
@@ -69,13 +86,19 @@ const MovieHero: React.FC<MovieHeroProps> = ({
             </div>
 
             <div className="flex gap-4 pt-4 mt-4">
-              <button className="bg-yellow-400 text-black p-4 rounded-full hover:scale-105 transition">
+              <button className="cursor-pointer bg-yellow-400 text-black p-4 rounded-full hover:scale-105 transition "
+                onClick={handlePlayButtonClick}
+              >
                 <PlayIcon className="w-6 h-6" />
               </button>
-              <button className="border border-white p-4 rounded-full hover:bg-white hover:text-black transition">
+              <button className="cursor-pointer border border-white p-4 rounded-full hover:bg-white hover:text-black transition "
+                onClick={handleLikeButtonClick}
+              >
                 <HeartIcon className="w-6 h-6" />
               </button>
-              <button className="border border-white p-4 rounded-full hover:bg-white hover:text-black transition">
+              <button className="cursor-pointer border border-white p-4 rounded-full hover:bg-white hover:text-black transition "
+                onClick={handleInfoButtonClick}
+              >
                 <InfoIcon className="w-6 h-6" />
               </button>
             </div>

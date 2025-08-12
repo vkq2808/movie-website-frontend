@@ -24,7 +24,6 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
-
   headers: async () => {
     return [
       {

@@ -8,6 +8,7 @@ import React, { Suspense } from 'react'
 function FacebookOauth2Content() {
   const setAuth = useAuthStore(state => state.setAuth);
   const setUser = useAuthStore(state => state.setUser);
+  const auth = useAuthStore(state => state);
   const searchParams = useSearchParams();
   // Effect lấy dữ liệu callback từ URL và gọi API
   React.useEffect(() => {
@@ -20,16 +21,13 @@ function FacebookOauth2Content() {
           params: { code }
         })
         .then((res) => {
+          console.log('Facebook OAuth2 Callback Response:', res.data);
           if (res.status === 200) {
 
             try {
-              if (res.data.user) {
-                console.log(res.data.access_token, res.data.refresh_token, res.data.user);
-                setAuth({ access_token: res.data.access_token, refresh_token: res.data.refresh_token, user: res.data.user }).then(() => {
-                  window.close();
-                });
-              } else {
-                console.warn('No user data in response');
+              if (res.data.data.user) {
+                console.log(res.data.data.access_token, res.data.data.refresh_token, res.data.data.user);
+                setAuth({ access_token: res.data.data.access_token, refresh_token: res.data.data.refresh_token, user: res.data.data.user })
               }
             } catch (error) {
               console.error('Error setting user:', error);
@@ -43,8 +41,14 @@ function FacebookOauth2Content() {
 
   }, [searchParams, setAuth, setUser]);
 
+  React.useEffect(() => {
+    if (auth.access_token) {
+      window.close();
+    }
+  }, [auth.access_token]);
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-black">
       <div className="bg-slate-100 p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-3xl font-bold text-center">Facebook OAuth2 Callback</h1>
         <p className="text-center">
@@ -58,7 +62,7 @@ function FacebookOauth2Content() {
 // Loading component to show while waiting for the content to load
 function LoadingCallback() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-black">
       <div className="bg-slate-100 p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-3xl font-bold text-center">Facebook OAuth2 Callback</h1>
         <p className="text-center">

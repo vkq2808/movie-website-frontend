@@ -52,6 +52,8 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
                 src={image.url}
                 alt={image.alt || `Gallery image ${index + 1}`}
                 className="max-w-full max-h-full object-cover rounded-lg"
+                width={500}
+                height={300}
               />
               <div className="absolute inset-0 bg-black opacity-20 hover:bg-opacity-20 transition-all duration-200" />
             </div>
@@ -86,6 +88,8 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
                 alt="Screenshot"
                 className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200"
                 onClick={() => openModal(movie.backdrop.url)}
+                width={500}
+                height={300}
               />
             </div>
           )}
@@ -112,6 +116,8 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
                 alt="Movie poster"
                 className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200"
                 onClick={() => openModal(movie.poster.url)}
+                width={300}
+                height={450}
               />
             </div>
           )}
@@ -136,7 +142,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
           <div className="relative max-w-full max-h-full">
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
+              className="absolute top-4 right-4 text-white hover:text-gray-300 z-10 cursor-pointer"
             >
               <X className="w-8 h-8" />
             </button>
@@ -145,6 +151,8 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
               alt="Full size"
               className="max-w-screen max-h-screen object-contain"
               onClick={(e) => e.stopPropagation()}
+              width={1920}
+              height={1080}
             />
           </div>
         </div>

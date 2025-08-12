@@ -3,12 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { getUserPurchases, MoviePurchaseResponse } from '@/apis/movie-purchase.api';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import Link from 'next/link';
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 const UserPurchasesPage: React.FC = () => {
   const [purchases, setPurchases] = useState<MoviePurchaseResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchPurchases = async () => {
@@ -17,20 +18,15 @@ const UserPurchasesPage: React.FC = () => {
         const response = await getUserPurchases();
         setPurchases(response.data);
       } catch (error: unknown) {
-        if (error && typeof error === 'object' && 'response' in error &&
-          error.response && typeof error.response === 'object' && 'data' in error.response &&
-          error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
-          setError(error.response.data.message as string);
-        } else {
-          setError('Failed to load purchases');
-        }
+        router.push('/auth/login');
+        setError('Failed to load purchases');
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchPurchases();
-  }, []);
+  }, [router]);
 
   if (isLoading) {
     return (

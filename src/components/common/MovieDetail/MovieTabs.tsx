@@ -14,9 +14,7 @@ const MovieTabs: React.FC<MovieTabsProps> = ({ movie }) => {
 
   const tabs: ReadonlyArray<{ id: TabType; label: string; icon: React.ReactNode }> = [
     { id: 'episode-tab', label: 'Tập phim', icon: null },
-    { id: 'gallery-tab', label: 'Thư viện', icon: null },
-    { id: 'cast-tab', label: 'Diễn viên', icon: null },
-    { id: 'suggestion-tab', label: 'Gợi ý', icon: null },
+    { id: 'gallery-tab', label: 'Thư viện', icon: null }
   ] as const
 
   return (
@@ -27,7 +25,7 @@ const MovieTabs: React.FC<MovieTabsProps> = ({ movie }) => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as TabType)}
-            className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
+            className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer ${activeTab === tab.id
               ? 'border-yellow-400 text-yellow-400'
               : 'border-transparent text-gray-400 hover:text-white'
               }`}

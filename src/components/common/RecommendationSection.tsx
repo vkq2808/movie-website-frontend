@@ -1,12 +1,11 @@
 'use client'
 import React, { useState, useEffect, useCallback } from 'react'
-import { RecommendationResponse, getRecommendations, RecommendationFilters } from '@/apis/recommendation.api'
+import { RecommendationResponse, getRecommendations, getTrendingRecommendations, RecommendationFilters } from '@/apis/recommendation.api'
 import { Movie } from '@/zustand'
 import MovieCard from './MovieCard'
 import LoadingSpinner from './LoadingSpinner'
 import { ChevronLeft, ChevronRight, RefreshCw, Filter } from 'lucide-react'
 import { isAuthError } from '@/utils/auth.util'
-import api, { handleApiError, apiEndpoint } from '@/utils/api.util'
 
 interface RecommendationSectionProps {
   title?: string
@@ -40,19 +39,18 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({
 
   const fetchTrendingMovies = useCallback(async (resetPage = false) => {
     const currentPage = resetPage ? 1 : page
-    const params = new URLSearchParams();
-
-    if (filters.limit) params.append('limit', filters.limit.toString());
-    if (currentPage) params.append('page', currentPage.toString());
-    if (filters.exclude_watched !== undefined) params.append('exclude_watched', filters.exclude_watched.toString());
-
-    const url = `${apiEndpoint.RECOMMENDATIONS}/trending${params.toString() ? `?${params.toString()}` : ''}`;
 
     try {
-      const response = await api.get(url);
+      const response = await getTrendingRecommendations({
+        limit: filters.limit,
+        page: currentPage,
+        exclude_watched: filters.exclude_watched,
+        exclude_purchased: filters.exclude_purchased,
+        min_score: filters.min_score,
+      });
 
-      if (response.data.success) {
-        const trendingMovies = response.data.data.recommendations
+      if (response.success) {
+        const trendingMovies = response.data.recommendations
 
         if (resetPage) {
           setRecommendations(trendingMovies)
@@ -61,13 +59,13 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({
           setRecommendations(prev => [...prev, ...trendingMovies])
         }
 
-        setHasMore(response.data.data.hasMore)
+        setHasMore(response.data.hasMore)
         return true;
       }
       return false;
     } catch (error) {
       console.error('Error fetching trending movies:', error);
-      return false;
+      throw error; // Re-throw to handle in main function
     }
   }, [filters, page])
 
@@ -78,43 +76,57 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({
 
       const currentPage = resetPage ? 1 : page
 
-      const response = await getRecommendations({
-        ...filters,
-        page: currentPage,
-      })
-
-      if (response.success) {
-        const newRecommendations = response.data.recommendations
-
-        if (resetPage) {
-          setRecommendations(newRecommendations)
-          setPage(1)
-        } else {
-          setRecommendations(prev => [...prev, ...newRecommendations])
+      // For trending type, directly call trending endpoint
+      if (filters.type === 'trending') {
+        const success = await fetchTrendingMovies(resetPage);
+        if (!success) {
+          setError('Failed to load trending movies')
         }
-
-        setHasMore(response.data.hasMore)
-      } else {
-        setError('Failed to load recommendations')
+        return;
       }
-    } catch (error: unknown) {
-      // Handle authentication errors gracefully - fetch trending instead
-      if (isAuthError(error)) {
-        try {
-          const success = await fetchTrendingMovies(resetPage);
-          if (success) {
-            setError(null) // Clear error since we successfully got trending movies
+
+      // First, try to get personalized recommendations
+      try {
+        const response = await getRecommendations({
+          ...filters,
+          page: currentPage,
+        })
+
+        if (response.success) {
+          const newRecommendations = response.data.recommendations
+
+          if (resetPage) {
+            setRecommendations(newRecommendations)
+            setPage(1)
           } else {
+            setRecommendations(prev => [...prev, ...newRecommendations])
+          }
+
+          setHasMore(response.data.hasMore)
+        } else {
+          setError('Failed to load recommendations')
+        }
+      } catch (error: unknown) {
+        // Handle authentication errors gracefully - fetch trending instead
+        if (isAuthError(error)) {
+          console.log('User not authenticated, falling back to trending movies')
+          try {
+            const success = await fetchTrendingMovies(resetPage);
+            if (!success) {
+              setError('Failed to load movies')
+            }
+          } catch (trendingError) {
+            console.error('Error fetching trending movies:', trendingError)
             setError('Failed to load movies')
           }
-        } catch (trendingError) {
-          console.error('Error fetching trending movies:', trendingError)
-          setError('Failed to load movies')
+        } else {
+          console.error('Error fetching recommendations:', error)
+          setError('Failed to load recommendations')
         }
-      } else {
-        console.error('Error fetching recommendations:', error)
-        setError('Failed to load recommendations')
       }
+    } catch (error: unknown) {
+      console.error('Unexpected error in fetchRecommendations:', error)
+      setError('Failed to load movies')
     } finally {
       setLoading(false)
       setRefreshing(false)
@@ -164,13 +176,13 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({
 
   useEffect(() => {
     fetchRecommendations(true)
-  }, [filters])
+  }, [filters, fetchRecommendations])
 
   useEffect(() => {
     if (page > 1) {
       fetchRecommendations()
     }
-  }, [page])
+  }, [page, fetchRecommendations])
 
   if (loading && recommendations.length === 0) {
     return (
