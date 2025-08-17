@@ -1,6 +1,7 @@
 'use client';
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { SupportedLanguage } from '../utils/locale.util';
+import { useSettings } from './settings.context';
 
 interface LanguageContextType {
   language: SupportedLanguage;
@@ -22,6 +23,14 @@ interface LanguageProviderProps {
  */
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState<SupportedLanguage>('vi');
+  const { settings } = useSettings();
+
+  useEffect(() => {
+    if (settings?.defaultLanguage) {
+      const next = settings.defaultLanguage as SupportedLanguage;
+      if (next && next !== language) setLanguage(next);
+    }
+  }, [settings?.defaultLanguage]);
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage }}>

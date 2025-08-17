@@ -23,11 +23,9 @@ function FacebookOauth2Content() {
         .then((res) => {
           console.log('Facebook OAuth2 Callback Response:', res.data);
           if (res.status === 200) {
-
             try {
               if (res.data.data.user) {
-                console.log(res.data.data.access_token, res.data.data.refresh_token, res.data.data.user);
-                setAuth({ access_token: res.data.data.access_token, refresh_token: res.data.data.refresh_token, user: res.data.data.user })
+                setAuth({ user: res.data.data.user })
               }
             } catch (error) {
               console.error('Error setting user:', error);
@@ -42,10 +40,10 @@ function FacebookOauth2Content() {
   }, [searchParams, setAuth, setUser]);
 
   React.useEffect(() => {
-    if (auth.access_token) {
+    if (auth.user) {
       window.close();
     }
-  }, [auth.access_token]);
+  }, [auth.user]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-black">

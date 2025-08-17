@@ -32,7 +32,7 @@ const VerifyContent: React.FC = () => {
     setIsResending(true);
     try {
       if (!email) return;
-      const res = await api.post(`${apiEndpoint.AUTH}/resend-otp`, { email });
+      const res = await api.post(`${apiEndpoint.AUTH}/resend-otp`, { email, otp_type: 'VERIFY_EMAIL' });
       if (res.status === 200) {
         // Đặt lại timer khi gửi lại OTP thành công
         setCountdown(60);

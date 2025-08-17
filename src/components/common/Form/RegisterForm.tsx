@@ -1,8 +1,9 @@
 'use client';
 import React from 'react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authApi, RegisterData } from '@/apis/auth.api';
+import { Eye, EyeOff } from 'lucide-react';
 
 const RegisterForm: React.FC = () => {
   const router = useRouter();
@@ -15,35 +16,112 @@ const RegisterForm: React.FC = () => {
   }
   const [formData, setFormData] = useState(initialRegisterData);
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [info, setInfo] = useState('');
+  const [pwdVisible, setPwdVisible] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [usernameAvailable, setUsernameAvailable] = useState<null | boolean>(null);
+  const [emailAvailable, setEmailAvailable] = useState<null | boolean>(null);
+  const [checking, setChecking] = useState<{ email: boolean; username: boolean }>({ email: false, username: false });
+
+  const canSubmit = useMemo(() => {
+    return !submitting && (!checking.email && !checking.username);
+  }, [submitting, checking]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  // Debounced availability checks
+  useEffect(() => {
+    const handler = setTimeout(async () => {
+      if (formData.username && formData.username.length >= 3) {
+        setChecking((c) => ({ ...c, username: true }));
+        try {
+          const res = await authApi.checkUsername(formData.username);
+          setUsernameAvailable(res.data.available);
+        } catch (_) {
+          setUsernameAvailable(null);
+        } finally {
+          setChecking((c) => ({ ...c, username: false }));
+        }
+      } else {
+        setUsernameAvailable(null);
+      }
+    }, 400);
+    return () => clearTimeout(handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.username]);
+
+  useEffect(() => {
+    const handler = setTimeout(async () => {
+      const email = formData.email.trim();
+      if (email) {
+        setChecking((c) => ({ ...c, email: true }));
+        try {
+          const res = await authApi.checkEmail(email);
+          setEmailAvailable(res.data.available);
+        } catch (_) {
+          setEmailAvailable(null);
+        } finally {
+          setChecking((c) => ({ ...c, email: false }));
+        }
+      } else {
+        setEmailAvailable(null);
+      }
+    }, 400);
+    return () => clearTimeout(handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.email]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setInfo('');
+    setSubmitting(true);
 
     const isValid = await validateData();
     if (!isValid) {
+      setSubmitting(false);
       return;
     }
 
     await authApi.register(formData).then(res => {
       if (res.success) {
-        router.push(`/auth/verify?email=${formData.email}`);
+        setInfo('Đăng ký thành công. Đang chuyển hướng đến trang nhập OTP...');
+        // Small delay so users can see the message before redirect
+        setTimeout(() => {
+          router.push(`/auth/verify?email=${formData.email}`);
+        }, 900);
       }
     }).catch(err => {
-      setError(err.response.data.message);
+      const msg = err?.response?.data?.message;
+      if (Array.isArray(msg) && msg.length > 0) {
+        setError(msg[0]);
+      } else if (typeof msg === 'string') {
+        setError(msg);
+      } else {
+        setError('Đăng ký thất bại. Vui lòng thử lại.');
+      }
     });
+    // Keep submitting state if success (until redirect). If failed, stop loading.
+    setSubmitting(false);
   };
 
   const validateData = async () => {
     // Validate the form data
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,50}$/;
+    const usernameRegex = /^[a-zA-Z0-9_]{3,30}$/;
 
     if (!formData.username) {
       setError('Username is required');
+      return false;
+    }
+
+    if (!usernameRegex.test(formData.username)) {
+      setError('Username must be 3-30 characters and contain only letters, numbers, and underscores');
       return false;
     }
 
@@ -63,7 +141,7 @@ const RegisterForm: React.FC = () => {
     }
 
     if (!passwordRegex.test(formData.password)) {
-      setError('Password must contain at least 8 characters, including one letter and one number');
+      setError('Password must be 8-50 chars, include upper, lower, and a number');
       return false;
     }
 
@@ -82,11 +160,21 @@ const RegisterForm: React.FC = () => {
       return false;
     }
 
+    // Check availability results if present
+    if (emailAvailable === false) {
+      setError('Email is already in use');
+      return false;
+    }
+    if (usernameAvailable === false) {
+      setError('Username is already taken');
+      return false;
+    }
+
     return true;
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 text-black">
       <div>
         <label htmlFor="username" className="block text-gray-700 font-medium">
           Username
@@ -98,10 +186,15 @@ const RegisterForm: React.FC = () => {
           placeholder="Username"
           value={formData.username}
           onChange={handleChange}
-          autoComplete="email"
+          autoComplete="username"
           required
-          className="mt-1 w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full text-gray-700 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+        {usernameAvailable !== null && (
+          <p className={`text-sm mt-1 ${usernameAvailable ? 'text-green-600' : 'text-red-600'}`}>
+            {checking.username ? 'Đang kiểm tra...' : usernameAvailable ? 'Username khả dụng' : 'Username đã được sử dụng'}
+          </p>
+        )}
       </div>
       <div>
         <label htmlFor="email" className="block text-gray-700 font-medium">
@@ -115,39 +208,55 @@ const RegisterForm: React.FC = () => {
           value={formData.email}
           onChange={handleChange}
           required
-          className="mt-1 w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full text-gray-700 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+        {emailAvailable !== null && (
+          <p className={`text-sm mt-1 ${emailAvailable ? 'text-green-600' : 'text-red-600'}`}>
+            {checking.email ? 'Đang kiểm tra...' : emailAvailable ? 'Email khả dụng' : 'Email đã được sử dụng'}
+          </p>
+        )}
       </div>
       <div>
         <label htmlFor="password" className="block text-gray-700 font-medium">
           Password
         </label>
-        <input
-          type="password"
-          name="password"
-          id="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          autoComplete="shipping mobile tel-local-suffix webauthn"
-          className="mt-1 w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        <div className="relative">
+          <input
+            type={pwdVisible ? 'text' : 'password'}
+            name="password"
+            id="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            autoComplete="new-password"
+            className="mt-1 w-full text-gray-700 p-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button type="button" onClick={() => setPwdVisible((v) => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+            {pwdVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
       </div>
       <div>
         <label htmlFor="confirmPassword" className="block text-gray-700 font-medium">
           Confirm Password
         </label>
-        <input
-          type="password"
-          name="confirmPassword"
-          id="confirmPassword"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-          className="mt-1 w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        <div className="relative">
+          <input
+            type={confirmVisible ? 'text' : 'password'}
+            name="confirmPassword"
+            id="confirmPassword"
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+            autoComplete="new-password"
+            className="mt-1 w-full p-2 pr-10 text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button type="button" onClick={() => setConfirmVisible((v) => !v)} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+            {confirmVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
       </div>
       <div>
         <label htmlFor="birthdate" className="block text-gray-700 font-medium">
@@ -160,15 +269,17 @@ const RegisterForm: React.FC = () => {
           value={formData.birthdate}
           onChange={handleChange}
           required
-          className="mt-1 w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-1 w-full text-gray-700 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
       {error && <p className="text-red-500">{error}</p>}
+      {!error && info && <p className="text-blue-600">{info}</p>}
       <button
         type="submit"
-        className="w-full bg-blue-500 text-neutral-50 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+        disabled={!canSubmit}
+        className={`w-full bg-blue-500 text-neutral-50 py-2 rounded-lg transition duration-300 ${!canSubmit ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-600'}`}
       >
-        Đăng ký
+        {submitting ? 'Đang gửi...' : 'Đăng ký'}
       </button>
     </form>
   );

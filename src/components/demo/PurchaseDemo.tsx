@@ -92,10 +92,7 @@ const PurchaseDemo: React.FC = () => {
         {/* Current Wallet Status */}
         <div className="max-w-md mx-auto mb-12">
           <h2 className="text-2xl font-semibold mb-4 text-center">Your Current Wallet</h2>
-          <WalletBalance
-            showAddBalance={false}
-            onBalanceUpdate={setCurrentBalance}
-          />
+          <WalletBalance showAddBalance={false} />
         </div>
 
         {/* Features Grid */}

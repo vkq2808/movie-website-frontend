@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npx next dev --turbopack",
+    "dev": "npx next dev",
     "build": "npx next build",
     "start": "npx next start",
     "lint": "npx next lint"
@@ -26,7 +26,6 @@
     "i18n-iso-countries": "^7.14.0",
     "lucide-react": "^0.479.0",
     "next": "15.2.0",
-    "persist-and-sync": "^1.2.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.62.0",

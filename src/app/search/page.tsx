@@ -147,7 +147,7 @@ const SearchContent = () => {
         setResults(response.data)
 
         // Save search query to history if user is logged in
-        if (auth.access_token && query.trim()) {
+        if (auth.user && query.trim()) {
           saveSearchHistory(query.trim())
         }
       } catch (error) {
@@ -169,7 +169,7 @@ const SearchContent = () => {
       setResults(null)
       setCurrentPage(1)
     }
-  }, [query, activeFilters, language, currentPage, auth.access_token, searchParams])
+  }, [query, activeFilters, language, currentPage, auth.user, searchParams])
 
   useEffect(() => {
     // Update genres filter options with available genres from the store

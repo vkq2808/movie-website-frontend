@@ -1,23 +1,59 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
-  // Check if the request is for an admin route
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    // In a real application, you would validate the JWT token here
-    // For now, we'll let the client-side handle authentication
-    // The AdminLayout component will redirect if not authenticated or not admin
+// Simple in-memory cache for maintenance settings in edge runtime
+let cachedSettings: { maintenanceMode?: boolean } | null = null;
+let lastFetch = 0;
+const CACHE_MS = 30_000; // 30s
 
-    // You could also add server-side token validation here:
-    // const token = request.cookies.get('auth_token');
-    // if (!token || !validateToken(token)) {
-    //   return NextResponse.redirect(new URL('/auth/login', request.url));
-    // }
+const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:2808/';
+const SETTINGS_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+
+async function getSettings(): Promise<{ maintenanceMode?: boolean } | null> {
+  const now = Date.now();
+  if (cachedSettings && now - lastFetch < CACHE_MS) return cachedSettings;
+  try {
+    const res = await fetch(`${API_BASE_URL}/settings`, { cache: 'no-store' });
+    const json = await res.json().catch(() => ({}));
+    cachedSettings = json?.data || {};
+    lastFetch = now;
+    return cachedSettings;
+  } catch {
+    return cachedSettings || null;
+  }
+}
+export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const accept = request.headers.get('accept') || '';
+  const isHTML = accept.includes('text/html');
+  // Skip non-HTML (assets, API, data, flight)
+  if (!isHTML) {
+    return NextResponse.next();
+  }
+  // Bypass middleware for RSC/Router prefetch requests to prevent corrupting flight responses
+  const isRouterPrefetch = request.headers.get('next-router-prefetch') === '1' || request.headers.get('purpose') === 'prefetch';
+  const isRSC = request.headers.get('RSC') === '1' || request.headers.get('rsc') === '1';
+  const isNextData = pathname.startsWith('/_next/data') || pathname.startsWith('/_next/static');
+  if (isRouterPrefetch || isRSC || isNextData) {
+    return NextResponse.next();
+  }
+
+  // Maintenance mode: block everything except auth and admin and maintenance page itself
+  const settings = await getSettings();
+  if (settings?.maintenanceMode) {
+    const isPublicAllowed = pathname.startsWith('/auth') || pathname.startsWith('/maintenance') || pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname === '/favicon.ico';
+    const isAdmin = pathname.startsWith('/admin');
+    if (!isAdmin && !isPublicAllowed) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/maintenance';
+      url.search = '';
+      return NextResponse.redirect(url);
+    }
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/admin/:path*']
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

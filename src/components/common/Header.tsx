@@ -7,6 +7,7 @@ import { ChevronDownIcon, SearchIcon, UserIcon } from "lucide-react";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { useLanguage } from "@/contexts/language.context";
 import Image from "next/image";
+import { useSettings } from "@/contexts/settings.context";
 
 const Header = () => {
   const genres = useGenreStore(state => state.genres);
@@ -15,6 +16,7 @@ const Header = () => {
   const [search, setSearch] = React.useState('');
   const { language } = useLanguage();
   const router = useRouter();
+  const { settings } = useSettings();
 
   // Function to get genre name based on current language
   const getGenreName = (genre: Genre) => {
@@ -39,7 +41,7 @@ const Header = () => {
         <nav className="hidden lg:flex items-center space-x-6">
           {/* Logo */}
           <Link href="/" className={`text-2xl font-bold text-neutral-100 hover:text-gray-300 transition-colors mr-10 h-12 w-auto flex items-center`}>
-            MyLogo
+            {settings?.siteName || 'MovieStream'}
           </Link>
           <div className="flex-2 mx-4 relative">
             <form onSubmit={(e) => {
@@ -126,6 +128,7 @@ const Header = () => {
 
 const UserInformation = () => {
   const user = useAuthStore(state => state.user);
+  const logout = useAuthStore(state => state.logout);
   const fetchUser = useAuthStore(state => state.fetchUser);
   const handleLogout = useAuthStore(state => state.logout);
   const router = useRouter();
@@ -146,7 +149,7 @@ const UserInformation = () => {
     <div className="flex items-center space-x-4">
       {user ? (
         <>
-          <Image src={user.photo_url} width={32} height={32} alt="User Avatar" className="w-8 h-8 rounded-full" />
+          <Image src={user.photo_url ?? '/default-avatar.png'} width={32} height={32} alt="User Avatar" className="w-8 h-8 rounded-full" />
           <Link href="/profile" className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors">
             {user.username || user.email}
           </Link>

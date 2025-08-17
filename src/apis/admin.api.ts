@@ -153,8 +153,31 @@ const deleteUser = async (id: string): Promise<ApiResponse<null>> => {
 
 // Dashboard APIs
 const getAdminStats = async (): Promise<ApiResponse<AdminStats>> => {
-  const response = await api.get('/admin/stats');
-  return response.data;
+  try {
+    const response = await api.get('/admin/stats');
+    return response.data;
+  } catch (err: any) {
+    const status = err?.response?.status;
+    if (status === 404) {
+      // Fallback: backend does not expose /admin/stats yet
+      const fallback: ApiResponse<AdminStats> = {
+        success: true,
+        message: 'Admin stats endpoint not available; using defaults',
+        data: {
+          totalUsers: 0,
+          totalMovies: 0,
+          totalViews: 0,
+          newUsersThisWeek: 0,
+          recentActivity: [],
+          userGrowth: [],
+          genreDistribution: [],
+          mostWatchedMovies: [],
+        },
+      };
+      return fallback;
+    }
+    throw err;
+  }
 };
 
 const getTrendingMovies = async (params?: {

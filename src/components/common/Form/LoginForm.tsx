@@ -19,10 +19,19 @@ const LoginForm = () => {
 
     await authApi.login({ email, password }).then(res => {
       if (res.success) {
-        setAuth({ access_token: res.data.access_token, refresh_token: res.data.refresh_token, user: res.data.user })
-          .then(() => {
-            router.push('/');
-          });
+        // Persist user in local store
+        setAuth({ user: res.data.user })
+        // Write FE-domain cookies so middleware (edge) can validate using backend
+        try {
+          const isSecure = typeof window !== 'undefined' && window.location.protocol === 'https:';
+          const at = res.data.access_token;
+          const rt = res.data.refresh_token;
+          if (at) document.cookie = `access_token=${at}; Path=/; SameSite=Lax${isSecure ? '; Secure' : ''}`;
+          if (rt) document.cookie = `refresh_token=${rt}; Path=/; SameSite=Lax${isSecure ? '; Secure' : ''}`;
+          // Broadcast token update
+          try { window.dispatchEvent(new CustomEvent('auth:token-updated')); } catch { }
+          try { new BroadcastChannel('auth').postMessage({ type: 'token-updated' }); } catch { }
+        } catch { /* ignore */ }
       }
     }).catch(err => {
       setErrorMsg('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
@@ -45,7 +54,7 @@ const LoginForm = () => {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Nhập email của bạn"
           required
-          className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full p-3 border border-gray-300 text-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
       </div>
       <div>
@@ -59,7 +68,7 @@ const LoginForm = () => {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Nhập mật khẩu của bạn"
           required
-          className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full text-gray-700 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
       </div>
       <button

@@ -10,9 +10,11 @@ import { useSearchParams } from 'next/navigation';
 const LoginOauth2 = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const auth = useAuthStore(state => state);
+  const fetchUser = useAuthStore(state => state.fetchUser);
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get('from');
+  const redirect = searchParams.get('redirect');
 
   const handleGoogleOauth2Login = () => {
     // setIsLoading(true);
@@ -24,16 +26,25 @@ const LoginOauth2 = () => {
     window.open(`${baseURL}` + '/auth/facebook-oauth2', 'newwindow', 'width=500, height=600');
   }
 
-  const handleReturnToUrl = () => {
-    setIsLoading(false);
-    router.push(from || '/');
+  const handleReturnToUrl = async () => {
+    setIsLoading(true);
+    try {
+      // Ensure we have the latest user with correct role from backend
+      await fetchUser();
+    } catch {
+      // ignore fetch errors, still proceed to redirect
+    } finally {
+      const target = from || redirect || '/';
+      router.push(target);
+      setIsLoading(false);
+    }
   }
 
   React.useEffect(() => {
-    if (auth.access_token) {
+    if (auth.user) {
       handleReturnToUrl();
     }
-  }, [auth.access_token, router, from]);
+  }, [auth.user, router, from, redirect]);
 
   return (
     isLoading ?

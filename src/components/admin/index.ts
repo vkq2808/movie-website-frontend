@@ -1,2 +1,3 @@
 export { default as AdminLayout } from './AdminLayout';
-export { default as MovieForm } from './MovieForm';
+export { default as AdminGuard } from './AdminGuard';
+

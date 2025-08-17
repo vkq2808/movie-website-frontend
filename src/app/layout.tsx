@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Footer, Header, LoadingOverlay } from "@/components/common";
-import dotenv from "dotenv";
+import TokenWatcher from "@/components/common/TokenWatcher";
 import React from "react";
 import { LanguageProvider } from "@/contexts/language.context";
-
-dotenv.config({ path: ".env" });
+import { SettingsProvider } from "@/contexts/settings.context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -81,8 +80,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`hide-scrollbar ${geistSans.variable} ${geistMono.variable}`}>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#000000" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
@@ -114,14 +113,18 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased flex flex-col min-h-screen">
-        <LanguageProvider>
-          <LoadingOverlay />
-          <Header />
-          <main className="flex-1 bg-gray-900 text-gray-100">
-            {children}
-          </main>
-          <Footer />
-        </LanguageProvider>
+        <SettingsProvider>
+          <LanguageProvider>
+            <LoadingOverlay />
+            <TokenWatcher />
+            {/* Disable automatic prefetch globally if needed by passing prefetch={false} on links. Header remains as is. */}
+            <Header />
+            <main className="flex-1 bg-gray-900 text-gray-100">
+              {children}
+            </main>
+            <Footer />
+          </LanguageProvider>
+        </SettingsProvider>
       </body>
     </html>
   );

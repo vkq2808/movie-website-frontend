@@ -22,6 +22,23 @@ export async function getMovieById(id: string): Promise<ApiResponse<Movie>> {
   return response.data
 }
 
+// Generic movies listing with optional filters and pagination
+export async function getMovies(params?: {
+  page?: number;
+  limit?: number;
+  title?: string;
+  status?: string;
+  genres?: string; // comma-separated IDs
+  original_language?: string;
+  sort_by?: 'popularity' | 'release_date' | 'vote_average' | 'title' | 'vote_count';
+  sort_order?: 'ASC' | 'DESC';
+}): Promise<PaginatedApiResponse<Movie>> {
+  const response = await api.get<PaginatedApiResponse<Movie>>(`${apiEndpoint.MOVIE}`, {
+    params: params ?? {}
+  })
+  return response.data
+}
+
 export async function getMovieAlternativeTitles(movieId: string): Promise<ApiResponse<AlternativeTitle[]>> {
   const response = await api.get<ApiResponse<AlternativeTitle[]>>(
     `${apiEndpoint.MOVIE}/${movieId}/alternative-titles`

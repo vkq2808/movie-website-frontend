@@ -47,26 +47,6 @@ html.dark {
   --foreground: #ffffff;
 }
 
-/* Base body styling */
-body {
-  user-select: none;
-  transition: all 0.2s ease-in-out;
-  min-height: 100vh;
-  font-feature-settings: 'rlig' 1, 'calt' 1;
-}
-
-/* Text selection improvements */
-label,
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  user-select: text;
-}
-
 /* Focus improvements for accessibility */
 *:focus {
   outline: 2px solid #3b82f6;
@@ -80,22 +60,6 @@ h6 {
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
-}
-
-/* Typography improvements */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.025em;
-}
-
-p {
-  line-height: 1.6;
 }
 
 /* Animation utilities */

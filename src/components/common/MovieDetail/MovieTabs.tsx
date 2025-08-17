@@ -7,14 +7,15 @@ interface MovieTabsProps {
   movie: Movie
 }
 
-type TabType = 'episode-tab' | 'gallery-tab' | 'cast-tab' | 'suggestion-tab'
+type TabType = 'episode-tab' | 'gallery-tab' | 'cast-tab' | 'suggestion-tab' | 'comments-tab'
 
 const MovieTabs: React.FC<MovieTabsProps> = ({ movie }) => {
   const [activeTab, setActiveTab] = useState<TabType>('episode-tab')
 
   const tabs: ReadonlyArray<{ id: TabType; label: string; icon: React.ReactNode }> = [
     { id: 'episode-tab', label: 'Tập phim', icon: null },
-    { id: 'gallery-tab', label: 'Thư viện', icon: null }
+    { id: 'gallery-tab', label: 'Thư viện', icon: null },
+    { id: 'comments-tab', label: 'Bình luận', icon: null },
   ] as const
 
   return (

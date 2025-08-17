@@ -1,18 +1,16 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getWalletBalance, addBalance } from '@/apis/wallet.api';
 import { useAuthStore } from '@/zustand/auth.store';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 
 interface WalletBalanceProps {
   showAddBalance?: boolean;
-  onBalanceUpdate?: (newBalance: number) => void;
   className?: string;
 }
 
 const WalletBalance: React.FC<WalletBalanceProps> = ({
   showAddBalance = false,
-  onBalanceUpdate,
   className = '',
 }) => {
   const [balance, setBalance] = useState(0);
@@ -24,7 +22,7 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
   // Get user from auth store
   const user = useAuthStore(state => state.user);
 
-  const fetchBalance = async () => {
+  const fetchBalance = useCallback(async () => {
     // Only fetch if user is authenticated
     if (!user) {
       setIsLoading(false);
@@ -36,20 +34,16 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
       const response = await getWalletBalance();
       const newBalance = response.data.balance;
       setBalance(newBalance);
-
-      if (onBalanceUpdate) {
-        onBalanceUpdate(newBalance);
-      }
     } catch (error) {
       setError('Failed to load wallet balance');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchBalance();
-  }, [user]);
+  }, [fetchBalance]);
 
   const handleAddBalance = async () => {
     const amount = parseFloat(addAmount);
@@ -67,10 +61,6 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
       const newBalance = response.data.balance;
       setBalance(newBalance);
       setAddAmount('');
-
-      if (onBalanceUpdate) {
-        onBalanceUpdate(newBalance);
-      }
     } catch (error: unknown) {
       if (error && typeof error === 'object' && 'response' in error &&
         error.response && typeof error.response === 'object' && 'data' in error.response &&

@@ -26,7 +26,7 @@ const GoogleOAuth2Content = () => {
         params: { code, scope, authUser, prompt }
       }).then((res) => {
         if (res.status === 200) {
-          setAuth({ access_token: res.data.data.access_token, refresh_token: res.data.data.refresh_token, user: res.data.data.user });
+          setAuth({ user: res.data.data.user });
           console.log('Google OAuth2 Callback Response:', res.data);
         }
       })
@@ -37,10 +37,10 @@ const GoogleOAuth2Content = () => {
   }, [searchParams, setAuth, setUser]);
 
   useEffect(() => {
-    if (auth.access_token) {
+    if (auth.user) {
       window.close();
     }
-  }, [auth.access_token]);
+  }, [auth.user]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">

@@ -22,12 +22,19 @@ export interface RegisterData {
   username: string;
   email: string;
   password: string;
-  confirmPassword: string;
-  birthdate: string;
+  confirmPassword: string; // client-side only, will not be sent to backend
+  birthdate: string; // YYYY-MM-DD
 };
 
 const register = async (data: RegisterData): Promise<ApiResponse<null>> => {
-  const response = await api.post<ApiResponse<null>>(`${apiEndpoint.AUTH}/register`, data);
+  // Send only whitelisted fields expected by backend DTO
+  const payload = {
+    username: data.username,
+    email: data.email,
+    password: data.password,
+    birthdate: data.birthdate,
+  };
+  const response = await api.post<ApiResponse<null>>(`${apiEndpoint.AUTH}/register`, payload);
   return response.data;
 }
 
@@ -36,8 +43,8 @@ export interface VerifyData {
   otp: string;
 }
 
-const verify = async (data: VerifyData): Promise<ApiResponse<LoginResponse>> => {
-  const response = await api.post<ApiResponse<LoginResponse>>(`${apiEndpoint.AUTH}/verify`, data);
+const verify = async (data: VerifyData): Promise<ApiResponse<null>> => {
+  const response = await api.post<ApiResponse<null>>(`${apiEndpoint.AUTH}/verify`, data);
   return response.data;
 }
 
@@ -64,10 +71,21 @@ const resetPassword = async (data: ResetPasswordData): Promise<ApiResponse<null>
 
 export interface ResendOtpData {
   email: string;
+  otp_type: 'VERIFY_EMAIL' | 'RESET_PASSWORD';
 }
 
 const resendOTP = async (data: ResendOtpData): Promise<ApiResponse<null>> => {
   const response = await api.post<ApiResponse<null>>(`${apiEndpoint.AUTH}/resend-otp`, data);
+  return response.data;
+}
+
+const checkEmail = async (email: string): Promise<ApiResponse<{ available: boolean }>> => {
+  const response = await api.get<ApiResponse<{ available: boolean }>>(`${apiEndpoint.AUTH}/check-email`, { params: { email } });
+  return response.data;
+}
+
+const checkUsername = async (username: string): Promise<ApiResponse<{ available: boolean }>> => {
+  const response = await api.get<ApiResponse<{ available: boolean }>>(`${apiEndpoint.AUTH}/check-username`, { params: { username } });
   return response.data;
 }
 
@@ -78,4 +96,6 @@ export const authApi = {
   forgetPassword,
   resetPassword,
   resendOTP,
+  checkEmail,
+  checkUsername,
 };

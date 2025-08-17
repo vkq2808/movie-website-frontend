@@ -1,45 +1,68 @@
 import { create } from 'zustand';
-import { persistNSync } from 'persist-and-sync';
 import { User } from './types';
+import type { ApiResponse } from '@/types/api.response';
 import api, { apiEndpoint } from '@/utils/api.util';
 
 export interface AuthStore {
-  access_token: string | undefined,
-  refresh_token: string | undefined,
   user: User | undefined
   ,
-  setAuth: ({ access_token, refresh_token, user }: { access_token: string | undefined, refresh_token: string | undefined, user: User }) => Promise<void>;
-  setAccessToken: (access_token: string) => void;
+  setAuth: ({ user }: { user: User }) => Promise<void>;
   setUser: (user: User) => void;
   fetchUser: () => Promise<void>;
   logout: () => void;
+  hydrated: boolean;
 }
 
 export const useAuthStore = create<AuthStore>(
-  persistNSync((set, get) => ({
-    access_token: undefined,
-    refresh_token: undefined,
+  (set, get) => ({
     user: undefined,
-    setAuth: async ({ access_token, refresh_token, user }) => {
+    hydrated: false,
+    setAuth: async ({ user }) => {
+      // Update store
       set({
-        access_token: access_token || undefined,
-        refresh_token: refresh_token || undefined,
         user: user
       });
+      // Persist only user to localStorage; both tokens live in cookies now
+      try {
+        if (user) {
+          localStorage.setItem('auth', JSON.stringify({ user }));
+        } else {
+          localStorage.removeItem('auth');
+        }
+      } catch { /* ignore */ }
     },
-    setAccessToken: (access_token) => set((state) => ({ ...state, access_token })),
     logout: () => {
-      set({ access_token: undefined, refresh_token: undefined, user: undefined });
+      set({ user: undefined, hydrated: true });
+      try {
+        localStorage.removeItem('auth');
+      } catch {
+        // ignore
+      }
+      // Clear token cookies
+      if (typeof document !== 'undefined') {
+        try {
+          document.cookie = 'access_token=; Path=/; Max-Age=0; SameSite=Lax';
+          document.cookie = 'refresh_token=; Path=/; Max-Age=0; SameSite=Lax';
+          try { window.dispatchEvent(new CustomEvent('auth:token-updated')); } catch { }
+          try { new BroadcastChannel('auth').postMessage({ type: 'token-updated' }); } catch { }
+        } catch { /* ignore */ }
+      }
+      delete api.defaults.headers.common['Authorization'];
     },
     setUser: (user: User) => set((state) => ({ ...state, user })),
     fetchUser: async () => {
-      if (!get().access_token) {
-        return
+      try {
+        const { data } = await api.get<ApiResponse<User>>(`${apiEndpoint.AUTH}/me`);
+        if (data?.success && data.data) {
+          set((state) => ({ ...state, user: data.data }));
+        }
+      } catch (err) {
+        // Ignore 401s silently; user is not authenticated
+        // Only log unexpected errors
+        // @ts-expect-error: err may be an AxiosError; safe optional chaining check
+        if (!(err?.response?.status === 401)) {
+          console.error('Error fetching user:', err);
+        }
       }
-      const res = await api.get<User>(`${apiEndpoint.AUTH}/me`).catch((err) => {
-        console.error('Error fetching user:', err)
-        return { data: undefined }
-      });
-      set((state) => ({ ...state, user: res.data }));
     }
-  }), { name: 'auth' }));
+  }));
