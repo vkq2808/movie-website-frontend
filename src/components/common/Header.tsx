@@ -128,22 +128,16 @@ const Header = () => {
 
 const UserInformation = () => {
   const user = useAuthStore(state => state.user);
-  const logout = useAuthStore(state => state.logout);
-  const fetchUser = useAuthStore(state => state.fetchUser);
   const handleLogout = useAuthStore(state => state.logout);
   const router = useRouter();
 
   const handleLoginNavigate = () => {
     // Redirect to login with current path as query
     const currentPath = window.location.pathname
+    if (currentPath === "/")
+      router.push('/auth/login')
     router.push(`/auth/login?from=${encodeURIComponent(currentPath)}`)
   }
-
-  React.useEffect(() => {
-    if (!user) {
-      fetchUser();
-    }
-  }, [user, fetchUser]);
 
   return (
     <div className="flex items-center space-x-4">
@@ -154,7 +148,7 @@ const UserInformation = () => {
             {user.username || user.email}
           </Link>
           {user.role === 'admin' && (
-            <Link href="/admin" className="text-lg font-medium text-blue-400 hover:text-blue-300 transition-colors">
+            <Link href="/admin" prefetch={false} className="text-lg font-medium text-blue-400 hover:text-blue-300 transition-colors">
               Admin
             </Link>
           )}

@@ -1,6 +1,5 @@
 "use client";
 import React from 'react';
-import { AdminGuard, AdminLayout } from '@/components/admin';
 import { adminApi, type SystemSettings } from '@/apis/admin.api';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 
@@ -57,112 +56,110 @@ export default function AdminSettingsPage() {
   };
 
   return (
-    <AdminGuard>
-      <AdminLayout>
-        <header className="mb-6">
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-            System Settings
-          </h1>
-          <p className="mt-1 text-sm text-gray-400">Manage site-wide configuration and operational flags.</p>
-        </header>
-        {loading && (
-          <div className="flex h-40 items-center justify-center">
-            <LoadingSpinner />
+    <>
+      <header className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+          System Settings
+        </h1>
+        <p className="mt-1 text-sm text-gray-400">Manage site-wide configuration and operational flags.</p>
+      </header>
+      {loading && (
+        <div className="flex h-40 items-center justify-center">
+          <LoadingSpinner />
+        </div>
+      )}
+      {!loading && error && (
+        <div className="rounded-md border border-red-700/60 bg-red-900/20 p-3 text-sm text-red-200">
+          {error}
+        </div>
+      )}
+      {!loading && !error && settings && (
+        <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
+          <Section title="General">
+            <LabeledInput
+              label="Site Name"
+              value={settings.siteName}
+              onChange={v => handleChange('siteName', v)}
+            />
+            <LabeledInput
+              label="Site Description"
+              value={settings.siteDescription}
+              onChange={v => handleChange('siteDescription', v)}
+            />
+            <LabeledInput
+              label="Contact Email"
+              type="email"
+              value={settings.contactEmail}
+              onChange={v => handleChange('contactEmail', v)}
+            />
+            <ToggleRow
+              label="Maintenance Mode"
+              checked={settings.maintenanceMode}
+              onChange={v => handleChange('maintenanceMode', v)}
+            />
+            <ToggleRow
+              label="Enable Registration"
+              checked={settings.registrationEnabled}
+              onChange={v => handleChange('registrationEnabled', v)}
+            />
+          </Section>
+
+          <Section title="Notifications">
+            <ToggleRow
+              label="Email Notifications"
+              checked={settings.emailNotifications}
+              onChange={v => handleChange('emailNotifications', v)}
+            />
+            <ToggleRow
+              label="Push Notifications"
+              checked={settings.pushNotifications}
+              onChange={v => handleChange('pushNotifications', v)}
+            />
+          </Section>
+
+          <Section title="Defaults">
+            <LabeledInput
+              label="Default Language"
+              value={settings.defaultLanguage}
+              onChange={v => handleChange('defaultLanguage', v)}
+            />
+            <NumberInput
+              label="Max File Size (MB)"
+              value={settings.maxFileSize}
+              onChange={v => handleChange('maxFileSize', v)}
+            />
+            <NumberInput
+              label="Session Timeout (minutes)"
+              value={settings.sessionTimeout}
+              onChange={v => handleChange('sessionTimeout', v)}
+            />
+          </Section>
+
+          <Section title="Maintenance">
+            <LabeledInput
+              label="Backup Frequency"
+              value={settings.backupFrequency}
+              onChange={v => handleChange('backupFrequency', v)}
+            />
+            <NumberInput
+              label="Log Retention Days"
+              value={settings.logRetentionDays}
+              onChange={v => handleChange('logRetentionDays', v)}
+            />
+          </Section>
+
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              disabled={saving}
+              className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-blue-500 to-indigo-600 px-5 py-2.5 text-white shadow transition hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {saving ? 'Saving…' : 'Save Settings'}
+            </button>
           </div>
-        )}
-        {!loading && error && (
-          <div className="rounded-md border border-red-700/60 bg-red-900/20 p-3 text-sm text-red-200">
-            {error}
-          </div>
-        )}
-        {!loading && !error && settings && (
-          <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
-            <Section title="General">
-              <LabeledInput
-                label="Site Name"
-                value={settings.siteName}
-                onChange={v => handleChange('siteName', v)}
-              />
-              <LabeledInput
-                label="Site Description"
-                value={settings.siteDescription}
-                onChange={v => handleChange('siteDescription', v)}
-              />
-              <LabeledInput
-                label="Contact Email"
-                type="email"
-                value={settings.contactEmail}
-                onChange={v => handleChange('contactEmail', v)}
-              />
-              <ToggleRow
-                label="Maintenance Mode"
-                checked={settings.maintenanceMode}
-                onChange={v => handleChange('maintenanceMode', v)}
-              />
-              <ToggleRow
-                label="Enable Registration"
-                checked={settings.registrationEnabled}
-                onChange={v => handleChange('registrationEnabled', v)}
-              />
-            </Section>
-
-            <Section title="Notifications">
-              <ToggleRow
-                label="Email Notifications"
-                checked={settings.emailNotifications}
-                onChange={v => handleChange('emailNotifications', v)}
-              />
-              <ToggleRow
-                label="Push Notifications"
-                checked={settings.pushNotifications}
-                onChange={v => handleChange('pushNotifications', v)}
-              />
-            </Section>
-
-            <Section title="Defaults">
-              <LabeledInput
-                label="Default Language"
-                value={settings.defaultLanguage}
-                onChange={v => handleChange('defaultLanguage', v)}
-              />
-              <NumberInput
-                label="Max File Size (MB)"
-                value={settings.maxFileSize}
-                onChange={v => handleChange('maxFileSize', v)}
-              />
-              <NumberInput
-                label="Session Timeout (minutes)"
-                value={settings.sessionTimeout}
-                onChange={v => handleChange('sessionTimeout', v)}
-              />
-            </Section>
-
-            <Section title="Maintenance">
-              <LabeledInput
-                label="Backup Frequency"
-                value={settings.backupFrequency}
-                onChange={v => handleChange('backupFrequency', v)}
-              />
-              <NumberInput
-                label="Log Retention Days"
-                value={settings.logRetentionDays}
-                onChange={v => handleChange('logRetentionDays', v)}
-              />
-            </Section>
-
-            <div className="flex gap-3">
-              <button
-                type="submit"
-                disabled={saving}
-                className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-blue-500 to-indigo-600 px-5 py-2.5 text-white shadow transition hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {saving ? 'Saving…' : 'Save Settings'}
-              </button>
-            </div>
-          </form>
-        )}
-      </AdminLayout>
-    </AdminGuard>
+        </form>
+      )}
+    </>
   );
 }
 

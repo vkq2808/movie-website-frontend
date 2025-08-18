@@ -20,6 +20,7 @@ export default function TokenWatcher() {
   const checkAndFetch = React.useCallback(() => {
     try {
       const token = getCookie("access_token");
+      if (!token) return;
       if (token !== lastTokenRef.current) {
         lastTokenRef.current = token;
         // Fetch user on any change (including token removal)

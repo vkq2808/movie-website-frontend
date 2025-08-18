@@ -156,8 +156,8 @@ const getAdminStats = async (): Promise<ApiResponse<AdminStats>> => {
   try {
     const response = await api.get('/admin/stats');
     return response.data;
-  } catch (err: any) {
-    const status = err?.response?.status;
+  } catch (error: unknown) {
+    const status = (error as { response?: { status?: number } })?.response?.status;
     if (status === 404) {
       // Fallback: backend does not expose /admin/stats yet
       const fallback: ApiResponse<AdminStats> = {
@@ -176,7 +176,7 @@ const getAdminStats = async (): Promise<ApiResponse<AdminStats>> => {
       };
       return fallback;
     }
-    throw err;
+    throw error;
   }
 };
 

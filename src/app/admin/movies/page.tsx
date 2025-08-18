@@ -1,6 +1,5 @@
 "use client";
 import React from 'react';
-import { AdminGuard, AdminLayout } from '@/components/admin';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { adminApi, type AdminMovie } from '@/apis/admin.api';
 
@@ -51,128 +50,126 @@ export default function AdminMoviesPage() {
   };
 
   return (
-    <AdminGuard>
-      <AdminLayout>
-        <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold">Movies</h1>
-            <p className="mt-1 text-sm text-gray-400">Manage your movie catalog</p>
-          </div>
-          <div className="flex flex-col gap-2 md:flex-row md:items-center">
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by title..."
-              className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm outline-none focus:border-blue-500 md:w-64"
-            />
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.currentTarget.value as typeof status)}
-              className="rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm outline-none focus:border-blue-500"
-            >
-              <option value="all">All</option>
-              <option value="published">Published</option>
-              <option value="draft">Draft</option>
-            </select>
-          </div>
+    <>
+      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Movies</h1>
+          <p className="mt-1 text-sm text-gray-400">Manage your movie catalog</p>
         </div>
+        <div className="flex flex-col gap-2 md:flex-row md:items-center">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by title..."
+            className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm outline-none focus:border-blue-500 md:w-64"
+          />
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.currentTarget.value as typeof status)}
+            className="rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm outline-none focus:border-blue-500"
+          >
+            <option value="all">All</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+          </select>
+        </div>
+      </div>
 
-        {loading ? (
-          <div className="flex h-56 items-center justify-center"><LoadingSpinner /></div>
-        ) : error ? (
-          <div className="rounded bg-red-500/10 p-3 text-sm text-red-300">{error}</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-left text-sm">
-              <thead>
-                <tr className="border-b border-gray-800 text-gray-400">
-                  <th className="px-3 py-2">Title</th>
-                  <th className="px-3 py-2">Release</th>
-                  <th className="px-3 py-2">Status</th>
-                  <th className="px-3 py-2">Popularity</th>
-                  <th className="px-3 py-2">Rating</th>
-                  <th className="px-3 py-2" />
+      {loading ? (
+        <div className="flex h-56 items-center justify-center"><LoadingSpinner /></div>
+      ) : error ? (
+        <div className="rounded bg-red-500/10 p-3 text-sm text-red-300">{error}</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-left text-sm">
+            <thead>
+              <tr className="border-b border-gray-800 text-gray-400">
+                <th className="px-3 py-2">Title</th>
+                <th className="px-3 py-2">Release</th>
+                <th className="px-3 py-2">Status</th>
+                <th className="px-3 py-2">Popularity</th>
+                <th className="px-3 py-2">Rating</th>
+                <th className="px-3 py-2" />
+              </tr>
+            </thead>
+            <tbody>
+              {movies.map((m) => (
+                <tr key={m.id} className="border-b border-gray-800">
+                  <td className="px-3 py-2 font-medium text-gray-100">{m.title}</td>
+                  <td className="px-3 py-2 text-gray-300">{new Date(m.release_date).toLocaleDateString()}</td>
+                  <td className="px-3 py-2">
+                    <span
+                      className={
+                        'rounded px-2 py-1 text-xs ' +
+                        (m.status === 'published'
+                          ? 'bg-green-500/10 text-green-300'
+                          : 'bg-yellow-500/10 text-yellow-300')
+                      }
+                    >
+                      {m.status}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 text-gray-300">{Math.round(m.popularity)}</td>
+                  <td className="px-3 py-2 text-gray-300">{m.vote_average?.toFixed(1)}</td>
+                  <td className="px-3 py-2 text-right">
+                    <a
+                      href={`/admin/movies/${m.id}`}
+                      className="mr-2 rounded bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-500"
+                    >
+                      Edit
+                    </a>
+                    <button
+                      onClick={() => handleDelete(m.id)}
+                      className="rounded bg-red-600 px-3 py-1 text-xs text-white hover:bg-red-500"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {movies.map((m) => (
-                  <tr key={m.id} className="border-b border-gray-800">
-                    <td className="px-3 py-2 font-medium text-gray-100">{m.title}</td>
-                    <td className="px-3 py-2 text-gray-300">{new Date(m.release_date).toLocaleDateString()}</td>
-                    <td className="px-3 py-2">
-                      <span
-                        className={
-                          'rounded px-2 py-1 text-xs ' +
-                          (m.status === 'published'
-                            ? 'bg-green-500/10 text-green-300'
-                            : 'bg-yellow-500/10 text-yellow-300')
-                        }
-                      >
-                        {m.status}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2 text-gray-300">{Math.round(m.popularity)}</td>
-                    <td className="px-3 py-2 text-gray-300">{m.vote_average?.toFixed(1)}</td>
-                    <td className="px-3 py-2 text-right">
-                      <a
-                        href={`/admin/movies/${m.id}`}
-                        className="mr-2 rounded bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-500"
-                      >
-                        Edit
-                      </a>
-                      <button
-                        onClick={() => handleDelete(m.id)}
-                        className="rounded bg-red-600 px-3 py-1 text-xs text-white hover:bg-red-500"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-                {movies.length === 0 && (
-                  <tr>
-                    <td className="px-3 py-6 text-center text-gray-400" colSpan={6}>No movies found</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+              ))}
+              {movies.length === 0 && (
+                <tr>
+                  <td className="px-3 py-6 text-center text-gray-400" colSpan={6}>No movies found</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
 
-            <div className="mt-4 flex items-center justify-between">
-              <div className="text-sm text-gray-400">
-                Page {page} of {totalPages} • {total} total
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  className="rounded border border-gray-700 px-3 py-1 text-sm text-gray-200 disabled:opacity-50"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page <= 1}
-                >
-                  Prev
-                </button>
-                <select
-                  value={limit}
-                  onChange={(e) => {
-                    setLimit(Number(e.currentTarget.value));
-                    setPage(1);
-                  }}
-                  className="rounded border border-gray-700 bg-gray-800 px-2 py-1 text-sm"
-                >
-                  {[10, 20, 50].map((n) => (
-                    <option key={n} value={n}>{n}/page</option>
-                  ))}
-                </select>
-                <button
-                  className="rounded border border-gray-700 px-3 py-1 text-sm text-gray-200 disabled:opacity-50"
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page >= totalPages}
-                >
-                  Next
-                </button>
-              </div>
+          <div className="mt-4 flex items-center justify-between">
+            <div className="text-sm text-gray-400">
+              Page {page} of {totalPages} • {total} total
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                className="rounded border border-gray-700 px-3 py-1 text-sm text-gray-200 disabled:opacity-50"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1}
+              >
+                Prev
+              </button>
+              <select
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.currentTarget.value));
+                  setPage(1);
+                }}
+                className="rounded border border-gray-700 bg-gray-800 px-2 py-1 text-sm"
+              >
+                {[10, 20, 50].map((n) => (
+                  <option key={n} value={n}>{n}/page</option>
+                ))}
+              </select>
+              <button
+                className="rounded border border-gray-700 px-3 py-1 text-sm text-gray-200 disabled:opacity-50"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages}
+              >
+                Next
+              </button>
             </div>
           </div>
-        )}
-      </AdminLayout>
-    </AdminGuard>
+        </div>
+      )}
+    </>
   );
 }

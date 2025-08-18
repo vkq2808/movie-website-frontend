@@ -1,7 +1,6 @@
 "use client";
 import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { AdminGuard, AdminLayout } from '@/components/admin';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import MovieForm, { MovieFormValues } from '@/components/admin/MovieForm';
 import { adminApi } from '@/apis/admin.api';
@@ -57,17 +56,15 @@ export default function AdminMovieDetailPage() {
   };
 
   return (
-    <AdminGuard>
-      <AdminLayout>
-        <h1 className="mb-4 text-2xl font-semibold">Edit Movie</h1>
-        {loading ? (
-          <div className="flex h-40 items-center justify-center"><LoadingSpinner /></div>
-        ) : error ? (
-          <div className="rounded bg-red-500/10 p-3 text-sm text-red-300">{error}</div>
-        ) : initial ? (
-          <MovieForm initialValues={initial} onSubmit={handleSubmit} submitting={submitting} />
-        ) : null}
-      </AdminLayout>
-    </AdminGuard>
+    <>
+      <h1 className="mb-4 text-2xl font-semibold">Edit Movie</h1>
+      {loading ? (
+        <div className="flex h-40 items-center justify-center"><LoadingSpinner /></div>
+      ) : error ? (
+        <div className="rounded bg-red-500/10 p-3 text-sm text-red-300">{error}</div>
+      ) : initial ? (
+        <MovieForm initialValues={initial} onSubmit={handleSubmit} submitting={submitting} />
+      ) : null}
+    </>
   );
 }
