@@ -4,6 +4,7 @@ import { getUserPurchases, MoviePurchaseResponse } from '@/apis/movie-purchase.a
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { getMoviePoster } from '@/apis/movie.api';
 
 const UserPurchasesPage: React.FC = () => {
   const [purchases, setPurchases] = useState<MoviePurchaseResponse[]>([]);
@@ -11,6 +12,23 @@ const UserPurchasesPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  const fetchMoviePoster = async (movieId: string, index: number) => {
+    try {
+      const response = await getMoviePoster(movieId);
+      setPurchases((prev) => {
+        prev[index].movie_poster = response.data.poster_url;
+        return [...prev];
+      });
+    } catch (error) {
+      console.error('Failed to fetch movie poster:', error);
+    }
+  };
+  const fetchAllPosters = () => {
+    const promises = purchases.map((purchase, index) => {
+      return Promise.allSettled([fetchMoviePoster(purchase.movie_id, index), setTimeout(() => { }, 200)]);
+    });
+    return Promise.allSettled(promises);
+  };
   useEffect(() => {
     const fetchPurchases = async () => {
       try {
@@ -27,6 +45,16 @@ const UserPurchasesPage: React.FC = () => {
 
     fetchPurchases();
   }, [router]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      fetchAllPosters();
+    }
+  }, [isLoading])
+
+  useEffect(() => {
+    console.log(purchases)
+  }, [purchases])
 
   if (isLoading) {
     return (
@@ -99,19 +127,27 @@ const UserPurchasesPage: React.FC = () => {
                 {/* Movie Poster Placeholder */}
                 <div className="aspect-[2/3] bg-gray-700 relative">
                   <div className="absolute inset-0 flex items-center justify-center text-gray-500">
-                    <svg
-                      className="w-16 h-16"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M7 4v16l13-8L7 4z"
+                    {purchase.movie_poster ? (
+                      <img
+                        src={purchase.movie_poster}
+                        alt={purchase.movie_title}
+                        className="w-full h-full object-cover"
                       />
-                    </svg>
+                    ) : (
+                      <svg
+                        className="w-16 h-16"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 4v16l13-8L7 4z"
+                        />
+                      </svg>
+                    )}
                   </div>
 
                   {/* Owned Badge */}
@@ -130,7 +166,7 @@ const UserPurchasesPage: React.FC = () => {
                     <div className="flex justify-between">
                       <span>Purchase Price:</span>
                       <span className="text-green-400 font-medium">
-                        ${purchase.purchase_price.toFixed(2)}
+                        ${purchase.purchase_price}
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -173,13 +209,13 @@ const UserPurchasesPage: React.FC = () => {
               </div>
               <div>
                 <p className="text-3xl font-bold text-green-400">
-                  ${purchases.reduce((total, purchase) => total + purchase.purchase_price, 0).toFixed(2)}
+                  ${purchases.reduce((total, purchase) => total + Number(purchase.purchase_price), 0).toFixed(2)}
                 </p>
                 <p className="text-gray-400">Total Spent</p>
               </div>
               <div>
                 <p className="text-3xl font-bold text-purple-400">
-                  ${(purchases.reduce((total, purchase) => total + purchase.purchase_price, 0) / purchases.length).toFixed(2)}
+                  ${(purchases.reduce((total, purchase) => total + Number(purchase.purchase_price), 0) / purchases.length).toFixed(2)}
                 </p>
                 <p className="text-gray-400">Average Price</p>
               </div>

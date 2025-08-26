@@ -3,8 +3,10 @@ import { authApi } from '@/apis/auth.api';
 import { useRouter } from 'next/navigation';
 import React from 'react'
 import { ClipLoader } from 'react-spinners';
+import { useToast } from '@/contexts/toast.context';
 
 const ForgetPasswordPage = () => {
+  const toast = useToast();
   const [email, setEmail] = React.useState('');
   const [error, setError] = React.useState('');
   const router = useRouter();
@@ -13,10 +15,12 @@ const ForgetPasswordPage = () => {
   const validateData = () => {
     if (!email) {
       setError('Email không được để trống');
+      toast.warning('Email không được để trống');
       return false;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setError('Email không hợp lệ');
+      toast.warning('Email không hợp lệ');
       return false;
     }
     return true
@@ -32,10 +36,15 @@ const ForgetPasswordPage = () => {
     setTimeout(() => {
       authApi.forgetPassword({ email }).then((res) => {
         if (res.success) {
+          toast.success('Gửi mã OTP thành công');
           router.push('/auth/reset-password?email=' + email);
+        } else {
+          toast.error(res.message || 'Không thể gửi OTP');
         }
       }).catch((error) => {
-        setError(error?.response?.data?.message);
+        const msg = error?.response?.data?.message || 'Không thể gửi OTP';
+        setError(msg);
+        toast.error(msg);
       }).finally(() => {
         setLoading(false);
       });

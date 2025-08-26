@@ -3,10 +3,12 @@ import { authApi, ResetPasswordData } from '@/apis/auth.api';
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ClipLoader } from 'react-spinners';
 import React, { Suspense } from 'react'
+import { useToast } from '@/contexts/toast.context'
 
 // Component using useSearchParams
 const ResetPasswordContent = () => {
   const params = useSearchParams();
+  const toast = useToast();
   const initialResetPasswordData: ResetPasswordData = {
     email: params.get('email') || '',
     password: '',
@@ -28,26 +30,31 @@ const ResetPasswordContent = () => {
   const validateData = () => {
     if (!resetPasswordData.password || !resetPasswordData.confirmPassword || !resetPasswordData.otp) {
       setError('Vui lòng điền đầy đủ thông tin');
+      toast.warning('Vui lòng điền đầy đủ thông tin');
       return false;
     }
 
     if (resetPasswordData.password.length < 6) {
       setError('Mật khẩu phải có ít nhất 6 ký tự');
+      toast.warning('Mật khẩu phải có ít nhất 6 ký tự');
       return false;
     }
 
     if (resetPasswordData.password.length > 20) {
       setError('Mật khẩu không được quá 20 ký tự');
+      toast.warning('Mật khẩu không được quá 20 ký tự');
       return false;
     }
 
     if (resetPasswordData.password !== resetPasswordData.confirmPassword) {
       setError('Mật khẩu không khớp');
+      toast.warning('Mật khẩu không khớp');
       return false;
     }
 
     if (resetPasswordData.otp.length !== 6) {
       setError('Mã OTP không hợp lệ');
+      toast.warning('Mã OTP không hợp lệ');
       return false;
     }
 
@@ -65,10 +72,15 @@ const ResetPasswordContent = () => {
     setTimeout(() => {
       authApi.resetPassword(resetPasswordData).then((res) => {
         if (res.success) {
+          toast.success('Đổi mật khẩu thành công');
           router.push('/auth/login');
+        } else {
+          toast.error(res.message || 'Đổi mật khẩu thất bại');
         }
       }).catch((error) => {
-        setError(error?.response?.data?.message);
+        const msg = error?.response?.data?.message || 'Có lỗi xảy ra khi đổi mật khẩu';
+        setError(msg);
+        toast.error(msg);
       }).finally(() => {
         setLoading(false);
       });
@@ -83,7 +95,7 @@ const ResetPasswordContent = () => {
             <label className="block text-sm font-medium text-neutral-700">Email</label>
             <input
               type="email"
-              className="w-full px-4 py-2 mt-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:border-neutral-500"
+              className="w-full text-gray-700 px-4 cursor-not-allowed py-2 mt-2 text-sm border-b border-neutral-300 focus:outline-none focus:border-neutral-500"
               name="email"
               value={resetPasswordData.email}
               onChange={handleChange}
@@ -94,17 +106,19 @@ const ResetPasswordContent = () => {
             <label className="block text-sm font-medium text-neutral-700">Mật khẩu mới</label>
             <input
               type="password"
-              className="w-full px-4 py-2 mt-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:border-neutral-500"
+              className="w-full text-gray-700 px-4 py-2 mt-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:border-neutral-500"
               name="password"
               value={resetPasswordData.password}
               onChange={handleChange}
+              autoComplete='old-password'
+              autoCorrect='off'
             />
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-neutral-700">Nhập lại mật khẩu</label>
             <input
               type="password"
-              className="w-full px-4 py-2 mt-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:border-neutral-500"
+              className="w-full text-gray-700 px-4 py-2 mt-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:border-neutral-500"
               name="confirmPassword"
               value={resetPasswordData.confirmPassword}
               onChange={handleChange}
@@ -114,7 +128,7 @@ const ResetPasswordContent = () => {
             <label className="block text-sm font-medium text-neutral-700">Mã OTP</label>
             <input
               type="text"
-              className="w-full px-4 py-2 mt-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:border-neutral-500"
+              className="w-full text-gray-700 px-4 py-2 mt-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:border-neutral-500"
               name="otp"
               value={resetPasswordData.otp}
               onChange={handleChange}

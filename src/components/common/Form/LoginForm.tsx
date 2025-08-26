@@ -3,9 +3,11 @@ import React, { FormEvent } from 'react'
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/zustand/auth.store';
 import { authApi } from '@/apis/auth.api';
+import { useToast } from '@/contexts/toast.context';
 
 const LoginForm = () => {
   const router = useRouter();
+  const toast = useToast();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [loading, setLoading] = React.useState(false);
@@ -32,9 +34,12 @@ const LoginForm = () => {
           try { window.dispatchEvent(new CustomEvent('auth:token-updated')); } catch { }
           try { new BroadcastChannel('auth').postMessage({ type: 'token-updated' }); } catch { }
         } catch { /* ignore */ }
+        toast.success('Đăng nhập thành công');
       }
     }).catch(err => {
-      setErrorMsg('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+      const msg = err?.response?.data?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.';
+      setErrorMsg(msg);
+      toast.error(msg);
       console.error('Login error:', err);
     }).finally(() => {
       setLoading(false);

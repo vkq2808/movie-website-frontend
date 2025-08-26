@@ -14,6 +14,7 @@ export const apiEndpoint = {
   RECOMMENDATIONS: '/recommendations',
   WATCH_HISTORY: '/watch-history',
   FEEDBACK: '/feedback',
+  CHAT: '/chat',
 }
 
 // Mở rộng interface InternalAxiosRequestConfig để thêm thuộc tính __retry

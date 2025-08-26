@@ -4,9 +4,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authApi, RegisterData } from '@/apis/auth.api';
 import { Eye, EyeOff } from 'lucide-react';
+import { useToast } from '@/contexts/toast.context';
 
 const RegisterForm: React.FC = () => {
   const router = useRouter();
+  const toast = useToast();
   const initialRegisterData: RegisterData = {
     username: '',
     email: '',
@@ -90,6 +92,7 @@ const RegisterForm: React.FC = () => {
     await authApi.register(formData).then(res => {
       if (res.success) {
         setInfo('Đăng ký thành công. Đang chuyển hướng đến trang nhập OTP...');
+        toast.success('Đăng ký thành công');
         // Small delay so users can see the message before redirect
         setTimeout(() => {
           router.push(`/auth/verify?email=${formData.email}`);
@@ -99,10 +102,14 @@ const RegisterForm: React.FC = () => {
       const msg = err?.response?.data?.message;
       if (Array.isArray(msg) && msg.length > 0) {
         setError(msg[0]);
+        toast.error(msg[0]);
       } else if (typeof msg === 'string') {
         setError(msg);
+        toast.error(msg);
       } else {
-        setError('Đăng ký thất bại. Vui lòng thử lại.');
+        const fallback = 'Đăng ký thất bại. Vui lòng thử lại.';
+        setError(fallback);
+        toast.error(fallback);
       }
     });
     // Keep submitting state if success (until redirect). If failed, stop loading.
@@ -117,56 +124,67 @@ const RegisterForm: React.FC = () => {
 
     if (!formData.username) {
       setError('Username is required');
+      toast.warning('Username is required');
       return false;
     }
 
     if (!usernameRegex.test(formData.username)) {
       setError('Username must be 3-30 characters and contain only letters, numbers, and underscores');
+      toast.warning('Username must be 3-30 characters and contain only letters, numbers, and underscores');
       return false;
     }
 
     if (!formData.email) {
       setError('Email is required');
+      toast.warning('Email is required');
       return false;
     }
 
     if (!emailRegex.test(formData.email)) {
       setError('Invalid email');
+      toast.warning('Invalid email');
       return false;
     }
 
     if (!formData.password) {
       setError('Password is required');
+      toast.warning('Password is required');
       return false;
     }
 
     if (!passwordRegex.test(formData.password)) {
       setError('Password must be 8-50 chars, include upper, lower, and a number');
+      toast.warning('Password must be 8-50 chars, include upper, lower, and a number');
       return false;
     }
 
     if (!formData.confirmPassword) {
       setError('Confirm Password is required');
+      toast.warning('Confirm Password is required');
       return false;
     }
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
+      toast.warning('Passwords do not match');
       return false;
     }
 
     if (!formData.birthdate) {
       setError('Birthdate is required');
+      toast.warning('Birthdate is required');
       return false;
     }
 
     // Check availability results if present
     if (emailAvailable === false) {
       setError('Email is already in use');
+      toast.warning('Email is already in use');
       return false;
     }
     if (usernameAvailable === false) {
       setError('Username is already taken');
+      toast.warning('Username is already taken');
       return false;
     }
 

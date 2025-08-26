@@ -10,6 +10,7 @@ export interface AuthStore {
   setUser: (user: User) => void;
   fetchUser: () => Promise<void>;
   logout: () => void;
+  // Non-state helper signatures can be declared in components; keeping store minimal.
   hydrated: boolean;
 }
 
@@ -22,22 +23,9 @@ export const useAuthStore = create<AuthStore>(
       set({
         user: user
       });
-      // Persist only user to localStorage; both tokens live in cookies now
-      try {
-        if (user) {
-          localStorage.setItem('auth', JSON.stringify({ user }));
-        } else {
-          localStorage.removeItem('auth');
-        }
-      } catch { /* ignore */ }
     },
     logout: () => {
       set({ user: undefined, hydrated: true });
-      try {
-        localStorage.removeItem('auth');
-      } catch {
-        // ignore
-      }
       // Clear token cookies
       if (typeof document !== 'undefined') {
         try {

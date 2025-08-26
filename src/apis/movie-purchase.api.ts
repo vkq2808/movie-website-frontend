@@ -9,9 +9,10 @@ export interface MoviePurchaseResponse {
   id: string;
   movie_id: string;
   movie_title: string;
-  purchase_price: number;
+  purchase_price: string;
   purchased_at: string;
   created_at: string;
+  movie_poster?: string;
 }
 
 export interface MovieOwnershipResponse {

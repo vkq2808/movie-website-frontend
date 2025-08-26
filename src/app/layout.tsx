@@ -6,6 +6,9 @@ import TokenWatcher from "@/components/common/TokenWatcher";
 import React from "react";
 import { LanguageProvider } from "@/contexts/language.context";
 import { SettingsProvider } from "@/contexts/settings.context";
+import { ToastProvider } from "@/contexts/toast.context";
+import ChatBot from "@/components/common/ChatBot";
+import { usePathname } from "next/navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -72,11 +75,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Only show ChatBot if not on admin page
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  const isAdmin = pathname.startsWith('/admin');
   return (
     <html lang="en" className={`hide-scrollbar ${geistSans.variable} ${geistMono.variable}`}>
       <head>
@@ -85,7 +87,6 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#000000" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-
         {/* Structured Data for SEO */}
         <script
           type="application/ld+json"
@@ -115,14 +116,16 @@ export default function RootLayout({
       <body className="antialiased flex flex-col min-h-screen">
         <SettingsProvider>
           <LanguageProvider>
-            <LoadingOverlay />
-            <TokenWatcher />
-            {/* Disable automatic prefetch globally if needed by passing prefetch={false} on links. Header remains as is. */}
-            <Header />
-            <main className="flex-1 bg-gray-900 text-gray-100">
-              {children}
-            </main>
-            <Footer />
+            <ToastProvider>
+              <LoadingOverlay />
+              <TokenWatcher />
+              <Header />
+              <main className="flex-1 bg-gray-900 text-gray-100">
+                {children}
+              </main>
+              {!isAdmin && <ChatBot />}
+              <Footer />
+            </ToastProvider>
           </LanguageProvider>
         </SettingsProvider>
       </body>

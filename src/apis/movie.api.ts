@@ -39,6 +39,13 @@ export async function getMovies(params?: {
   return response.data
 }
 
+export async function getMoviePoster(movieId: string) {
+  const response = await api.get<ApiResponse<{ poster_url: string }>>(
+    `${apiEndpoint.MOVIE}/${movieId}/poster`
+  );
+  return response.data;
+}
+
 export async function getMovieAlternativeTitles(movieId: string): Promise<ApiResponse<AlternativeTitle[]>> {
   const response = await api.get<ApiResponse<AlternativeTitle[]>>(
     `${apiEndpoint.MOVIE}/${movieId}/alternative-titles`

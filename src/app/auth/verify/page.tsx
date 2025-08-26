@@ -3,12 +3,14 @@ import api, { apiEndpoint } from '@/utils/api.util';
 import { authApi } from '@/apis/auth.api';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
+import { useToast } from '@/contexts/toast.context';
 
 // Component using useSearchParams
 const VerifyContent: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email');
+  const toast = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [otp, setOtp] = useState('');
@@ -20,11 +22,16 @@ const VerifyContent: React.FC = () => {
     try {
       const res = await authApi.verify({ email: email || '', otp });
       if (res.success) {
+        toast.success('Xác thực thành công');
         router.push('/auth/login');
+      } else {
+        toast.error(res.message || 'Xác thực thất bại');
       }
     } catch (err) {
       console.log(err);
-      setError('OTP không hợp lệ');
+      const msg = 'OTP không hợp lệ';
+      setError(msg);
+      toast.error(msg);
     }
   };
 
@@ -36,10 +43,13 @@ const VerifyContent: React.FC = () => {
       if (res.status === 200) {
         // Đặt lại timer khi gửi lại OTP thành công
         setCountdown(60);
+        toast.info('Đã gửi lại OTP');
       }
     } catch (err) {
       console.log(err);
-      setError('Không thể gửi lại OTP. Vui lòng thử lại sau.');
+      const msg = 'Không thể gửi lại OTP. Vui lòng thử lại sau.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setIsResending(false);
     }

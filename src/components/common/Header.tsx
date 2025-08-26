@@ -8,6 +8,7 @@ import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { useLanguage } from "@/contexts/language.context";
 import Image from "next/image";
 import { useSettings } from "@/contexts/settings.context";
+import { useToast } from "@/contexts/toast.context";
 
 const Header = () => {
   const genres = useGenreStore(state => state.genres);
@@ -128,8 +129,9 @@ const Header = () => {
 
 const UserInformation = () => {
   const user = useAuthStore(state => state.user);
-  const handleLogout = useAuthStore(state => state.logout);
+  const logout = useAuthStore(state => state.logout);
   const router = useRouter();
+  const toast = useToast();
 
   const handleLoginNavigate = () => {
     // Redirect to login with current path as query
@@ -153,7 +155,14 @@ const UserInformation = () => {
             </Link>
           )}
           <button
-            onClick={handleLogout}
+            onClick={() => {
+              try {
+                logout();
+                toast.success('Đăng xuất thành công');
+              } catch (e) {
+                toast.error('Đăng xuất thất bại');
+              }
+            }}
             className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors"
           >
             Đăng xuất
