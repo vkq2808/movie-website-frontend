@@ -131,6 +131,11 @@ const restoreMovie = async (id: string): Promise<ApiResponse<null>> => {
   return response.data;
 };
 
+// Alias for UI: hard delete is not supported; use soft delete under the hood
+const deleteMovie = async (id: string): Promise<ApiResponse<null>> => {
+  return softDeleteMovie(id);
+};
+
 // Movie relations management (Genres)
 const setMovieGenres = async (id: string, genre_ids: number[]): Promise<ApiResponse<AdminMovie>> => {
   const response = await api.post(`${apiEndpoint.MOVIE}/${id}/genres/set`, { genre_ids });
@@ -363,6 +368,7 @@ export const adminApi = {
   updateMovie,
   softDeleteMovie,
   restoreMovie,
+  deleteMovie,
 
   // Movie relations
   setMovieGenres,
