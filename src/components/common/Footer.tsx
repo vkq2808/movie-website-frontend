@@ -30,11 +30,10 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold mb-4 select-none">Liên kết nhanh</h3>
             <ul className="space-y-2">
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Danh mục phim</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Thể loại</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Phim được đánh giá cao</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Phim mới phát hành</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Phim sắp chiếu</Link></li>
+              <li><Link href="/genres" className="hover:text-purple-400 transition duration-300">Danh mục phim</Link></li>
+              <li><Link href="/recommendations" className="hover:text-purple-400 transition duration-300">Phim được đánh giá cao</Link></li>
+              <li><Link href="/new" className="hover:text-purple-400 transition duration-300">Phim mới phát hành</Link></li>
+              <li><Link href="/upcoming" className="hover:text-purple-400 transition duration-300">Phim sắp chiếu</Link></li>
             </ul>
           </div>          {/* Customer Support */}
           <div>
@@ -42,7 +41,9 @@ const Footer = () => {
             <ul className="space-y-2">
               <li className="flex items-center gap-2">
                 <FaPhone className="text-purple-400" />
-                <Link href="#" className="hover:text-purple-400 transition duration-300">Liên hệ chúng tôi</Link>
+                <Link href="tel:+84919309031" className="hover:text-purple-400 transition duration-300">
+                  Hotline
+                </Link>
               </li>
               <li className="flex items-center gap-2">
                 <FaQuestionCircle className="text-purple-400" />

@@ -30,19 +30,27 @@ export default function GenreList() {
     return nameForLanguage ? nameForLanguage.name : genre.names[0]?.name || 'Unknown';
   };
 
-  const defaultGenre = React.useMemo(() => (
-    {
-      id: 'all',
-      names: [],
-      bgColor: {
-        r: 0,
-        g: 0,
-        b: 0,
-      },
-      original_id: '',
-      created_at: '',
-      updated_at: '',
-    }), []);
+  const defaultGenre = React.useMemo(() => ({
+    id: 'all',
+    names: [],
+    bgColor: {
+      r: 0,
+      g: 0,
+      b: 0,
+    },
+    original_id: '',
+    created_at: '',
+    updated_at: '',
+  } as DisplayGenre), []);
+
+  const createDisplayGenres = (genres: Genre[], defaultGenre: DisplayGenre) => {
+    return genres.slice(0, 6).map((genre) => {
+      const r = Math.floor(Math.random() * 100) + 155;
+      const g = Math.floor(Math.random() * 100) + 155;
+      const b = Math.floor(Math.random() * 100) + 155;
+      return { ...genre, bgColor: { r, g, b } };
+    }).concat(defaultGenre);
+  };
 
   React.useEffect(() => {
     const initializeGenres = async () => {
@@ -51,31 +59,12 @@ export default function GenreList() {
 
         if (genres.length === 0) {
           await fetchGenres();
-          return; // Exit early, let the next effect handle the display
+          return;
         }
 
-        // Only process display genres if we have genres
-        if (genres.length > 0) {
-          const newDisplayGenres = genres.slice(0, 6).map((genre) => {
-            const r = Math.floor(Math.random() * 100) + 155;
-            const g = Math.floor(Math.random() * 100) + 155;
-            const b = Math.floor(Math.random() * 100) + 155;
-            return {
-              ...genre,
-              bgColor: {
-                r,
-                g,
-                b,
-              }
-            };
-          }).concat(
-            defaultGenre
-          );
-
-          setDisplayGenres(newDisplayGenres);
-        }
+        setDisplayGenres(createDisplayGenres(genres, defaultGenre));
       } catch (error) {
-        console.error('Error loading genres:', error);
+        console.error("Error loading genres:", error);
         setDisplayGenres([defaultGenre]);
       } finally {
         setLoading(false);
@@ -85,29 +74,12 @@ export default function GenreList() {
     initializeGenres();
   }, [defaultGenre, fetchGenres]);
 
-  // Separate effect to handle genres changes
   React.useEffect(() => {
     if (genres.length > 0) {
-      const newDisplayGenres = genres.slice(0, 6).map((genre) => {
-        const r = Math.floor(Math.random() * 100) + 155;
-        const g = Math.floor(Math.random() * 100) + 155;
-        const b = Math.floor(Math.random() * 100) + 155;
-        return {
-          ...genre,
-          bgColor: {
-            r,
-            g,
-            b,
-          }
-        };
-      }).concat(
-        defaultGenre
-      );
-
-      setDisplayGenres(newDisplayGenres);
-      setLoading(false);
+      setDisplayGenres(createDisplayGenres(genres, defaultGenre));
     }
   }, [genres, defaultGenre]);
+
 
   if (loading) {
     return (

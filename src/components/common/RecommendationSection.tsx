@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { RecommendationResponse, getRecommendations, getTrendingRecommendations, RecommendationFilters } from '@/apis/recommendation.api'
 import { Movie } from '@/zustand'
-import MovieCard from './MovieCard'
+import MovieCard from './MovieCard/MovieCard'
 import LoadingSpinner from './LoadingSpinner'
 import { ChevronLeft, ChevronRight, RefreshCw, Filter } from 'lucide-react'
 import { isAuthError } from '@/utils/auth.util'

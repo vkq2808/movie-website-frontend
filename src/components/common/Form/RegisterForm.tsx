@@ -53,7 +53,6 @@ const RegisterForm: React.FC = () => {
       }
     }, 400);
     return () => clearTimeout(handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.username]);
 
   useEffect(() => {
@@ -74,7 +73,6 @@ const RegisterForm: React.FC = () => {
       }
     }, 400);
     return () => clearTimeout(handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.email]);
 
   const handleSubmit = async (e: React.FormEvent) => {

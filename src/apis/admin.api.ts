@@ -104,22 +104,86 @@ const getMovies = async (params?: {
 };
 
 const getMovie = async (id: string): Promise<ApiResponse<AdminMovie>> => {
-  const response = await api.get(`${apiEndpoint.MOVIE}/admin/${id}`);
+  // Backend exposes public GET /movie/:id which admin can reuse
+  const response = await api.get(`${apiEndpoint.MOVIE}/${id}`);
   return response.data;
 };
 
 const createMovie = async (data: CreateMovieData): Promise<ApiResponse<AdminMovie>> => {
-  const response = await api.post(`${apiEndpoint.MOVIE}/admin`, data);
+  // Backend: POST /movie
+  const response = await api.post(`${apiEndpoint.MOVIE}`, data);
   return response.data;
 };
 
 const updateMovie = async (id: string, data: UpdateMovieData): Promise<ApiResponse<AdminMovie>> => {
-  const response = await api.put(`${apiEndpoint.MOVIE}/admin/${id}`, data);
+  // Backend: POST /movie/:id
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}`, data);
   return response.data;
 };
 
-const deleteMovie = async (id: string): Promise<ApiResponse<null>> => {
-  const response = await api.delete(`${apiEndpoint.MOVIE}/admin/${id}`);
+const softDeleteMovie = async (id: string): Promise<ApiResponse<null>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/soft-delete`);
+  return response.data;
+};
+
+const restoreMovie = async (id: string): Promise<ApiResponse<null>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/restore`);
+  return response.data;
+};
+
+// Movie relations management (Genres)
+const setMovieGenres = async (id: string, genre_ids: number[]): Promise<ApiResponse<AdminMovie>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/genres/set`, { genre_ids });
+  return response.data;
+};
+const addMovieGenre = async (id: string, genre_id: number): Promise<ApiResponse<AdminMovie>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/genres/add`, { genre_id });
+  return response.data;
+};
+const removeMovieGenre = async (id: string, genre_id: number): Promise<ApiResponse<AdminMovie>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/genres/remove`, { genre_id });
+  return response.data;
+};
+
+// Production companies
+const setMovieProductionCompanies = async (id: string, company_ids: number[]): Promise<ApiResponse<AdminMovie>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/production-companies/set`, { company_ids });
+  return response.data;
+};
+const addMovieProductionCompany = async (id: string, company_id: number): Promise<ApiResponse<AdminMovie>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/production-companies/add`, { company_id });
+  return response.data;
+};
+const removeMovieProductionCompany = async (id: string, company_id: number): Promise<ApiResponse<AdminMovie>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/production-companies/remove`, { company_id });
+  return response.data;
+};
+
+// Keywords
+const setMovieKeywords = async (id: string, keyword_ids: number[]): Promise<ApiResponse<AdminMovie>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/keywords/set`, { keyword_ids });
+  return response.data;
+};
+const addMovieKeyword = async (id: string, keyword_id: number): Promise<ApiResponse<AdminMovie>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/keywords/add`, { keyword_id });
+  return response.data;
+};
+const removeMovieKeyword = async (id: string, keyword_id: number): Promise<ApiResponse<AdminMovie>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/keywords/remove`, { keyword_id });
+  return response.data;
+};
+
+// Languages
+const addLanguageToMovie = async (id: string, language_iso_code: string): Promise<ApiResponse<AdminMovie>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/languages/add`, { language_iso_code });
+  return response.data;
+};
+const setSpokenLanguages = async (id: string, language_codes: string[]): Promise<ApiResponse<AdminMovie>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/languages/set`, { language_codes });
+  return response.data;
+};
+const removeLanguageFromMovie = async (id: string, language_iso_code: string): Promise<ApiResponse<AdminMovie>> => {
+  const response = await api.post(`${apiEndpoint.MOVIE}/${id}/languages/remove`, { language_iso_code });
   return response.data;
 };
 
@@ -200,19 +264,17 @@ const getGenres = async (): Promise<ApiResponse<AdminGenre[]>> => {
   return response.data;
 };
 
-const createGenre = async (data: { name: string }): Promise<ApiResponse<AdminGenre>> => {
-  const response = await api.post(`${apiEndpoint.GENRE}`, data);
-  return response.data;
+// Backend currently supports only GET /genre. Disable mutations to avoid runtime errors.
+const createGenre = async (_data: { name: string }): Promise<ApiResponse<AdminGenre>> => {
+  throw new Error('Genre creation is not supported by backend');
 };
 
-const updateGenre = async (id: string, data: { name: string }): Promise<ApiResponse<AdminGenre>> => {
-  const response = await api.put(`${apiEndpoint.GENRE}/${id}`, data);
-  return response.data;
+const updateGenre = async (_id: string, _data: { name: string }): Promise<ApiResponse<AdminGenre>> => {
+  throw new Error('Genre update is not supported by backend');
 };
 
-const deleteGenre = async (id: string): Promise<ApiResponse<null>> => {
-  const response = await api.delete(`${apiEndpoint.GENRE}/${id}`);
-  return response.data;
+const deleteGenre = async (_id: string): Promise<ApiResponse<null>> => {
+  throw new Error('Genre deletion is not supported by backend');
 };
 
 // System Settings APIs
@@ -243,15 +305,15 @@ const updateSettings = async (data: SystemSettings): Promise<ApiResponse<SystemS
 };
 
 // Image Upload API
-const uploadImage = async (file: File, type: 'poster' | 'backdrop' | 'avatar'): Promise<ApiResponse<{
+const uploadImage = async (file: File, _type: 'poster' | 'backdrop' | 'avatar'): Promise<ApiResponse<{
   url: string;
   public_id: string;
 }>> => {
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('type', type);
 
-  const response = await api.post(`${apiEndpoint.IMAGE}/upload`, formData, {
+  // Backend: POST /image/poster/upload
+  const response = await api.post(`${apiEndpoint.IMAGE}/poster/upload`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -299,7 +361,22 @@ export const adminApi = {
   getMovie,
   createMovie,
   updateMovie,
-  deleteMovie,
+  softDeleteMovie,
+  restoreMovie,
+
+  // Movie relations
+  setMovieGenres,
+  addMovieGenre,
+  removeMovieGenre,
+  setMovieProductionCompanies,
+  addMovieProductionCompany,
+  removeMovieProductionCompany,
+  setMovieKeywords,
+  addMovieKeyword,
+  removeMovieKeyword,
+  addLanguageToMovie,
+  setSpokenLanguages,
+  removeLanguageFromMovie,
 
   // Users
   getUsers,

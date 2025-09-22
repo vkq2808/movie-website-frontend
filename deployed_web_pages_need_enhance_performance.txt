@@ -1,0 +1,7 @@
+/recommendations
+/genres
+/languages
+/profile/security
+/history
+/admin/providers
+/admin/companies
