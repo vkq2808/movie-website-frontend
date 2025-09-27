@@ -7,7 +7,7 @@ export const getMovieTitleByLanguage = (
   languageCode: string
 ): string => {
   // Check if the movie has an alternative title in the specified language
-  const alternativeTitle = movie.alternative_titles.find(
+  const alternativeTitle = movie.alternative_titles?.find(
     (title) => title.iso_639_1 === languageCode
   );
 
@@ -20,7 +20,7 @@ export const getMovieOverviewByLanguage = (
   languageCode: string
 ): string => {
   // Check if the movie has an alternative overview in the specified language
-  const alternativeOverview = movie.alternative_overviews.find(
+  const alternativeOverview = movie.alternative_overviews?.find(
     (overview) => overview.iso_639_1 === languageCode
   );
 

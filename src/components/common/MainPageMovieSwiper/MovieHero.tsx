@@ -33,11 +33,11 @@ const MovieHero: React.FC<MovieHeroProps> = ({
   return (
     <div className="relative w-full h-[80vh] text-white bg-black flex items-center justify-between overflow-hidden px-16">
       {/* Ảnh nền */}
-      {movie.backdrop?.url && <div
+      {movie.backdrops?.[0]?.url && <div
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: `url(${movie.backdrop?.url})`,
+          backgroundImage: `url(${movie.backdrops?.[0]?.url})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           maskImage: 'radial-gradient(circle at center, black 50%, transparent 100%)',

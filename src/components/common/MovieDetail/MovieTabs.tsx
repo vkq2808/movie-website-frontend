@@ -16,6 +16,7 @@ const MovieTabs: React.FC<MovieTabsProps> = ({ movie }) => {
     { id: 'episode-tab', label: 'Tập phim', icon: null },
     { id: 'gallery-tab', label: 'Thư viện', icon: null },
     { id: 'comments-tab', label: 'Bình luận', icon: null },
+    { id: 'cast-tab', label: 'Diễn viên', icon: null },
   ] as const
 
   return (

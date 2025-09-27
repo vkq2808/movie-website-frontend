@@ -15,10 +15,10 @@ const SearchMovieCard: React.FC<SearchMovieCardProps> = ({ movie }) => {
       <div className="relative h-full overflow-hidden rounded-lg transition-transform duration-300 group-hover:scale-105">
         {/* Movie Poster */}
         <div className="aspect-[2/3] bg-gray-800">
-          {movie.poster ? (
+          {movie.posters?.[0] ? (
             <Image
-              src={movie.poster.url}
-              alt={movie.poster.alt || movie.title}
+              src={movie.posters?.[0].url}
+              alt={movie.posters?.[0].alt || movie.title}
               className="w-full h-full object-cover"
               loading="lazy"
               fill

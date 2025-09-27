@@ -13,8 +13,8 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
 
   // Create a gallery array from movie images
   const galleryImages = [
-    movie.poster,
-    movie.backdrop,
+    ...movie.posters,
+    ...movie.backdrops,
     // Add more images if available in your data structure
   ].filter(Boolean)
 
@@ -81,13 +81,13 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
         <h3 className="text-xl font-semibold text-white">Ảnh chụp màn hình</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {/* Demo screenshots - replace with actual data */}
-          {movie.backdrop && (
+          {movie.backdrops?.[0] && (
             <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden">
               <Image
-                src={movie.backdrop.url}
+                src={movie.backdrops[0].url}
                 alt="Screenshot"
                 className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200"
-                onClick={() => openModal(movie.backdrop.url)}
+                onClick={() => openModal(movie.backdrops[0].url)}
                 width={500}
                 height={300}
               />
@@ -109,13 +109,13 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
       <div className="space-y-4">
         <h3 className="text-xl font-semibold text-white">Poster</h3>
         <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-          {movie.poster && (
+          {movie.posters?.[0] && (
             <div className="aspect-[2/3] bg-gray-800 rounded-lg overflow-hidden">
               <Image
-                src={movie.poster.url}
+                src={movie.posters?.[0].url}
                 alt="Movie poster"
                 className="w-full h-full object-cover cursor-pointer hover:scale-110 transition-transform duration-200"
-                onClick={() => openModal(movie.poster.url)}
+                onClick={() => openModal(movie.posters?.[0].url)}
                 width={300}
                 height={450}
               />

@@ -38,7 +38,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
         duration: 90 + (index * 10),
         vote_average: 7.5 + (index % 3),
         vote_count: 1000 + (index * 100),
-        poster: {
+        posters: [{
           id: `poster-${index}`,
           url: `https://via.placeholder.com/300x450?text=Movie+${index + 1}`,
           alt: `Poster for suggested movie ${index + 1}`,
@@ -47,8 +47,8 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
           bytes: 0,
           created_at: '',
           updated_at: '',
-        },
-        backdrop: {
+        }],
+        backdrops: [{
           id: `backdrop-${index}`,
           url: `https://via.placeholder.com/1280x720?text=Backdrop+${index + 1}`,
           alt: `Backdrop for suggested movie ${index + 1}`,
@@ -57,7 +57,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
           bytes: 0,
           created_at: '',
           updated_at: '',
-        },
+        }],
         genres: movie.genres.slice(0, 2), // Use some genres from current movie
         videos: [],
         trailer_url: null,
@@ -84,13 +84,13 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
       <div className="group bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition-all duration-300 cursor-pointer">
         {/* Movie Poster */}
         <div className="relative aspect-[2/3] overflow-hidden">
-          {suggestedMovie.poster ? (
+          {suggestedMovie.posters?.[0] ? (
             <Image
-              src={suggestedMovie.poster.url}
-              alt={suggestedMovie.poster.alt || suggestedMovie.title}
+              src={suggestedMovie.posters?.[0].url}
+              alt={suggestedMovie.posters?.[0].alt || suggestedMovie.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              width={suggestedMovie.poster.width || 300}
-              height={suggestedMovie.poster.height || 450}
+              width={suggestedMovie.posters?.[0].width || 300}
+              height={suggestedMovie.posters?.[0].height || 450}
               loading="lazy"
             />
           ) : (
@@ -187,13 +187,13 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
             <Link key={suggestedMovie.id} href={`/movie/${suggestedMovie.id}`}>
               <div className="flex gap-4 p-3 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer">
                 <div className="w-16 h-24 bg-gray-700 rounded overflow-hidden flex-shrink-0">
-                  {suggestedMovie.poster ? (
+                  {suggestedMovie.posters?.[0] ? (
                     <Image
-                      src={suggestedMovie.poster.url}
+                      src={suggestedMovie.posters?.[0].url}
                       alt={suggestedMovie.title}
                       className="w-full h-full object-cover"
-                      width={suggestedMovie.poster.width || 300}
-                      height={suggestedMovie.poster.height || 450}
+                      width={suggestedMovie.posters?.[0].width || 300}
+                      height={suggestedMovie.posters?.[0].height || 450}
                       loading="lazy"
                     />
                   ) : (

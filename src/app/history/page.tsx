@@ -70,7 +70,7 @@ export default function HistoryPage() {
         ) : (
           <ul className="space-y-4">
             {items.map((item) => {
-              const posterUrl = item.movie.poster?.url || '/placeholder-poster.jpg';
+              const posterUrl = item.movie.posters?.[0]?.url || '/placeholder-poster.jpg';
               const progress = Math.max(0, Math.min(100, Math.round(item.progress)));
               return (
                 <li key={item.id} className="rounded-xl border border-gray-700/60 bg-gray-800/40 p-4">

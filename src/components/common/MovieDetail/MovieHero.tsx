@@ -47,8 +47,8 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
-          src={movie.backdrop?.url || movie.poster?.url}
-          alt={movie.backdrop?.alt || movie.title}
+          src={movie.backdrops?.[0]?.url || movie.posters?.[0]?.url}
+          alt={movie.backdrops?.[0]?.alt || movie.title}
           className="w-full h-full object-cover"
           width={1920}
           height={1080}
@@ -66,10 +66,10 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
             {/* Movie Poster */}
             <div className="flex-shrink-0">
               <div className="w-64 h-96 rounded-lg overflow-hidden shadow-2xl">
-                {movie.poster ? (
+                {movie.posters?.[0] ? (
                   <Image
-                    src={movie.poster.url}
-                    alt={movie.poster.alt || movie.title}
+                    src={movie.posters?.[0].url}
+                    alt={movie.posters?.[0].alt || movie.title}
                     className="w-full h-full object-cover"
                     width={256}
                     height={384}

@@ -25,8 +25,8 @@ export interface Movie extends BaseModelWithId {
   overview: string;
   release_date: string;
   duration: number;
-  poster: Image;
-  backdrop: Image;
+  posters: Image[];
+  backdrops: Image[];
   trailer_url: string | null;
   rating: number;
   videos: Video[];
@@ -37,15 +37,24 @@ export interface Movie extends BaseModelWithId {
   alternative_overviews: AlternativeOverview[];
   original_language: string;
   original_title: string;
-  cast?: Actor[];
+  // movie.cast on backend is an array of MovieCast records that include a person relation
+  cast?: MovieCast[];
 }
 
-export interface Actor extends BaseModelWithId {
+export interface Person extends BaseModelWithId {
+  original_id: number;
   name: string;
-  profile_path: string;
-  character: string;
-  birthday: Date;
-  profileImage: string;
+  biography?: string;
+  birthday?: string | null;
+  place_of_birth?: string | null;
+  // profile_url is a fully built URL to the person's profile image
+  profile_url?: string | null;
+}
+
+export interface MovieCast extends BaseModelWithId {
+  person: Person;
+  character?: string | null;
+  order?: number | null;
 }
 
 export interface Video extends BaseModelWithId {

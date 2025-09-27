@@ -173,7 +173,7 @@ const RecommendationDashboard: React.FC = () => {
               {recentlyWatched.map((movie) => (
                 <div key={movie.id} className="relative group">
                   <Image
-                    src={movie.poster?.url || '/placeholder-movie.jpg'}
+                    src={movie.posters?.[0]?.url || '/placeholder-movie.jpg'}
                     alt={movie.title}
                     className="w-full aspect-[2/3] object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
                     width={300}

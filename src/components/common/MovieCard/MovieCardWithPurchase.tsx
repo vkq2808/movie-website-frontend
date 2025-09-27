@@ -52,10 +52,10 @@ const MovieCardWithPurchase: React.FC<MovieCardWithPurchaseProps> = ({
         <div className="relative overflow-hidden rounded-lg bg-gray-800 hover:scale-105 transition-transform duration-200">
           {/* Movie Poster */}
           <div className="aspect-[2/3] relative">
-            {movie.poster ? (
+            {movie.posters?.[0] ? (
               <Image
-                src={movie.poster.url}
-                alt={movie.poster.alt || movie.title}
+                src={movie.posters[0].url}
+                alt={movie.posters[0].alt || movie.title}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"

@@ -14,9 +14,9 @@ export default function MovieCard({ movie }: MovieCardProps) {
     <div className="group relative overflow-hidden rounded-lg transition-transform hover:scale-[1.02]">
       <Link href={`/movie/${movie.id}`}>
         <div className="relative aspect-[2/3] w-full">
-          {movie.poster ? (
+          {movie.posters?.[0] ? (
             <Image
-              src={movie.poster.url || '/placeholder-poster.jpg'}
+              src={movie.posters[0].url || '/placeholder-poster.jpg'}
               alt={movie.title}
               fill
               className="object-cover"

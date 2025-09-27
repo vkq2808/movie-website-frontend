@@ -4,6 +4,7 @@ import { Movie } from '@/zustand'
 import EpisodesTab from './tabs/EpisodesTab'
 import GalleryTab from './tabs/GalleryTab'
 import CommentsTab from './tabs/CommentsTab'
+import CastTab from './tabs/CastTab'
 
 interface TabContentProps {
   activeTab: string
@@ -17,6 +18,8 @@ const TabContent: React.FC<TabContentProps> = ({ activeTab, movie }) => {
         return <EpisodesTab movie={movie} />
       case 'gallery-tab':
         return <GalleryTab movie={movie} />
+      case 'cast-tab':
+        return <CastTab movie={movie} />
       case 'comments-tab':
         return <CommentsTab movieId={movie.id} />
       default:

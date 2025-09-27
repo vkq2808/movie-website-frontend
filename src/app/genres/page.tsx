@@ -22,7 +22,7 @@ export default function GenresPage() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [fetchGenres]);
 
   if (loading) {
     return (
