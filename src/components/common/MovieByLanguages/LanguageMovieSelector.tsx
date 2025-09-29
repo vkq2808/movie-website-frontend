@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Movie } from '@/zustand'
 import { getMoviesByLanguage } from '@/apis/movie.api'
-import { Language, getPopularLanguages } from '@/apis/language.api'
 import MovieCard from '@/components/common/MovieCard/MovieCard'
 import LoadingSpinner from '../LoadingSpinner'
 
@@ -28,6 +27,13 @@ interface LanguageMovieSelectorProps {
   languageLimit?: number
   width?: string
   height?: string
+}
+interface Language {
+  id: string;
+  iso_639_1: string;
+  name: string;
+  english_name: string;
+  country: string; // Added country property
 }
 
 interface MoviesByLanguage {
@@ -70,7 +76,7 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
         )
       );
 
-      const moviesData = await getMoviesByLanguage(language.iso_639_1, 1, limit);
+      const moviesData = await getMoviesByLanguage(language.country, language.iso_639_1, 1, limit);
 
       // Update the specific language's movies
       setMoviesByLanguage(current =>
@@ -98,54 +104,34 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
     const fetchPopularLanguages = async () => {
       try {
         setLanguagesLoading(true)
-        // Fetch the popular languages based on movie count
-        const response = await getPopularLanguages(languageLimit)
+        // Fallback to default languages if API returns empty
+        const defaultLanguages: Language[] = [
+          { id: 'default-language-1', iso_639_1: 'en', name: 'English', english_name: 'English', country: 'US' },
+          { id: 'default-language-2', iso_639_1: 'ko', name: 'Korean', english_name: 'Korean', country: 'KR' },
+          { id: 'default-language-3', iso_639_1: 'ja', name: 'Japanese', english_name: 'Japanese', country: 'JP' },
+          { id: 'default-language-4', iso_639_1: 'zh', name: 'Chinese', english_name: 'Chinese', country: 'CN' },
+        ]
 
-        if (response.data && response.data.length > 0) {
+        // Initialize with default languages
+        const initialMoviesByLanguage = defaultLanguages.map(language => ({
+          language,
+          movies: [],
+          loading: true
+        }))
 
-          // Initialize moviesByLanguage with all languages
-          const initialMoviesByLanguage = response.data.map(language => ({
-            language,
-            movies: [],
-            loading: true
-          }))
+        setMoviesByLanguage(initialMoviesByLanguage)
 
-          setMoviesByLanguage(initialMoviesByLanguage)
-
-          // Clear the fetched languages ref when new languages are loaded
-          fetchedLanguagesRef.current.clear();
-        } else {
-          // Fallback to default languages if API returns empty
-          const defaultLanguages = [
-            { id: '1', iso_639_1: 'en', name: 'English', english_name: 'English' },
-            { id: '2', iso_639_1: 'ko', name: 'Korean', english_name: 'Korean' },
-            { id: '3', iso_639_1: 'ja', name: 'Japanese', english_name: 'Japanese' },
-            { id: '4', iso_639_1: 'fr', name: 'French', english_name: 'French' },
-            { id: '5', iso_639_1: 'es', name: 'Spanish', english_name: 'Spanish' }
-          ]
-
-          // Initialize with default languages
-          const initialMoviesByLanguage = defaultLanguages.map(language => ({
-            language,
-            movies: [],
-            loading: true
-          }))
-
-          setMoviesByLanguage(initialMoviesByLanguage)
-
-          // Clear the fetched languages ref when new languages are loaded
-          fetchedLanguagesRef.current.clear();
-        }
+        // Clear the fetched languages ref when new languages are loaded
+        fetchedLanguagesRef.current.clear();
       } catch (error) {
         setError('Failed to fetch languages')
 
         // Fallback to default languages if API fails
-        const defaultLanguages = [
-          { id: '1', iso_639_1: 'en', name: 'English', english_name: 'English' },
-          { id: '2', iso_639_1: 'ko', name: 'Korean', english_name: 'Korean' },
-          { id: '3', iso_639_1: 'ja', name: 'Japanese', english_name: 'Japanese' },
-          { id: '4', iso_639_1: 'fr', name: 'French', english_name: 'French' },
-          { id: '5', iso_639_1: 'es', name: 'Spanish', english_name: 'Spanish' }
+        const defaultLanguages: Language[] = [
+          { id: 'default-language-1', iso_639_1: 'en', name: 'English', english_name: 'English', country: 'US' },
+          { id: 'default-language-2', iso_639_1: 'ko', name: 'Korean', english_name: 'Korean', country: 'KR' },
+          { id: 'default-language-3', iso_639_1: 'ja', name: 'Japanese', english_name: 'Japanese', country: 'JP' },
+          { id: 'default-language-4', iso_639_1: 'zh', name: 'Chinese', english_name: 'Chinese', country: 'CN' },
         ]
 
         // Initialize with default languages

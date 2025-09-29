@@ -98,12 +98,13 @@ export async function removeLanguageFromMovie(movieId: string, languageIsoCode: 
   return response.data
 }
 
-export async function getMoviesByLanguage(languageIsoCode: string, page: number = 1, limit: number = 10): Promise<PaginatedApiResponse<Movie>> {
+export async function getMoviesByLanguage(country: string, iso_639_1: string, page: number = 1, limit: number = 10): Promise<PaginatedApiResponse<Movie>> {
   const response = await api.get<PaginatedApiResponse<Movie>>(`${apiEndpoint.MOVIE}`, {
     params: {
       page,
       limit,
-      language: languageIsoCode
+      production_company: country,
+      spoken_language: iso_639_1,
     }
   })
   return response.data
