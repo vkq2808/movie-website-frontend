@@ -67,7 +67,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({
             <h1 className="text-4xl font-bold">{getMovieTitleByLanguage(movie, language)}</h1>
 
             <div className="flex flex-wrap gap-2 text-sm mt-4">
-              <span className="bg-yellow-400 text-black px-2 py-0.5 rounded">IMDb {movie.rating}</span>
+              <span className="bg-yellow-400 text-black px-2 py-0.5 rounded">IMDb {movie.vote_average}</span>
               <span className="bg-gray-700 px-2 py-0.5 rounded">{movie.release_date.split('-')[0]}</span>
             </div>
 
