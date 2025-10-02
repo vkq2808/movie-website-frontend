@@ -1,7 +1,6 @@
 'use client'
 import React, { useState, useEffect, useCallback } from 'react'
 import { RecommendationResponse, getRecommendations, getTrendingRecommendations, RecommendationFilters } from '@/apis/recommendation.api'
-import { Movie } from '@/zustand'
 import MovieCard from './MovieCard/MovieCard'
 import LoadingSpinner from './LoadingSpinner'
 import { ChevronLeft, ChevronRight, RefreshCw, Filter } from 'lucide-react'
@@ -265,7 +264,7 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({
                     </div>
                     <div className="flex items-center justify-between mt-1">
                       <span className="text-yellow-400">
-                        ⭐ {rec.score.toFixed(1)}
+                        ⭐ {rec.movie.vote_average.toFixed(2)}
                       </span>
                       {rec.metadata.reasoning && (
                         <span

@@ -10,12 +10,12 @@ type LanguageState = {
 export const SUPPORTED_LANGUAGES = [
   { iso_639_1: 'en', name: 'English' },
   { iso_639_1: 'vi', name: 'Vietnamese' }
-] as const;
+];
 
 export const useLanguageStore = create<LanguageState>()(
   persist(
     (set) => ({
-      currentLanguage: SUPPORTED_LANGUAGES[0],
+      currentLanguage: SUPPORTED_LANGUAGES[1],
       setLanguage: (language) => set({ currentLanguage: language }),
     }),
     {

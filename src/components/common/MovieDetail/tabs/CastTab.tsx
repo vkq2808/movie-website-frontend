@@ -8,9 +8,13 @@ interface CastTabProps {
 }
 
 const CastTab: React.FC<CastTabProps> = ({ movie }) => {
-  const cast: MovieCastType[] = (movie.cast ?? []) as MovieCastType[]
+  const cast = movie.cast;
 
-  if (cast.length === 0) {
+  React.useEffect(() => {
+    console.log('Movie:', movie);
+  }, [movie]);
+
+  if (cast && cast.length === 0) {
     return (
       <div className="space-y-6">
         <h2 className="text-2xl font-bold text-white mb-6">Diễn viên</h2>
@@ -23,7 +27,7 @@ const CastTab: React.FC<CastTabProps> = ({ movie }) => {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-white mb-6">Diễn viên</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {cast.map((c) => {
+        {cast?.map((c) => {
           const person: PersonType | undefined = c.person as PersonType | undefined
           const name = person?.name || 'Unknown'
           const profile = person?.profile_url || ''

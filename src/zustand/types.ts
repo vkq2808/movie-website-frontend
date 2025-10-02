@@ -28,7 +28,6 @@ export interface Movie extends BaseModelWithId {
   posters: Image[];
   backdrops: Image[];
   trailer_url: string | null;
-  rating: number;
   videos: Video[];
   vote_average: number;
   vote_count: number;

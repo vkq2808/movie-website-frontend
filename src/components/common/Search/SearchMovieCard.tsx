@@ -14,12 +14,12 @@ const SearchMovieCard: React.FC<SearchMovieCardProps> = ({ movie }) => {
     <Link href={`/movie/${movie.id}`} className="block group">
       <div className="relative h-full overflow-hidden rounded-lg transition-transform duration-300 group-hover:scale-105">
         {/* Movie Poster */}
-        <div className="aspect-[2/3] bg-gray-800">
+        <div className="aspect-[2/3] bg-gray-800 relative">
           {movie.posters?.[0] ? (
             <Image
               src={movie.posters?.[0].url}
               alt={movie.posters?.[0].alt || movie.title}
-              className="w-full h-full object-cover"
+              className="object-cover"
               loading="lazy"
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -36,7 +36,7 @@ const SearchMovieCard: React.FC<SearchMovieCardProps> = ({ movie }) => {
           {/* Movie Rating */}
           <div className="flex items-center mb-1">
             <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-            <span className="text-xs ml-1 text-white">{movie.rating || 'N/A'}</span>
+            <span className="text-xs ml-1 text-white">{movie.vote_average || 'N/A'}</span>
           </div>
 
           {/* Movie Title */}
@@ -59,7 +59,7 @@ const SearchMovieCard: React.FC<SearchMovieCardProps> = ({ movie }) => {
         </span>
         <div className="flex items-center">
           <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-          <span className="text-xs ml-1 text-gray-400">{movie.rating || 'N/A'}</span>
+          <span className="text-xs ml-1 text-gray-400">{movie.vote_average || 'N/A'}</span>
         </div>
       </div>
     </Link>

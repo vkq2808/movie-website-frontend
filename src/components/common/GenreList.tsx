@@ -1,9 +1,8 @@
 'use client';
-import { Genre, useGenreStore } from '@/zustand';
+import { Genre, useGenreStore, useLanguageStore } from '@/zustand';
 import Link from 'next/link';
 import React from 'react';
 import Spinner from './Spinner';
-import { useLanguage } from '@/contexts/language.context';
 
 interface DisplayGenre extends Genre {
   bgColor: {
@@ -17,7 +16,7 @@ export default function GenreList() {
 
   const genres = useGenreStore((state) => state.genres);
   const fetchGenres = useGenreStore((state) => state.fetchGenres);
-  const { language } = useLanguage();
+  const language = useLanguageStore(l => l.currentLanguage)
   const [displayGenres, setDisplayGenres] = React.useState<DisplayGenre[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
 
@@ -26,7 +25,7 @@ export default function GenreList() {
     if (!genre.names || genre.names.length === 0) {
       return 'Tất cả thể loại'
     }
-    const nameForLanguage = genre.names.find(n => n.iso_639_1 === language);
+    const nameForLanguage = genre.names.find(n => n.iso_639_1 === language.iso_639_1);
     return nameForLanguage ? nameForLanguage.name : genre.names[0]?.name || 'Unknown';
   };
 

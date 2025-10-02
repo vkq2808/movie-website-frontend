@@ -109,7 +109,6 @@ export default function AdminMoviesPage() {
                       {m.status}
                     </span>
                   </td>
-                  <td className="px-3 py-2 text-gray-300">{Math.round(m.popularity)}</td>
                   <td className="px-3 py-2 text-gray-300">{m.vote_average?.toFixed(1)}</td>
                   <td className="px-3 py-2 text-right">
                     <a

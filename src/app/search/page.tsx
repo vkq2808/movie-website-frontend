@@ -1,13 +1,13 @@
 'use client'
 import React, { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Movie, useGenreStore } from '@/zustand'
+import { Movie, useGenreStore, useLanguageStore } from '@/zustand'
 import api, { apiEndpoint } from '@/utils/api.util'
 import SearchMovieCard from '@/components/common/Search/SearchMovieCard'
 import SearchFilter from '@/components/common/Search/SearchFilter'
 import { useAuthStore } from '@/zustand'
 import { saveSearchHistory } from '@/apis/search-history.api'
-import { useLanguage } from '@/contexts/language.context'
+
 import { PaginatedApiResponse } from '@/types/api.response'
 
 interface SearchResult {
@@ -22,7 +22,7 @@ interface SearchResult {
 
 // Component that uses useSearchParams
 const SearchContent = () => {
-  const { language } = useLanguage();
+  const language = useLanguageStore(l => l.currentLanguage);
   const genres = useGenreStore(state => state.genres)
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
@@ -180,7 +180,7 @@ const SearchContent = () => {
           { id: 'all', label: 'Tất cả thể loại' },
           ...genres.map(genre => ({
             id: genre.id,
-            label: genre.names.find(n => n.iso_639_1 === language)?.name || genre.id
+            label: genre.names.find(n => n.iso_639_1 === language.iso_639_1)?.name || genre.id
           }))
         ]
       }))
@@ -192,7 +192,7 @@ const SearchContent = () => {
         ...(queryGenres ? { genres: queryGenres.split(',') } : {})
       }))
     }
-  }, [genres, searchParams, language])
+  }, [genres, searchParams, language.iso_639_1])
 
   return (
     <div className="bg-slate-100 min-h-screen">
