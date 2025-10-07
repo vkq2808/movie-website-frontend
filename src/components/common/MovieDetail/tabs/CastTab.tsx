@@ -30,7 +30,7 @@ const CastTab: React.FC<CastTabProps> = ({ movie }) => {
         {cast?.map((c) => {
           const person: PersonType | undefined = c.person as PersonType | undefined
           const name = person?.name || 'Unknown'
-          const profile = person?.profile_url || ''
+          const profile = person?.profile_image?.url || ''
           const character = c.character || ''
           return (
             <div key={c.id} className="bg-gray-800 rounded-lg p-3 flex flex-col items-center text-center">

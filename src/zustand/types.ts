@@ -47,7 +47,10 @@ export interface Person extends BaseModelWithId {
   birthday?: string | null;
   place_of_birth?: string | null;
   // profile_url is a fully built URL to the person's profile image
-  profile_url?: string | null;
+  profile_image?: {
+    url: string;
+    alt: string;
+  }
 }
 
 export interface MovieCast extends BaseModelWithId {

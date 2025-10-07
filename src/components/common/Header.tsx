@@ -2,10 +2,9 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Genre, useAuthStore, useGenreStore } from "@/zustand";
+import { Genre, useAuthStore, useGenreStore, useLanguageStore } from "@/zustand";
 import { ChevronDownIcon, SearchIcon, UserIcon } from "lucide-react";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
-import { useLanguage } from "@/contexts/language.context";
 import Image from "next/image";
 import { useSettings } from "@/contexts/settings.context";
 import { useToast } from "@/contexts/toast.context";
@@ -15,13 +14,13 @@ const Header = () => {
   const [displayGenres, setDisplayGenres] = React.useState<Genre[]>([]);
   const fetchGenres = useGenreStore(state => state.fetchGenres);
   const [search, setSearch] = React.useState('');
-  const { language } = useLanguage();
   const router = useRouter();
   const { settings } = useSettings();
+  const language = useLanguageStore(l => l.currentLanguage);
 
   // Function to get genre name based on current language
   const getGenreName = (genre: Genre) => {
-    const nameForLanguage = genre.names.find(n => n.iso_639_1 === language);
+    const nameForLanguage = genre.names.find(n => n.iso_639_1 === language.iso_639_1);
     return nameForLanguage ? nameForLanguage.name : genre.names[0]?.name || 'Unknown';
   };
 
@@ -68,9 +67,9 @@ const Header = () => {
             <span>Thể loại</span>
             <ChevronDownIcon className="w-4 h-4" />
           </PopoverButton>
-            <PopoverPanel className="absolute z-10 mt-2 w-screen max-w-lg pr-8 bg-gray-800 p-4 rounded shadow-lg focus:outline-none">
+            <PopoverPanel className="absolute z-10 mt-2 w-screen max-w-xl pr-8 bg-gray-800 p-4 rounded shadow-lg focus:outline-none">
               {({ close }) => (
-                <div className="grid grid-cols-4 gap-6">
+                <div className="grid grid-cols-4 gap-6 w-full">
                   {displayGenres.map(g => (
                     <Link
                       className="block px-2 py-1 w-32 hover:bg-gray-700 text-center break-words hyphens-auto overflow-hidden hover:z-10 hover:scale-110 transition-all"
