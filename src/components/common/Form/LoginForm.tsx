@@ -20,7 +20,7 @@ const LoginForm = () => {
     setLoading(true);
 
     await authApi.login({ email, password }).then(res => {
-      if (res.success) {
+      if (res.success && res.data.user) {
         // Persist user in local store
         setAuth({ user: res.data.user })
         // Write FE-domain cookies so middleware (edge) can validate using backend
@@ -35,6 +35,9 @@ const LoginForm = () => {
           try { new BroadcastChannel('auth').postMessage({ type: 'token-updated' }); } catch { }
         } catch { /* ignore */ }
         toast.success('Đăng nhập thành công');
+      } else {
+        setErrorMsg(res.message);
+        toast.warning(res.message);
       }
     }).catch(err => {
       const msg = err?.response?.data?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.';

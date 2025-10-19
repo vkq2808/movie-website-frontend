@@ -10,12 +10,24 @@ export interface LoginData {
 export interface LoginResponse {
   access_token: string;
   refresh_token: string;
-  user: User;
+  user?: User;
 }
 
 const login = async (data: LoginData): Promise<ApiResponse<LoginResponse>> => {
-  const response = await api.post<ApiResponse<LoginResponse>>(`${apiEndpoint.AUTH}/login`, data);
-  return response.data;
+  try {
+    const response = await api.post<ApiResponse<LoginResponse>>(`${apiEndpoint.AUTH}/login`, data);
+    return response.data;
+  } catch {
+    return {
+      data: {
+        access_token: "",
+        refresh_token: "",
+        user: undefined
+      },
+      message: "Đăng nhập thất bại. Vui lòng kiểm tra lại tên đăng nhập hoặc mật khẩu.",
+      success: false
+    }
+  }
 }
 
 export interface RegisterData {

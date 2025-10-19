@@ -128,9 +128,6 @@ export default function AdminUsersPage() {
                 <th className="px-3 py-2">Role</th>
                 <th className="px-3 py-2">Status</th>
                 <th className="px-3 py-2">Joined</th>
-                <th className="px-3 py-2">Last Login</th>
-                <th className="px-3 py-2">Purchases</th>
-                <th className="px-3 py-2">Watch Time</th>
                 <th className="px-3 py-2" />
               </tr>
             </thead>
@@ -156,9 +153,6 @@ export default function AdminUsersPage() {
                     </span>
                   </td>
                   <td className="px-3 py-2 text-gray-300">{new Date(u.created_at).toLocaleDateString()}</td>
-                  <td className="px-3 py-2 text-gray-300">{u.last_login ? new Date(u.last_login).toLocaleString() : '-'}</td>
-                  <td className="px-3 py-2 text-gray-300">{u.total_purchases ?? 0}</td>
-                  <td className="px-3 py-2 text-gray-300">{u.total_watch_time ?? 0}</td>
                   <td className="px-3 py-2 text-right">
                     <button
                       onClick={() => toggleRole(u)}

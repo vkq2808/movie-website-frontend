@@ -40,7 +40,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
 
             <h3 className="text-white font-semibold truncate">{movie.title}</h3>
             <p className="text-gray-300 text-sm">
-              {new Date(movie.release_date).getFullYear()} • {Math.floor(movie.duration / 60)}h {movie.duration % 60}m
+              {new Date(movie.release_date).getFullYear()}
             </p>
 
             <button className="mt-3 flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white rounded-md py-1 transition-colors">

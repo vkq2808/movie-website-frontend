@@ -10,7 +10,6 @@ import { useSearchParams } from 'next/navigation';
 const LoginOauth2 = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const auth = useAuthStore(state => state);
-  const fetchUser = useAuthStore(state => state.fetchUser);
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get('from');
@@ -28,23 +27,16 @@ const LoginOauth2 = () => {
 
   const handleReturnToUrl = async () => {
     setIsLoading(true);
-    try {
-      // Ensure we have the latest user with correct role from backend
-      await fetchUser();
-    } catch {
-      // ignore fetch errors, still proceed to redirect
-    } finally {
-      const target = from || redirect || '/';
-      router.push(target);
-      setIsLoading(false);
-    }
+    const target = from || redirect || '/';
+    router.push(target);
+    setIsLoading(false);
   }
 
   React.useEffect(() => {
     if (auth.user) {
       handleReturnToUrl();
     }
-  }, [auth.user, router, from, redirect]);
+  }, [auth.user, from, redirect]);
 
   return (
     isLoading ?

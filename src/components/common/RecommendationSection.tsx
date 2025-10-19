@@ -18,7 +18,7 @@ interface RecommendationSectionProps {
 const RecommendationSection: React.FC<RecommendationSectionProps> = ({
   title = 'Recommended for You',
   type = 'hybrid',
-  limit = 20,
+  limit = 18,
   showFilters = false,
   showRefresh = true,
   className = '',
@@ -130,7 +130,7 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({
       setLoading(false)
       setRefreshing(false)
     }
-  }, [filters, page, recommendations.length, fetchTrendingMovies])
+  }, [filters, fetchTrendingMovies])
 
   const handleRefresh = async () => {
     setRefreshing(true)
@@ -173,15 +173,16 @@ const RecommendationSection: React.FC<RecommendationSectionProps> = ({
     }
   }
 
+  // Khi filters thay đổi (ví dụ user đổi loại recommendation)
   useEffect(() => {
     fetchRecommendations(true)
-  }, [filters, fetchRecommendations])
+  }, [filters]) // Chỉ chạy khi filters đổi
 
+  // Khi page tăng (Load More)
   useEffect(() => {
-    if (page > 1) {
-      fetchRecommendations()
-    }
-  }, [page, fetchRecommendations])
+    if (page > 1) fetchRecommendations(false)
+  }, [page])
+
 
   if (loading && recommendations.length === 0) {
     return (

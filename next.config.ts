@@ -1,4 +1,6 @@
 import type { NextConfig } from "next";
+import dotenv from 'dotenv'
+dotenv.config();
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -34,6 +36,14 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'image.tmdb.org',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost'
+      },
+      {
+        protocol: 'https',
+        hostname: process.env.NEXT_PUBLIC_BASE_URL ?? ''
       }
     ]
   },

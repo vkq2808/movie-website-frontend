@@ -1,38 +1,113 @@
 import api, { apiEndpoint } from "@/utils/api.util";
 import { ApiResponse } from "@/types/api.response";
+import { MovieStatus, Role } from "@/constants/enum";
 
-// Admin Movie Management
+
 export interface AdminMovie {
   id: string;
-  title: string;
-  description: string;
-  release_date: string;
-  poster_url?: string;
-  trailer_url?: string;
-  status: 'published' | 'draft';
+  status: MovieStatus;
   genres: AdminGenre[];
-  vote_average: number;
+  title: string;
+  overview: string;
+  original_language: AdminLanguage;
+  production_companies: AdminProductionCompany[];
+  price: number;
+
+  backdrops: {
+    url: string;
+    alt: string;
+  }[];
+  posters: {
+    url: string;
+    alt: string;
+  }[];
+  keywords: AdminKeyword[];
+  spoken_languages: AdminLanguage[];
+  cast: AdminCast[];
+  crew: AdminCrew[];
+
   popularity: number;
+  vote_average: number;
+  vote_count: number;
+  budget: number;
+  revenue: number;
+  runtime: number;
+  adult: boolean;
+  purchases: AdminPurchase[];
+  original_id: number;
+  release_date: string;
+
+
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
+export interface AdminCast {
+  id: string;
+  character?: string;
+  order?: number;
+  person: AdminPerson;
+}
+
+export interface AdminCrew {
+  id: string;
+  job?: string;
+  department: string;
+  person: AdminPerson;
+}
+
+export interface AdminPerson {
+  id: string;
+  name: string;
+  profile_image?: {
+    url: string;
+    alt: string;
+  };
+  gender: number;
+  adult: boolean;
+}
+
+export interface AdminPurchase {
+  id: string;
+  user: Partial<AdminUser>;
+  movie: Partial<AdminMovie>;
+  purchase_price: number;
+  purchased_at: string;
   created_at: string;
   updated_at: string;
 }
 
-export interface AdminGenre {
+export interface AdminKeyword {
   id: string;
   name: string;
+}
+
+export interface AdminLanguage {
+  id: string;
+  name: string;
+}
+
+export interface AdminProductionCompany {
+  id: string;
+  name: string;
+}
+
+export interface AdminGenre {
+  id: string;
+  names: {
+    iso_639_1: string;
+    name: string;
+  }[];
 }
 
 export interface AdminUser {
   id: string;
   username: string;
   email: string;
-  role: 'admin' | 'user';
-  status: 'active' | 'inactive';
+  role: Role;
   created_at: string;
-  last_login?: string;
-  avatar_url?: string;
-  total_purchases: number;
-  total_watch_time: number;
+  status?: 'active' | 'inactive';
 }
 
 export interface AdminStats {
@@ -66,19 +141,79 @@ export interface PopularMovie {
 }
 
 export interface CreateMovieData {
+  /** Tiêu đề phim */
   title: string;
-  description: string;
+
+  /** Mô tả phim */
+  overview: string;
+
+  /** Ngày phát hành (YYYY-MM-DD) */
   release_date: string;
-  poster_url?: string;
-  trailer_url?: string;
-  status: 'published' | 'draft';
-  genre_ids: string[];
-  vote_average: number;
-  popularity: number;
+
+  /** Ngôn ngữ gốc của phim */
+  original_language_id?: string;
+
+  /** Trạng thái phim (draft, published, ...) */
+  status: MovieStatus;
+
+  /** Thời lượng (phút) */
+  runtime?: number;
+
+  /** Ngân sách sản xuất */
+  budget?: number;
+
+  /** Doanh thu */
+  revenue?: number;
+
+  /** Giá bán hoặc thuê */
+  price?: number;
+
+  /** Độ phổ biến */
+  popularity?: number;
+
+  /** Điểm trung bình */
+  vote_average?: number;
+
+  /** Số lượt đánh giá */
+  vote_count?: number;
+
+  /** Ảnh nền (backdrops) */
+  backdrops?: {
+    url: string;
+    alt?: string;
+  }[];
+
+  /** Danh sách thể loại */
+  genres: {
+    id: string;
+  }[];
+
+  /** Danh sách từ khóa */
+  keyword_ids?: string[];
+
+  /** Danh sách ngôn ngữ có trong phim */
+  spoken_language_ids?: string[];
+
+  /** Danh sách công ty sản xuất */
+  production_company_ids?: string[];
+
+  /** Danh sách diễn viên */
+  cast?: {
+    person_id: string;
+    character?: string;
+    order?: number;
+  }[];
+
+  /** Danh sách ekip */
+  crew?: {
+    person_id: string;
+    job?: string;
+    department: string;
+  }[];
 }
 
 export interface UpdateMovieData extends Partial<CreateMovieData> {
-  id: string;
+  id?: string;
 }
 
 export interface UpdateUserData {
@@ -86,12 +221,13 @@ export interface UpdateUserData {
   status?: 'active' | 'inactive';
 }
 
+
 // Movie Management APIs
 const getMovies = async (params?: {
   page?: number;
   limit?: number;
   search?: string;
-  status?: 'all' | 'published' | 'draft';
+  status?: MovieStatus | 'all';
 }): Promise<ApiResponse<{
   movies: AdminMovie[];
   total: number;
@@ -117,7 +253,7 @@ const createMovie = async (data: CreateMovieData): Promise<ApiResponse<AdminMovi
 
 const updateMovie = async (id: string, data: UpdateMovieData): Promise<ApiResponse<AdminMovie>> => {
   // Backend: POST /movie/:id
-  const response = await api.post(`${apiEndpoint.MOVIE}/${id}`, data);
+  const response = await api.put<ApiResponse<AdminMovie>>(`${apiEndpoint.MOVIE}/${id}`, data);
   return response.data;
 };
 
@@ -163,6 +299,11 @@ const removeMovieProductionCompany = async (id: string, company_id: number): Pro
   const response = await api.post(`${apiEndpoint.MOVIE}/${id}/production-companies/remove`, { company_id });
   return response.data;
 };
+
+const getMovieKeywords = async (query: string): Promise<ApiResponse<AdminKeyword[]>> => {
+  const res = await api.get<ApiResponse<AdminKeyword[]>>(`${apiEndpoint.KEYWORD}/search?query=${encodeURIComponent(query)}`);
+  return res.data;
+}
 
 // Keywords
 const setMovieKeywords = async (id: string, keyword_ids: number[]): Promise<ApiResponse<AdminMovie>> => {
@@ -310,15 +451,15 @@ const updateSettings = async (data: SystemSettings): Promise<ApiResponse<SystemS
 };
 
 // Image Upload API
-const uploadImage = async (file: File, _type: 'poster' | 'backdrop' | 'avatar'): Promise<ApiResponse<{
+export const uploadImage = async (file: File, key: string): Promise<ApiResponse<{
   url: string;
-  public_id: string;
 }>> => {
   const formData = new FormData();
   formData.append('file', file);
+  formData.append('key', key);
 
   // Backend: POST /image/poster/upload
-  const response = await api.post(`${apiEndpoint.IMAGE}/poster/upload`, formData, {
+  const response = await api.post(`${apiEndpoint.IMAGE}/upload`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -326,13 +467,18 @@ const uploadImage = async (file: File, _type: 'poster' | 'backdrop' | 'avatar'):
   return response.data;
 };
 
+export const deleteImage = async (url: string): Promise<ApiResponse<null>> => {
+  const response = await api.post<ApiResponse<null>>(`${apiEndpoint.IMAGE}/delete`, { url });
+  return response.data;
+}
+
 // Activity Log APIs
 const getActivityLogs = async (params?: {
   page?: number;
   limit?: number;
   type?: string;
-  startDate?: string;
-  endDate?: string;
+  startstring?: string;
+  endstring?: string;
 }): Promise<ApiResponse<{
   logs: ActivityItem[];
   total: number;
@@ -377,12 +523,17 @@ export const adminApi = {
   setMovieProductionCompanies,
   addMovieProductionCompany,
   removeMovieProductionCompany,
+
+  getMovieKeywords,
   setMovieKeywords,
   addMovieKeyword,
   removeMovieKeyword,
+
   addLanguageToMovie,
   setSpokenLanguages,
   removeLanguageFromMovie,
+
+
 
   // Users
   getUsers,
@@ -402,9 +553,6 @@ export const adminApi = {
   // Settings
   getSettings,
   updateSettings,
-
-  // Images
-  uploadImage,
 
   // Activity
   getActivityLogs,

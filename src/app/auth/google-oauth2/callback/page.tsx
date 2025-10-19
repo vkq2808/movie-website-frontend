@@ -25,6 +25,7 @@ const GoogleOAuth2Content = () => {
       api.get(`${apiEndpoint.AUTH}/google-oauth2/callback`, {
         params: { code, scope, authUser, prompt }
       }).then((res) => {
+        console.log(res.status === 200);
         if (res.status === 200) {
           setAuth({ user: res.data.data.user });
           console.log('Google OAuth2 Callback Response:', res.data);

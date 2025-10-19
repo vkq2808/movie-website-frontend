@@ -2,6 +2,8 @@
 import React from 'react';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { adminApi, type AdminMovie } from '@/apis/admin.api';
+import Link from 'next/link';
+import { MovieStatus } from '@/constants/enum';
 
 export default function AdminMoviesPage() {
   const [loading, setLoading] = React.useState(true);
@@ -11,7 +13,7 @@ export default function AdminMoviesPage() {
   const [limit, setLimit] = React.useState(10);
   const [total, setTotal] = React.useState(0);
   const [search, setSearch] = React.useState('');
-  const [status, setStatus] = React.useState<'all' | 'published' | 'draft'>('all');
+  const [status, setStatus] = React.useState<MovieStatus | 'all'>('all');
 
   const load = React.useCallback(async () => {
     try {
@@ -81,58 +83,75 @@ export default function AdminMoviesPage() {
         <div className="rounded bg-red-500/10 p-3 text-sm text-red-300">{error}</div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left text-sm">
-            <thead>
-              <tr className="border-b border-gray-800 text-gray-400">
-                <th className="px-3 py-2">Title</th>
-                <th className="px-3 py-2">Release</th>
-                <th className="px-3 py-2">Status</th>
-                <th className="px-3 py-2">Popularity</th>
-                <th className="px-3 py-2">Rating</th>
-                <th className="px-3 py-2" />
-              </tr>
-            </thead>
-            <tbody>
-              {movies.map((m) => (
-                <tr key={m.id} className="border-b border-gray-800">
-                  <td className="px-3 py-2 font-medium text-gray-100">{m.title}</td>
-                  <td className="px-3 py-2 text-gray-300">{new Date(m.release_date).toLocaleDateString()}</td>
-                  <td className="px-3 py-2">
-                    <span
-                      className={
-                        'rounded px-2 py-1 text-xs ' +
-                        (m.status === 'published'
-                          ? 'bg-green-500/10 text-green-300'
-                          : 'bg-yellow-500/10 text-yellow-300')
-                      }
-                    >
-                      {m.status}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2 text-gray-300">{m.vote_average?.toFixed(1)}</td>
-                  <td className="px-3 py-2 text-right">
-                    <a
-                      href={`/admin/movies/${m.id}`}
-                      className="mr-2 rounded bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-500"
-                    >
-                      Edit
-                    </a>
-                    <button
-                      onClick={() => handleDelete(m.id)}
-                      className="rounded bg-red-600 px-3 py-1 text-xs text-white hover:bg-red-500"
-                    >
-                      Delete
-                    </button>
-                  </td>
+          <div className='flex flex-row'>
+            <table className="w-full border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-gray-800 text-gray-400">
+                  <th className="px-3 py-2">Title</th>
+                  <th className="px-3 py-2">Release</th>
+                  <th className="px-3 py-2">Status</th>
+                  <th className="px-3 py-2">Popularity</th>
+                  <th className="px-3 py-2">Rating</th>
                 </tr>
-              ))}
-              {movies.length === 0 && (
-                <tr>
-                  <td className="px-3 py-6 text-center text-gray-400" colSpan={6}>No movies found</td>
+              </thead>
+              <tbody>
+                {movies.map((m) => (
+                  <tr key={'d-' + m.id} className="border-b border-gray-800"
+                  >
+                    <td className="px-3 py-2 font-medium text-gray-100">
+                      <Link href={`/admin/movies/${m.id}`}>{m.title}
+                      </Link>
+                    </td>
+                    <td className="px-3 py-2 text-gray-300">{new Date(m.release_date).toLocaleDateString()}</td>
+                    <td className="px-3 py-2">
+                      <span
+                        className={
+                          'rounded px-2 py-1 text-xs ' +
+                          (m.status === 'published'
+                            ? 'bg-green-500/10 text-green-300'
+                            : 'bg-yellow-500/10 text-yellow-300')
+                        }
+                      >
+                        {m.status}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-gray-300">{m.vote_average?.toFixed(1)}</td>
+                  </tr>
+                ))}
+                {movies.length === 0 && (
+                  <tr>
+                    <td className="px-3 py-6 text-center text-gray-400" colSpan={6}>No movies found</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            <table className="w-2/3 border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-gray-800 text-gray-400">
+                  <th className="px-3 py-2 text-end">Action</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {movies.map((m) => (
+                  <tr key={'a-' + m.id} className="border-b border-gray-800">
+                    <td className="px-3 py-2 text-right">
+                      <button
+                        onClick={() => handleDelete(m.id)}
+                        className="rounded bg-red-600 px-3 py-1 text-xs text-white hover:bg-red-500"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {movies.length === 0 && (
+                  <tr>
+                    <td className="px-3 py-6 text-center text-gray-400" colSpan={6}></td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
 
           <div className="mt-4 flex items-center justify-between">
             <div className="text-sm text-gray-400">
