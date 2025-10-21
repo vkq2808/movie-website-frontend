@@ -15,7 +15,8 @@ export const apiEndpoint = {
   WATCH_HISTORY: '/watch-history',
   FEEDBACK: '/feedback',
   CHAT: '/chat',
-  KEYWORD: '/keyword'
+  KEYWORD: '/keyword',
+  PERSON: '/person',
 }
 
 // Mở rộng interface InternalAxiosRequestConfig để thêm thuộc tính __retry

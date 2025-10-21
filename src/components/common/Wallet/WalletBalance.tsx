@@ -7,16 +7,19 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 interface WalletBalanceProps {
   showAddBalance?: boolean;
   className?: string;
+  onBalanceUpdate?: () => void;
 }
 
 const WalletBalance: React.FC<WalletBalanceProps> = ({
   showAddBalance = false,
   className = '',
+  onBalanceUpdate,
 }) => {
   const [balance, setBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isAddingBalance, setIsAddingBalance] = useState(false);
   const [addAmount, setAddAmount] = useState('');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('manual');
   const [error, setError] = useState<string | null>(null);
 
   // Get user from auth store
@@ -57,10 +60,20 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
     setError(null);
 
     try {
-      const response = await addBalance(amount);
+      const response = await addBalance(
+        amount,
+        selectedPaymentMethod,
+        undefined, // reference_id for external payments
+        `Nạp tiền qua ${selectedPaymentMethod === 'manual' ? 'thủ công' : selectedPaymentMethod}`
+      );
       const newBalance = response.data.balance;
       setBalance(newBalance);
       setAddAmount('');
+
+      // Call callback to refresh other components
+      if (onBalanceUpdate) {
+        onBalanceUpdate();
+      }
     } catch (error: unknown) {
       if (error && typeof error === 'object' && 'response' in error &&
         error.response && typeof error.response === 'object' && 'data' in error.response &&
@@ -192,6 +205,21 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
                 +${amount}
               </button>
             ))}
+          </div>
+
+          {/* Payment Method Selection */}
+          <div className="space-y-2">
+            <label className="block text-sm text-gray-400">Payment Method</label>
+            <select
+              value={selectedPaymentMethod}
+              onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            >
+              <option value="manual">Manual (Demo)</option>
+              <option value="momo">MoMo Wallet</option>
+              <option value="vnpay">VNPay</option>
+              <option value="bank">Bank Transfer</option>
+            </select>
           </div>
 
           {/* Custom Amount Input */}

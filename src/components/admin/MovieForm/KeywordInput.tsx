@@ -1,23 +1,48 @@
 import React from "react";
-import AutoCompleteMultiSelectInput, { Option } from "./AutoCompleteMultiSelectInput";
-import { MovieFormValues } from "./MovieForm";
-import { adminApi } from "@/apis/admin.api";
+import { AutoCompleteMultiSelectInput, Option } from "../../extensibles/AutoCompleteMultiSelectInput";
+import { adminApi, AdminKeyword } from "@/apis/admin.api";
+import { CreateOptionModal, CreateOptionProps, CreateOptionState } from "@/components/extensibles/CreateOptionModal";
+import { ToastContextValue } from "@/contexts/toast.context";
 
-interface KeywordInputProps {
-  keywords: Option[];
-  onChange: (field: keyof MovieFormValues, newKeywords: Option[]) => void;
+
+class CreateKeywordModal extends CreateOptionModal<AdminKeyword> {
 }
 
-export default function KeywordInput({ keywords, onChange }: KeywordInputProps) {
+class KeywordMultipleInput extends AutoCompleteMultiSelectInput<AdminKeyword> {
+
+  renderCreateModal(): React.JSX.Element {
+
+    const handleSubmit = (newOption: AdminKeyword) => {
+      this.addItem(newOption)
+    }
+
+    return (
+      <CreateKeywordModal creatingOption={{ id: "", name: this.state.inputValue }} handleSubmit={handleSubmit} label="Create new keyword" />
+    )
+  }
+}
+
+interface KeywordInputProps {
+  keywords: AdminKeyword[];
+  onChange: (field: string, newKeywords: Option[]) => void;
+  toast: ToastContextValue;
+}
+
+export default function KeywordInput({
+  keywords,
+  onChange,
+  toast
+}: KeywordInputProps) {
   // Hàm fetch keyword từ backend (NestJS)
-  const fetchSuggestions = async (query: string): Promise<string[]> => {
+  const fetchSuggestions = async (query: string): Promise<AdminKeyword[]> => {
     const list = await adminApi.getMovieKeywords(query);
-    return list.data.map(i => i.name);
+    return list.data;
   };
 
   return (
-    <AutoCompleteMultiSelectInput
-      label="Keywords"
+    <KeywordMultipleInput
+      toast={toast}
+      label="Keyword"
       field="keywords"
       values={keywords}
       onChange={onChange}

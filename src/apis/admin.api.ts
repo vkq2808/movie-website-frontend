@@ -43,18 +43,19 @@ export interface AdminMovie {
   deleted_at: string | null;
 }
 
-export interface AdminCast {
+export interface AdminMoviePerson {
   id: string;
-  character?: string;
-  order?: number;
   person: AdminPerson;
 }
 
-export interface AdminCrew {
-  id: string;
+export interface AdminCast extends AdminMoviePerson {
+  character?: string;
+  order?: number;
+}
+
+export interface AdminCrew extends AdminMoviePerson {
   job?: string;
   department: string;
-  person: AdminPerson;
 }
 
 export interface AdminPerson {
@@ -86,6 +87,8 @@ export interface AdminKeyword {
 export interface AdminLanguage {
   id: string;
   name: string;
+  english_name: string;
+  iso_639_1: string;
 }
 
 export interface AdminProductionCompany {
@@ -151,7 +154,7 @@ export interface CreateMovieData {
   release_date: string;
 
   /** Ngôn ngữ gốc của phim */
-  original_language_id?: string;
+  original_language: AdminLanguage;
 
   /** Trạng thái phim (draft, published, ...) */
   status: MovieStatus;
@@ -168,48 +171,34 @@ export interface CreateMovieData {
   /** Giá bán hoặc thuê */
   price?: number;
 
-  /** Độ phổ biến */
-  popularity?: number;
-
-  /** Điểm trung bình */
-  vote_average?: number;
-
-  /** Số lượt đánh giá */
-  vote_count?: number;
-
   /** Ảnh nền (backdrops) */
   backdrops?: {
     url: string;
     alt?: string;
   }[];
 
-  /** Danh sách thể loại */
-  genres: {
-    id: string;
+  posters?: {
+    url: string;
+    alt?: string;
   }[];
+
+  /** Danh sách thể loại */
+  genres: AdminGenre[]
 
   /** Danh sách từ khóa */
   keyword_ids?: string[];
 
   /** Danh sách ngôn ngữ có trong phim */
-  spoken_language_ids?: string[];
+  spoken_languages: AdminLanguage[];
 
   /** Danh sách công ty sản xuất */
-  production_company_ids?: string[];
+  production_companies: AdminProductionCompany[];
 
   /** Danh sách diễn viên */
-  cast?: {
-    person_id: string;
-    character?: string;
-    order?: number;
-  }[];
+  cast?: AdminCast[]
 
   /** Danh sách ekip */
-  crew?: {
-    person_id: string;
-    job?: string;
-    department: string;
-  }[];
+  crew?: AdminCrew[]
 }
 
 export interface UpdateMovieData extends Partial<CreateMovieData> {
@@ -300,12 +289,12 @@ const removeMovieProductionCompany = async (id: string, company_id: number): Pro
   return response.data;
 };
 
+// Keywords
 const getMovieKeywords = async (query: string): Promise<ApiResponse<AdminKeyword[]>> => {
   const res = await api.get<ApiResponse<AdminKeyword[]>>(`${apiEndpoint.KEYWORD}/search?query=${encodeURIComponent(query)}`);
   return res.data;
 }
 
-// Keywords
 const setMovieKeywords = async (id: string, keyword_ids: number[]): Promise<ApiResponse<AdminMovie>> => {
   const response = await api.post(`${apiEndpoint.MOVIE}/${id}/keywords/set`, { keyword_ids });
   return response.data;
@@ -332,6 +321,12 @@ const removeLanguageFromMovie = async (id: string, language_iso_code: string): P
   const response = await api.post(`${apiEndpoint.MOVIE}/${id}/languages/remove`, { language_iso_code });
   return response.data;
 };
+
+// Finding Person
+const getPersons = async (query: string): Promise<ApiResponse<AdminPerson[]>> => {
+  const response = await api.get<ApiResponse<AdminPerson[]>>(`${apiEndpoint.PERSON}/search?query=${query}`);
+  return response.data;
+}
 
 // User Management APIs
 const getUsers = async (params?: {
@@ -422,6 +417,11 @@ const updateGenre = async (_id: string, _data: { name: string }): Promise<ApiRes
 const deleteGenre = async (_id: string): Promise<ApiResponse<null>> => {
   throw new Error('Genre deletion is not supported by backend');
 };
+
+const findLanguages = async (query: string): Promise<ApiResponse<AdminLanguage[]>> => {
+  const response = await api.get<ApiResponse<AdminLanguage[]>>(`${apiEndpoint.LANGUAGE}/search?query=${query}`);
+  return response.data;
+}
 
 // System Settings APIs
 export interface SystemSettings {
@@ -533,6 +533,7 @@ export const adminApi = {
   setSpokenLanguages,
   removeLanguageFromMovie,
 
+  getPersons,
 
 
   // Users
@@ -549,6 +550,9 @@ export const adminApi = {
   createGenre,
   updateGenre,
   deleteGenre,
+
+  // Languages
+  findLanguages,
 
   // Settings
   getSettings,

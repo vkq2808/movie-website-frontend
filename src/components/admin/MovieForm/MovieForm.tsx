@@ -5,10 +5,14 @@ import React from "react";
 import { MovieStatus } from "@/constants/enum";
 import { AdminCast, AdminCrew, AdminGenre, AdminKeyword, AdminLanguage, AdminProductionCompany, deleteImage } from "@/apis/admin.api";
 import { useLanguageStore } from "@/zustand";
-import { BackdropsForm, PostersForm } from "./ImagesForm";
 import { uploadImage } from '@/apis/admin.api';
 import KeywordInput from "./KeywordInput";
 import { GenreInput } from "./GenreInput";
+import PersonInput from "./PersonInput";
+import { Option } from "@/components/extensibles/AutoCompleteMultiSelectInput";
+import { useToast } from "@/contexts/toast.context";
+import BackdropsInput from "./BackdropInput";
+import PostersInput from "./PosterInput";
 
 export interface MovieFormValues {
   id: string;
@@ -32,13 +36,16 @@ export default function MovieForm({
   initialValues,
   onSubmit,
   submitting,
+  isCreate = false
 }: {
   initialValues: MovieFormValues;
   onSubmit: (v: MovieFormValues) => void;
   submitting: boolean;
+  isCreate?: boolean;
 }) {
   const { currentLanguage } = useLanguageStore();
   const [values, setValues] = React.useState<MovieFormValues>(initialValues);
+  const toast = useToast();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -61,14 +68,15 @@ export default function MovieForm({
     onSubmit(values);
   };
 
-  const handleArrayChange = <T,>(
-    field: keyof MovieFormValues,
+  const handleArrayChange = <T extends Option,>(
+    field: string,
     newList: T[]
   ) => {
+
     setValues((prev) => ({ ...prev, [field]: newList }));
   };
 
-  const handleUploadMultipleFile = async (e: React.ChangeEvent<HTMLInputElement>, type: "backdrops" | "posters") => {
+  const handleUploadMultipleFile = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     const files = e.target?.files;
     if (!files) return;
 
@@ -77,7 +85,7 @@ export default function MovieForm({
         const formData = new FormData();
         formData.append("file", file);
 
-        const res = await uploadImage(file, values.id || 'new')
+        const res = await uploadImage(file, values.id || ('new-' + field))
         if (!res.success) throw new Error("Upload failed");
 
         console.log(res.data.url);
@@ -91,22 +99,22 @@ export default function MovieForm({
     const urls = await Promise.all(uploadPromises);
 
     const notNullUrls = urls.filter(u => u != null);
-    const newUrls = [...values[type], ...notNullUrls.map(u => ({ url: u, alt: values.title }))]
-    setValues((prev) => ({ ...prev, [type]: newUrls }))
+    const newUrls = [...values[field], ...notNullUrls.map(u => ({ url: u, alt: values.title }))]
+    setValues((prev) => ({ ...prev, [field]: newUrls }))
     e.target.value = "";
   };
 
-  const handleDeleteFile = async (url: string, type: "backdrops" | "posters") => {
+  const handleDeleteFile = async (url: string, field: string) => {
     await deleteImage(url)
-    const newUrls = values[type].filter(v => v.url != url);
-    setValues((prev) => ({ ...prev, [type]: newUrls }))
+    const newUrls = values[field].filter(v => v.url != url);
+    setValues((prev) => ({ ...prev, [field]: newUrls }))
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 text-sm text-gray-200">
       {/* Title */}
       <div>
-        <label className="block text-gray-400">Title</label>
+        <label className="block text-gray-400">Title<span className="text-red-500"> * </span></label>
         <input
           type="text"
           name="title"
@@ -157,16 +165,26 @@ export default function MovieForm({
       </div>
 
       {/* Genres */}
-      <GenreInput currentLanguage={currentLanguage} onChange={handleArrayChange} values={values.genres} />
+      <GenreInput currentLanguage={currentLanguage} onChange={handleArrayChange} values={values.genres} toast={toast} />
 
       {/* Keywords */}
-      <KeywordInput onChange={handleArrayChange} keywords={values.keywords} />
+      <KeywordInput onChange={handleArrayChange} keywords={values.keywords} toast={toast} />
+
+      {/* Original Language */}
+
 
       {/* Backdrops */}
-      <BackdropsForm backdrops={values.backdrops} addFunction={handleUploadMultipleFile} deleteFunction={handleDeleteFile} />
+      <BackdropsInput backdrops={values.backdrops} addFunction={handleUploadMultipleFile} deleteFunction={handleDeleteFile} />
 
       {/* Posters */}
-      <PostersForm posters={values.posters} addFunction={handleUploadMultipleFile} deleteFunction={handleDeleteFile} />
+      <PostersInput posters={values.posters} addFunction={handleUploadMultipleFile} deleteFunction={handleDeleteFile} />
+
+      {
+        isCreate && <PersonInput label="Cast" field="cast" onChange={handleArrayChange} values={values.cast} toast={toast} />
+      }
+      {
+        isCreate && <PersonInput label="Crew" field="crew" onChange={handleArrayChange} values={values.crew} toast={toast} />
+      }
 
       {/* Submit */}
       <div className="flex justify-end gap-3 pt-2">

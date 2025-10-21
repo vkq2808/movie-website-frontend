@@ -11,7 +11,7 @@ export type Toast = {
   duration?: number; // ms
 };
 
-type ToastContextValue = {
+export type ToastContextValue = {
   show: (toast: Omit<Toast, 'id'> & { id?: string }) => string;
   dismiss: (id: string) => void;
   clear: () => void;

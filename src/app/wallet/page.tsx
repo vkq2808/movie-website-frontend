@@ -1,7 +1,27 @@
-import React from 'react';
+"use client";
+import React, { useEffect, useState } from 'react';
 import WalletBalance from '@/components/common/Wallet/WalletBalance';
+import PaymentHistory from '@/components/common/Wallet/PaymentHistory';
+import WalletSummary from '@/components/common/Wallet/WalletSummary';
+import { useAuthStore } from '@/zustand';
+import { useRouter } from 'next/navigation';
 
 const WalletPage: React.FC = () => {
+  const [refreshKey, setRefreshKey] = useState(0);
+  const { user } = useAuthStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      router.push(`/auth/login?from=${encodeURIComponent(window.location.pathname)}`);
+    }
+  }, [user])
+
+  const handleBalanceUpdate = () => {
+    // Force refresh of all wallet-related components
+    setRefreshKey(prev => prev + 1);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="container mx-auto px-4 py-8">
@@ -15,7 +35,12 @@ const WalletPage: React.FC = () => {
 
         {/* Wallet Balance Section */}
         <div className="max-w-2xl mx-auto">
-          <WalletBalance showAddBalance={true} />
+          <WalletBalance showAddBalance={true} onBalanceUpdate={handleBalanceUpdate} />
+        </div>
+
+        {/* Payment History Section */}
+        <div className="max-w-4xl mx-auto mt-8">
+          <PaymentHistory key={`history-${refreshKey}`} />
         </div>
 
         {/* Information Section */}
@@ -45,7 +70,7 @@ const WalletPage: React.FC = () => {
                 </span>
                 <div>
                   <p className="font-medium">Add money to your wallet</p>
-                  <p className="text-sm text-gray-400">Choose from quick amounts or enter a custom amount</p>
+                  <p className="text-sm text-gray-400">Choose payment method and amount - all transactions are tracked</p>
                 </div>
               </div>
               <div className="flex items-start">
@@ -60,6 +85,15 @@ const WalletPage: React.FC = () => {
               <div className="flex items-start">
                 <span className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white text-sm rounded-full flex items-center justify-center mr-3 mt-0.5">
                   3
+                </span>
+                <div>
+                  <p className="font-medium">Track your spending</p>
+                  <p className="text-sm text-gray-400">View detailed transaction history and spending analytics</p>
+                </div>
+              </div>
+              <div className="flex items-start">
+                <span className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white text-sm rounded-full flex items-center justify-center mr-3 mt-0.5">
+                  4
                 </span>
                 <div>
                   <p className="font-medium">Watch anytime</p>
@@ -100,7 +134,7 @@ const WalletPage: React.FC = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>Instant transactions</span>
+                <span>Complete transaction tracking</span>
               </div>
               <div className="flex items-center">
                 <svg
@@ -114,7 +148,7 @@ const WalletPage: React.FC = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>Secure payments</span>
+                <span>Multiple payment methods</span>
               </div>
               <div className="flex items-center">
                 <svg
@@ -128,7 +162,7 @@ const WalletPage: React.FC = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>No transaction fees</span>
+                <span>Spending analytics</span>
               </div>
               <div className="flex items-center">
                 <svg
@@ -142,7 +176,7 @@ const WalletPage: React.FC = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>Balance never expires</span>
+                <span>Audit trail for all payments</span>
               </div>
             </div>
           </div>

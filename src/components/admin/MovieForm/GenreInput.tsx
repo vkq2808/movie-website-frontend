@@ -1,31 +1,36 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import AutoCompleteMultiSelectInput, { Option } from "./AutoCompleteMultiSelectInput";
+import { Option, AutoCompleteMultiSelectInput } from "../../extensibles/AutoCompleteMultiSelectInput";
 import { adminApi, AdminGenre } from "@/apis/admin.api"; // Giả sử bạn có module API
-import { MovieFormValues } from "./MovieForm";
+import { ToastContextValue } from "@/contexts/toast.context";
 
 interface GenreInputProps {
-  label?: string;
   currentLanguage: { iso_639_1: string };
   values: { id: string; names: { iso_639_1: string; name: string }[] }[];
-  onChange: (field: keyof MovieFormValues, newGenres: Option[]) => void;
+  onChange: (field: string, newGenres: Option[]) => void;
+  toast: ToastContextValue;
 }
 
 export const GenreInput: React.FC<GenreInputProps> = ({
-  label = "Genres",
   currentLanguage = {
     iso_639_1: 'vi'
   },
   values,
-  onChange
+  onChange,
+  toast
 }) => {
   const fetchGenres = async () => {
     try {
-      const res = await adminApi.getGenres();
-      return res.data.map((g: AdminGenre) => (g.names.find((n) => n.iso_639_1 === currentLanguage.iso_639_1)?.name)).filter(i => i != undefined)
+      const { data } = await adminApi.getGenres();
+
+      return data.map((g) => ({
+        id: g.id,
+        name:
+          g.names.find((n) => n.iso_639_1 === currentLanguage.iso_639_1)?.name ||
+          g.names[0]?.name,
+      }));
     } catch (error) {
       return []
-      console.error("Failed to fetch genres", error);
     }
   };
 
@@ -36,7 +41,7 @@ export const GenreInput: React.FC<GenreInputProps> = ({
       g.names[0]?.name,
   }));
 
-  const handleChange = (field: keyof MovieFormValues, items: { id: string; name: string }[]) => {
+  const handleChange = (field: string, items: { id: string; name: string }[]) => {
     const updated = items.map((i) => ({
       id: i.id,
       name: i.name,
@@ -49,7 +54,8 @@ export const GenreInput: React.FC<GenreInputProps> = ({
 
   return (
     <AutoCompleteMultiSelectInput
-      label={label}
+      toast={toast}
+      label={"Genre"}
       values={filteredValues}
       fetchSuggestions={fetchGenres}
       field="genres"

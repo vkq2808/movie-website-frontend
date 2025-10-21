@@ -135,9 +135,11 @@ const UserInformation = () => {
   const handleLoginNavigate = () => {
     // Redirect to login with current path as query
     const currentPath = window.location.pathname
-    if (currentPath === "/")
+    if (currentPath === "/") {
       router.push('/auth/login')
-    router.push(`/auth/login?from=${encodeURIComponent(currentPath)}`)
+    } else {
+      router.push(`/auth/login?from=${encodeURIComponent(currentPath)}`)
+    }
   }
 
   return (

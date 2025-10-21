@@ -4,7 +4,7 @@
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import MovieForm, { type MovieFormValues } from "@/components/admin/MovieForm/MovieForm";
-import { adminApi } from "@/apis/admin.api";
+import { adminApi, AdminLanguage } from "@/apis/admin.api";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { MovieStatus } from "@/constants/enum";
 
@@ -29,7 +29,9 @@ export default function UpdatePanel() {
         crew: [],
         original_language: {
           id: '',
-          name: ''
+          name: '',
+          english_name: '',
+          iso_639_1: ''
         },
         status: MovieStatus.DRAFT,
         price: 0,
@@ -59,7 +61,7 @@ export default function UpdatePanel() {
             status: m.status,
             genres: m.genres?.map((g) => ({ id: g.id, names: g.names })) || [],
             keywords: m.keywords?.map((k) => ({ id: k.id, name: k.name })) || [],
-            spoken_languages: m.spoken_languages?.map((l) => ({ id: l.id, name: l.name })) || [],
+            spoken_languages: m.spoken_languages as AdminLanguage[],
             production_companies: m.production_companies?.map((p) => ({ id: p.id, name: p.name })) || [],
             backdrops: m.backdrops || [],
             posters: m.posters || [],

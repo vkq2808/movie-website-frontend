@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
@@ -252,7 +253,7 @@ function ImageGrid({
   placeholderSize: string;
 }) {
   const total = images.length;
-  let totalSlots = Math.ceil(total / itemsPerRow) * itemsPerRow || itemsPerRow;
+  const totalSlots = Math.ceil(total / itemsPerRow) * itemsPerRow || itemsPerRow;
 
   return (
     <div>

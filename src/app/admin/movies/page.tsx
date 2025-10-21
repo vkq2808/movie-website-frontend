@@ -4,6 +4,7 @@ import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { adminApi, type AdminMovie } from '@/apis/admin.api';
 import Link from 'next/link';
 import { MovieStatus } from '@/constants/enum';
+import { useRouter } from 'next/navigation';
 
 export default function AdminMoviesPage() {
   const [loading, setLoading] = React.useState(true);
@@ -14,6 +15,7 @@ export default function AdminMoviesPage() {
   const [total, setTotal] = React.useState(0);
   const [search, setSearch] = React.useState('');
   const [status, setStatus] = React.useState<MovieStatus | 'all'>('all');
+  const router = useRouter();
 
   const load = React.useCallback(async () => {
     try {
@@ -74,6 +76,11 @@ export default function AdminMoviesPage() {
             <option value="published">Published</option>
             <option value="draft">Draft</option>
           </select>
+          <button
+            onClick={() => router.push("/admin/movies/create")}
+          >
+            Create
+          </button>
         </div>
       </div>
 
