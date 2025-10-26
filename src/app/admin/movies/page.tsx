@@ -24,6 +24,7 @@ export default function AdminMoviesPage() {
       if (res.success && res.data) {
         setMovies(res.data.movies);
         setTotal(res.data.total);
+        console.log(res.data)
       } else {
         setError(res.message || 'Failed to load movies');
       }
@@ -78,6 +79,7 @@ export default function AdminMoviesPage() {
           </select>
           <button
             onClick={() => router.push("/admin/movies/create")}
+            className='cursor-pointer'
           >
             Create
           </button>
@@ -97,7 +99,6 @@ export default function AdminMoviesPage() {
                   <th className="px-3 py-2">Title</th>
                   <th className="px-3 py-2">Release</th>
                   <th className="px-3 py-2">Status</th>
-                  <th className="px-3 py-2">Popularity</th>
                   <th className="px-3 py-2">Rating</th>
                 </tr>
               </thead>
@@ -132,16 +133,22 @@ export default function AdminMoviesPage() {
                 )}
               </tbody>
             </table>
-            <table className="w-2/3 border-collapse text-left text-sm">
+            <table className="w-1/5 border-collapse text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-800 text-gray-400">
-                  <th className="px-3 py-2 text-end">Action</th>
+                  <th className="px-3 py-2 text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {movies.map((m) => (
                   <tr key={'a-' + m.id} className="border-b border-gray-800">
-                    <td className="px-3 py-2 text-right">
+                    <td className="px-3 py-2 text-right gap-4 flex">
+                      <button
+                        onClick={() => router.push(`/admin/movies/${m.id}/update`)}
+                        className="rounded bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-500"
+                      >
+                        Edit
+                      </button>
                       <button
                         onClick={() => handleDelete(m.id)}
                         className="rounded bg-red-600 px-3 py-1 text-xs text-white hover:bg-red-500"

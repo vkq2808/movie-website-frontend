@@ -1,4 +1,3 @@
-// app/movie/[id]/@panel/(..)update/page.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -10,7 +9,6 @@ import { useToast } from "@/contexts/toast.context";
 
 export default function CreateModal() {
   const router = useRouter();
-  const [error, setError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
   const toast = useToast();
   const initial: MovieFormValues = {
@@ -50,15 +48,11 @@ export default function CreateModal() {
 
       router.back();
     } catch {
-      setError("Failed to save movie");
+      toast.error("Failed to save movie");
     } finally {
       setSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    toast.error(error ?? "Something went wrong!")
-  }, [error])
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">

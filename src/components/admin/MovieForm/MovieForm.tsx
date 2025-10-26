@@ -13,6 +13,7 @@ import { Option } from "@/components/extensibles/AutoCompleteMultiSelectInput";
 import { useToast } from "@/contexts/toast.context";
 import BackdropsInput from "./BackdropInput";
 import PostersInput from "./PosterInput";
+import { OriginalLanguageInput } from "./OriginalLanguageInput";
 
 export interface MovieFormValues {
   id: string;
@@ -68,13 +69,19 @@ export default function MovieForm({
     onSubmit(values);
   };
 
-  const handleArrayChange = <T extends Option,>(
-    field: string,
+  const handleArrayFieldChange = <T extends Option,>(
+    field: keyof MovieFormValues,
     newList: T[]
   ) => {
-
     setValues((prev) => ({ ...prev, [field]: newList }));
   };
+
+  const handleSingleFieldChange = <T extends Option,>(
+    field: keyof MovieFormValues,
+    newItem: T
+  ) => {
+    setValues((prev) => ({ ...prev, [field]: newItem }))
+  }
 
   const handleUploadMultipleFile = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     const files = e.target?.files;
@@ -165,12 +172,25 @@ export default function MovieForm({
       </div>
 
       {/* Genres */}
-      <GenreInput currentLanguage={currentLanguage} onChange={handleArrayChange} values={values.genres} toast={toast} />
+      <GenreInput currentLanguage={currentLanguage} onChange={handleArrayFieldChange} values={values.genres} toast={toast} />
 
       {/* Keywords */}
-      <KeywordInput onChange={handleArrayChange} keywords={values.keywords} toast={toast} />
+      <KeywordInput onChange={handleArrayFieldChange} keywords={values.keywords} toast={toast} />
 
       {/* Original Language */}
+      <OriginalLanguageInput onChange={handleSingleFieldChange} />
+
+      {/* Cast */}
+      {
+        isCreate && <PersonInput label="Cast" field="cast" onChange={handleArrayFieldChange} values={values.cast} toast={toast} />
+      }
+
+      {/* Crew */}
+      {
+        isCreate && <PersonInput label="Crew" field="crew" onChange={handleArrayFieldChange} values={values.crew} toast={toast} />
+      }
+
+      {/* Production Companay */}
 
 
       {/* Backdrops */}
@@ -179,12 +199,6 @@ export default function MovieForm({
       {/* Posters */}
       <PostersInput posters={values.posters} addFunction={handleUploadMultipleFile} deleteFunction={handleDeleteFile} />
 
-      {
-        isCreate && <PersonInput label="Cast" field="cast" onChange={handleArrayChange} values={values.cast} toast={toast} />
-      }
-      {
-        isCreate && <PersonInput label="Crew" field="crew" onChange={handleArrayChange} values={values.crew} toast={toast} />
-      }
 
       {/* Submit */}
       <div className="flex justify-end gap-3 pt-2">

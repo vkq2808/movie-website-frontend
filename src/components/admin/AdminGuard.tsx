@@ -25,7 +25,6 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
   }, [user, fetchUser]);
 
   useEffect(() => {
-    console.log(user)
     if (checking) return;
     // If not logged in, go to login
     if (!user) {

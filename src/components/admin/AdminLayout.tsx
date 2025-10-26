@@ -11,8 +11,9 @@ type NavItem = {
 const nav: NavItem[] = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/movies", label: "Movies" },
+  { href: "/admin/genres", label: "Genres" },
   { href: "/admin/users", label: "Users" },
-  { href: "/admin/settings", label: "Settings" }
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

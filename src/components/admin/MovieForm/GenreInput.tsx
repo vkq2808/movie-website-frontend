@@ -3,11 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Option, AutoCompleteMultiSelectInput } from "../../extensibles/AutoCompleteMultiSelectInput";
 import { adminApi, AdminGenre } from "@/apis/admin.api"; // Giả sử bạn có module API
 import { ToastContextValue } from "@/contexts/toast.context";
+import { MovieFormValues } from "./MovieForm";
 
 interface GenreInputProps {
   currentLanguage: { iso_639_1: string };
   values: { id: string; names: { iso_639_1: string; name: string }[] }[];
-  onChange: (field: string, newGenres: Option[]) => void;
+  onChange: (field: keyof MovieFormValues, newGenres: Option[]) => void;
   toast: ToastContextValue;
 }
 
@@ -41,7 +42,7 @@ export const GenreInput: React.FC<GenreInputProps> = ({
       g.names[0]?.name,
   }));
 
-  const handleChange = (field: string, items: { id: string; name: string }[]) => {
+  const handleChange = (field: keyof MovieFormValues, items: { id: string; name: string }[]) => {
     const updated = items.map((i) => ({
       id: i.id,
       name: i.name,

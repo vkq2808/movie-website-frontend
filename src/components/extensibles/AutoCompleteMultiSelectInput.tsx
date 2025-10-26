@@ -18,7 +18,7 @@ export interface AutoCompleteMultiSelectInputProps<T> {
   fetchSuggestions: (query: string) => Promise<T[]>;
   placeholder?: string;
   cacheKey?: string;
-  toast: ToastContextValue;
+  toast?: ToastContextValue;
   limit?: number;
   allowCreation?: boolean;
 }
@@ -34,7 +34,7 @@ export class AutoCompleteMultiSelectInput<T extends Option>
   extends Component<AutoCompleteMultiSelectInputProps<T>, AutoCompleteMultiSelectInputState<T>> {
   private cacheRef = new Map<string, T[]>();
   private debounceTimer?: NodeJS.Timeout;
-  toast: ToastContextValue;
+  toast?: ToastContextValue;
 
   constructor(props: AutoCompleteMultiSelectInputProps<T>) {
     super(props);
@@ -91,7 +91,7 @@ export class AutoCompleteMultiSelectInput<T extends Option>
 
     onChange(field, [...values, { ...item, name: trimmed } as T]);
     this.setState({ inputValue: "", showSuggestions: false });
-    this.toast.success("Successfully add " + this.props.label)
+    this.toast?.success("Successfully add " + this.props.label)
   };
 
   removeItem = (name: string, id?: string) => {
@@ -102,7 +102,7 @@ export class AutoCompleteMultiSelectInput<T extends Option>
       return;
     }
     onChange(field, values.filter((v) => v.id !== id));
-    this.toast.success("Successfully remove " + this.props.label)
+    this.toast?.success("Successfully remove " + this.props.label)
   };
 
   // ======================================================
@@ -196,15 +196,3 @@ export class AutoCompleteMultiSelectInput<T extends Option>
     );
   }
 }
-
-
-function withToast<P>(
-  WrappedComponent: React.ComponentType<P & { toast: ToastContextValue }>
-) {
-  return function WithToast(props: P) {
-    const toast = useToast();
-    return <WrappedComponent {...props} toast={toast} />;
-  };
-}
-
-export default withToast(AutoCompleteMultiSelectInput);

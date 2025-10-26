@@ -1,21 +1,22 @@
 'use client'
 import React from 'react'
 import { Movie } from '@/zustand'
-import EpisodesTab from './tabs/EpisodesTab'
+import MovieDetailTab from './tabs/MovieDetailTab'
 import GalleryTab from './tabs/GalleryTab'
 import CommentsTab from './tabs/CommentsTab'
 import CastTab from './tabs/CastTab'
+import { TabType } from './MovieTabs'
 
 interface TabContentProps {
-  activeTab: string
+  activeTab: TabType;
   movie: Movie
 }
 
 const TabContent: React.FC<TabContentProps> = ({ activeTab, movie }) => {
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'episode-tab':
-        return <EpisodesTab movie={movie} />
+      case 'detail-tab':
+        return <MovieDetailTab movie={movie} />
       case 'gallery-tab':
         return <GalleryTab movie={movie} />
       case 'cast-tab':
@@ -23,7 +24,7 @@ const TabContent: React.FC<TabContentProps> = ({ activeTab, movie }) => {
       case 'comments-tab':
         return <CommentsTab movieId={movie.id} />
       default:
-        return <EpisodesTab movie={movie} />
+        return <MovieDetailTab movie={movie} />
     }
   }
 

@@ -8,11 +8,11 @@ import { ToastContextValue } from "@/contexts/toast.context";
 import { LoadingOverlay } from "@/components/common";
 
 interface CreatePersonOptionModalProps extends CreateOptionProps<AdminPerson> {
-  toast: ToastContextValue;
+  toast?: ToastContextValue;
 }
 
 class CreatePersonOptionModal extends CreateOptionModal<AdminPerson, CreatePersonOptionModalProps> {
-  toast: ToastContextValue;
+  toast?: ToastContextValue;
   constructor(props: CreatePersonOptionModalProps) {
     super(props)
     this.toast = props.toast;
@@ -33,7 +33,7 @@ class CreatePersonOptionModal extends CreateOptionModal<AdminPerson, CreatePerso
           // Save new ProfileImage
           this.setState(prev => ({ ...prev, creatingOption: { ...prev.creatingOption, profile_image: newProfileImage } }));
         } catch {
-          this.toast.error("Error when uploading profile image");
+          this.toast?.error("Error when uploading profile image");
         }
       }
     }
@@ -222,7 +222,7 @@ class PersonAutoCompleteInput extends AutoCompleteMultiSelectInput<Option> {
 interface PersonInputProps {
   label: string;
   field: keyof MovieFormValues;
-  onChange: (field: string, newItems: Option[]) => void;
+  onChange: (field: keyof MovieFormValues, newItems: Option[]) => void;
   values: AdminMoviePerson[];
   toast: ToastContextValue;
 }

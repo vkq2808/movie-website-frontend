@@ -25,6 +25,7 @@ export interface AdminMovie {
   spoken_languages: AdminLanguage[];
   cast: AdminCast[];
   crew: AdminCrew[];
+  videos: AdminVideo[];
 
   popularity: number;
   vote_average: number;
@@ -41,6 +42,15 @@ export interface AdminMovie {
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
+}
+
+export interface AdminVideo {
+  id: string;
+  name?: string;
+  key: string;
+  site: string; // "YouTube" hoặc "Vimeo"
+  type: string; // "Trailer" | "Featurette" | "Clip" ...
+  official: boolean;
 }
 
 export interface AdminMoviePerson {
@@ -118,11 +128,25 @@ export interface AdminStats {
   totalMovies: number;
   totalViews: number;
   newUsersThisWeek: number;
-  recentActivity: ActivityItem[];
-  userGrowth: ChartData[];
-  genreDistribution: ChartData[];
-  mostWatchedMovies: PopularMovie[];
+  viewsToday: number;
+  viewsThisMonth: number;
+  viewTrends: { date: string; views: number }[];
+  topMovies: { id: string; title: string; views: number; thumbnail: string }[];
+  system: {
+    storageUsedGB: number;
+    totalStorageGB: number;
+    activeServers: number;
+    recentErrors: { id: string; message: string; timestamp: string }[];
+  };
+  recentActivity: {
+    id: string;
+    type: string;
+    description: string;
+    timestamp: string;
+  }[];
+  genreDistribution: { names: { iso_639_1: string; name: string; }[]; value: number }[];
 }
+
 
 export interface ActivityItem {
   id: string;
@@ -357,30 +381,40 @@ const deleteUser = async (id: string): Promise<ApiResponse<null>> => {
 };
 
 // Dashboard APIs
-const getAdminStats = async (): Promise<ApiResponse<AdminStats>> => {
+export const getAdminStats = async (): Promise<ApiResponse<AdminStats>> => {
   try {
-    const response = await api.get('/admin/stats');
+    const response = await api.get("/admin/stats");
     return response.data;
   } catch (error: unknown) {
     const status = (error as { response?: { status?: number } })?.response?.status;
     if (status === 404) {
-      // Fallback: backend does not expose /admin/stats yet
+      // ✅ Fallback: nếu backend chưa có endpoint /admin/stats
       const fallback: ApiResponse<AdminStats> = {
         success: true,
-        message: 'Admin stats endpoint not available; using defaults',
+        message: "Admin stats endpoint not available; using default mock data",
         data: {
           totalUsers: 0,
           totalMovies: 0,
           totalViews: 0,
           newUsersThisWeek: 0,
+          viewsToday: 0,
+          viewsThisMonth: 0,
+          viewTrends: [],
+          topMovies: [],
+          system: {
+            storageUsedGB: 0,
+            totalStorageGB: 0,
+            activeServers: 0,
+            recentErrors: [],
+          },
           recentActivity: [],
-          userGrowth: [],
           genreDistribution: [],
-          mostWatchedMovies: [],
         },
       };
       return fallback;
     }
+
+    // ❌ Nếu lỗi khác (500, 401, ...), ném lỗi ra ngoài để component xử lý
     throw error;
   }
 };
@@ -400,26 +434,63 @@ const getTrendingMovies = async (params?: {
 };
 
 // Genre Management APIs
-const getGenres = async (): Promise<ApiResponse<AdminGenre[]>> => {
+
+/**
+ * Lấy danh sách tất cả thể loại (Genres)
+ */
+export const getGenres = async (): Promise<ApiResponse<AdminGenre[]>> => {
   const response = await api.get(`${apiEndpoint.GENRE}`);
   return response.data;
 };
 
-// Backend currently supports only GET /genre. Disable mutations to avoid runtime errors.
-const createGenre = async (_data: { name: string }): Promise<ApiResponse<AdminGenre>> => {
-  throw new Error('Genre creation is not supported by backend');
+/**
+ * Tạo mới một thể loại
+ * @param data Danh sách tên theo ngôn ngữ (VD: English, Vietnamese)
+ */
+export const createGenre = async (
+  data: { names: { name: string; iso_639_1: string }[] }
+): Promise<ApiResponse<AdminGenre>> => {
+  const response = await api.post(`${apiEndpoint.GENRE}`, data);
+  return response.data;
 };
 
-const updateGenre = async (_id: string, _data: { name: string }): Promise<ApiResponse<AdminGenre>> => {
-  throw new Error('Genre update is not supported by backend');
+/**
+ * Cập nhật thể loại theo id
+ * @param id ID của thể loại cần cập nhật
+ * @param data Danh sách tên mới theo ngôn ngữ
+ */
+export const updateGenre = async (
+  id: string,
+  data: { names: { name: string; iso_639_1: string }[] }
+): Promise<ApiResponse<AdminGenre>> => {
+  const response = await api.put(`${apiEndpoint.GENRE}/${id}`, data);
+  return response.data;
 };
 
-const deleteGenre = async (_id: string): Promise<ApiResponse<null>> => {
-  throw new Error('Genre deletion is not supported by backend');
+/**
+ * Xóa thể loại theo id
+ * @param id ID của thể loại
+ */
+export const deleteGenre = async (id: string): Promise<ApiResponse<null>> => {
+  const response = await api.delete(`${apiEndpoint.GENRE}/${id}`);
+  return response.data;
+};
+
+/**
+ * Gọi API backend để xoá toàn bộ thể loại và đồng bộ lại từ TMDB
+ */
+export const refreshGenres = async (): Promise<ApiResponse<null>> => {
+  const response = await api.post(`${apiEndpoint.GENRE}/refresh`);
+  return response.data;
 };
 
 const findLanguages = async (query: string): Promise<ApiResponse<AdminLanguage[]>> => {
   const response = await api.get<ApiResponse<AdminLanguage[]>>(`${apiEndpoint.LANGUAGE}/search?query=${query}`);
+  return response.data;
+}
+
+const getLanguages = async (): Promise<ApiResponse<AdminLanguage[]>> => {
+  const response = await api.get<ApiResponse<AdminLanguage[]>>(`${apiEndpoint.LANGUAGE}`);
   return response.data;
 }
 
@@ -553,6 +624,7 @@ export const adminApi = {
 
   // Languages
   findLanguages,
+  getLanguages,
 
   // Settings
   getSettings,

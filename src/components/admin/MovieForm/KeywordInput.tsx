@@ -3,6 +3,7 @@ import { AutoCompleteMultiSelectInput, Option } from "../../extensibles/AutoComp
 import { adminApi, AdminKeyword } from "@/apis/admin.api";
 import { CreateOptionModal, CreateOptionProps, CreateOptionState } from "@/components/extensibles/CreateOptionModal";
 import { ToastContextValue } from "@/contexts/toast.context";
+import { MovieFormValues } from "./MovieForm";
 
 
 class CreateKeywordModal extends CreateOptionModal<AdminKeyword> {
@@ -24,7 +25,7 @@ class KeywordMultipleInput extends AutoCompleteMultiSelectInput<AdminKeyword> {
 
 interface KeywordInputProps {
   keywords: AdminKeyword[];
-  onChange: (field: string, newKeywords: Option[]) => void;
+  onChange: (field: keyof MovieFormValues, newKeywords: Option[]) => void;
   toast: ToastContextValue;
 }
 
