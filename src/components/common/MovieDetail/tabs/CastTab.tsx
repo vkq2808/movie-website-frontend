@@ -2,17 +2,37 @@
 import React from 'react'
 import { Movie, MovieCast as MovieCastType, Person as PersonType } from '@/zustand'
 import Image from 'next/image'
+import { getMovieCast } from '@/apis/movie.api'
+import { MovieCastItemResponseDto } from '@/dto/movie-cast.dto'
 
 interface CastTabProps {
   movie: Movie
 }
 
 const CastTab: React.FC<CastTabProps> = ({ movie }) => {
-  const cast = movie.cast;
 
+  const [cast, setCast] = React.useState<MovieCastItemResponseDto[] | MovieCastType[]>([])
   React.useEffect(() => {
-    console.log('Movie:', movie);
-  }, [movie]);
+    if (movie.cast) {
+      setCast(movie.cast)
+    } else {
+      const fetchCast = async () => {
+        try {
+          const response = await getMovieCast(movie.id)
+          if (response.success) {
+            setCast(response.data.cast)
+          } else {
+            setCast([])
+          }
+        } catch (error) {
+          console.error('Error fetching movie cast:', error)
+          setCast([])
+        }
+      }
+
+      fetchCast()
+    }
+  }, [movie.cast])
 
   if (cast && cast.length === 0) {
     return (
@@ -27,7 +47,7 @@ const CastTab: React.FC<CastTabProps> = ({ movie }) => {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-white mb-6">Diễn viên</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {cast?.map((c) => {
+        {cast?.map((c: MovieCastItemResponseDto | MovieCastType) => {
           const person: PersonType | undefined = c.person as PersonType | undefined
           const name = person?.name || 'Unknown'
           const profile = person?.profile_image?.url || ''

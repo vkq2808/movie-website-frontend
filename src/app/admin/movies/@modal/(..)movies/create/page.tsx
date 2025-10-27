@@ -20,7 +20,6 @@ export default function CreateModal() {
     original_language: {
       id: '',
       name: '',
-      english_name: '',
       iso_639_1: ''
     },
     status: MovieStatus.DRAFT,

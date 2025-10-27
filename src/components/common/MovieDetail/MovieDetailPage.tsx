@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { Movie } from '@/zustand'
-import { getMovieById } from '@/apis/movie.api'
+import { getMovieById, getMovieVideos, getMovieGenres, getMovieCast } from '@/apis/movie.api'
 import MovieHero from './MovieHero'
 import MovieTabs from './MovieTabs'
 import Spinner from '../Spinner'
@@ -20,8 +20,21 @@ const MovieDetailPage: React.FC<MovieDetailPageProps> = ({ movieId }) => {
       try {
         setLoading(true)
         setError(null)
-        const response = await getMovieById(movieId)
-        setMovie(response.data)
+        // Fetch base movie (essential fields) then fetch split resources in parallel
+        const baseRes = await getMovieById(movieId)
+        const baseMovie = baseRes.data
+
+        // Parallel fetch supplemental resources
+        const [genresRes] = await Promise.all([
+          getMovieGenres(movieId).catch(e => ({ success: false, data: [] } as any)) // eslint-disable-line @typescript-eslint/no-explicit-any
+        ])
+
+        const mergedMovie: Movie = {
+          ...baseMovie,
+          genres: genresRes?.data || baseMovie.genres || []
+        }
+
+        setMovie(mergedMovie)
       } catch (error) {
         setError('Failed to load movie details')
       } finally {

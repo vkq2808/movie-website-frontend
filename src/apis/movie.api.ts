@@ -5,12 +5,23 @@ import { ApiResponse, PaginatedApiResponse } from '@/types/api.response'
 
 // Import the types from alternative-title.api.ts to reuse them
 import { AlternativeTitle, UpdateAlternativeTitlesResponse, ImportAlternativeTitlesResponse } from './alternative-title.api'
+import type {
+  MovieProductionCompanyResponseDto,
+  MovieCrewResponseDto,
+  MovieCastResponseDto,
+  MovieKeywordsResponseDto,
+  MovieSpokenLanguagesResponseDto,
+} from '@/dto'
+import { VideoResponseDto } from '@/dto/movie-video.dto'
 
 // Response type for language operations
 export interface LanguageOperationResponse {
   message: string;
   movie: Movie;
 }
+
+// Production company response DTO returned by backend
+// production company and crew DTOs moved to src/dto/
 
 export async function getTop5Movies(): Promise<ApiResponse<Movie[]>> {
   const response = await api.get<ApiResponse<Movie[]>>(`${apiEndpoint.MOVIE}/slides`)
@@ -19,6 +30,41 @@ export async function getTop5Movies(): Promise<ApiResponse<Movie[]>> {
 
 export async function getMovieById(id: string): Promise<ApiResponse<Movie>> {
   const response = await api.get<ApiResponse<Movie>>(`${apiEndpoint.MOVIE}/${id}`)
+  return response.data
+}
+
+export async function getMovieVideos(id: string): Promise<ApiResponse<VideoResponseDto[]>> {
+  const response = await api.get<ApiResponse<VideoResponseDto[]>>(`${apiEndpoint.MOVIE}/${id}/videos`)
+  return response.data
+}
+
+export async function getMovieGenres(id: string): Promise<ApiResponse<Movie['genres']>> {
+  const response = await api.get<ApiResponse<Movie['genres']>>(`${apiEndpoint.MOVIE}/${id}/genres`)
+  return response.data
+}
+
+export async function getMovieCast(id: string): Promise<ApiResponse<MovieCastResponseDto>> {
+  const response = await api.get<ApiResponse<MovieCastResponseDto>>(`${apiEndpoint.MOVIE}/${id}/cast`)
+  return response.data
+}
+
+export async function getMovieCrew(id: string): Promise<ApiResponse<MovieCrewResponseDto>> {
+  const response = await api.get<ApiResponse<MovieCrewResponseDto>>(`${apiEndpoint.MOVIE}/${id}/crew`)
+  return response.data
+}
+
+export async function getMovieProductionCompanies(id: string): Promise<ApiResponse<MovieProductionCompanyResponseDto[]>> {
+  const response = await api.get<ApiResponse<MovieProductionCompanyResponseDto[]>>(`${apiEndpoint.MOVIE}/${id}/production-companies`)
+  return response.data
+}
+
+export async function getMovieKeywords(id: string): Promise<ApiResponse<MovieKeywordsResponseDto>> {
+  const response = await api.get<ApiResponse<MovieKeywordsResponseDto>>(`${apiEndpoint.MOVIE}/${id}/keywords`)
+  return response.data
+}
+
+export async function getMovieSpokenLanguages(id: string): Promise<ApiResponse<MovieSpokenLanguagesResponseDto>> {
+  const response = await api.get<ApiResponse<MovieSpokenLanguagesResponseDto>>(`${apiEndpoint.MOVIE}/${id}/spoken-languages`)
   return response.data
 }
 

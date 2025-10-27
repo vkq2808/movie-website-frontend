@@ -6,6 +6,19 @@ import Image from 'next/image'
 import MoviePurchaseButton from '@/components/common/MoviePurchase/MoviePurchaseButton'
 import { maximizeTextLength } from '@/utils/string.util'
 import clsx from 'clsx'
+import Script from 'next/script'
+
+declare global {
+  interface Window {
+    YT: {
+      Player: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+      PlayerState: {
+        PLAYING: number;
+      };
+    };
+    onYouTubeIframeAPIReady?: () => void;
+  }
+}
 
 interface MovieHeroProps {
   movie: Movie
@@ -14,21 +27,61 @@ interface MovieHeroProps {
 const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
   const language = useLanguageStore(s => s.currentLanguage)
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const [hasError, setHasError] = useState(false)
+  const playerRef = useRef<any>(null) // eslint-disable-line @typescript-eslint/no-explicit-any
+  const playerContainerRef = useRef<HTMLDivElement>(null)
 
   // --- Xác định trailer URL ---
   const mainVideo = movie.videos?.find(v => v.type === 'Trailer') || movie.videos?.[0]
-  const videoUrl =
-    mainVideo?.site === 'YouTube'
-      ? `https://www.youtube.com/embed/${mainVideo.key}?autoplay=1&mute=1&loop=1&playlist=${mainVideo.key}&controls=0&modestbranding=1&showinfo=0`
-      : mainVideo?.site === 'Vimeo'
-        ? `https://player.vimeo.com/video/${mainVideo.key}?autoplay=1&muted=1&loop=1&background=1`
-        : null
 
-  // --- Event handler video load ---
-  const handleVideoLoaded = () => {
-    setIsVideoLoaded(true)
-  }
+  useEffect(() => {
+    if (!mainVideo || mainVideo.site !== 'YouTube' || !playerContainerRef.current) return;
+
+    const initializeYouTubePlayer = () => {
+      if (typeof window !== 'undefined' && window.YT) {
+        playerRef.current = new window.YT.Player(playerContainerRef.current, {
+          videoId: mainVideo.key,
+          playerVars: {
+            autoplay: 1,
+            controls: 0,
+            modestbranding: 1,
+            loop: 1,
+            playlist: mainVideo.key,
+            mute: 1,
+            playsinline: 1,
+          },
+          events: {
+            onReady: (event) => {
+              event.target.playVideo();
+              setIsVideoLoaded(true);
+            },
+            onError: () => {
+              setHasError(true);
+              setIsVideoLoaded(false);
+            },
+            onStateChange: (event) => {
+              if (event.data === window.YT?.PlayerState?.PLAYING) {
+                setIsVideoLoaded(true);
+              }
+            }
+          }
+        });
+      }
+    };
+
+    // Initialize YouTube player when API is ready
+    if (window.YT) {
+      initializeYouTubePlayer();
+    } else {
+      window.onYouTubeIframeAPIReady = initializeYouTubePlayer;
+    }
+
+    return () => {
+      if (playerRef.current) {
+        playerRef.current.destroy();
+      }
+    };
+  }, [mainVideo]);
 
   // --- Get genre name theo ngôn ngữ ---
   const getGenreName = (genre: Genre) => {
@@ -58,21 +111,39 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
       </div>
 
       {/* --- VIDEO BACKGROUND --- */}
-      {videoUrl && (
+      {mainVideo?.site === 'YouTube' && (
+        <>
+          <Script src="https://www.youtube.com/iframe_api" strategy="lazyOnload" />
+          <div
+            className={clsx(
+              'absolute inset-0 transition-opacity duration-1000',
+              isVideoLoaded ? 'opacity-100' : 'opacity-0'
+            )}
+          >
+            <div ref={playerContainerRef} className="absolute inset-0 w-full h-full object-cover" />
+
+            {/* Gradient overlay để đảm bảo readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/40" />
+          </div>
+        </>
+      )}
+
+      {/* Fallback cho Vimeo hoặc nguồn video khác */}
+      {mainVideo?.site === 'Vimeo' && (
         <div
           className={clsx(
             'absolute inset-0 transition-opacity duration-1000',
             isVideoLoaded ? 'opacity-100' : 'opacity-0'
           )}
         >
-          {/* Vì YouTube iframe không có event “onLoadedData”, nên ta dùng overlay fade */}
           <iframe
-            src={videoUrl}
+            src={`https://player.vimeo.com/video/${mainVideo.key}?autoplay=1&muted=1&loop=1&background=1`}
             className="absolute inset-0 w-full h-full object-cover"
             allow="autoplay; encrypted-media"
             allowFullScreen
-            onLoad={handleVideoLoaded}
-          ></iframe>
+            onLoad={() => setIsVideoLoaded(true)}
+          />
 
           {/* Gradient overlay để đảm bảo readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />

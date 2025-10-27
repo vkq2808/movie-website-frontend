@@ -4,6 +4,7 @@ import React from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { adminApi } from "@/apis/admin.api";
+import { getMovieVideos, getMovieGenres, getMovieCast } from '@/apis/movie.api'
 import Link from "next/link";
 import { useLanguageStore } from "@/zustand";
 
@@ -23,9 +24,31 @@ export default function AdminMovieDetailPage() {
     try {
       setLoading(true);
       setError(null);
+      // Fetch base admin movie data
       const res = await adminApi.getMovie(id);
-      if (res.success && res.data) setMovie(res.data);
-      else setError(res.message || "Failed to load movie");
+      if (!(res.success && res.data)) {
+        setError(res.message || "Failed to load movie");
+        return;
+      }
+
+      const baseMovie = res.data;
+
+      // Fetch supplemental resources in parallel (new split-backend design)
+      const [videosRes, genresRes, castRes] = await Promise.all([
+        getMovieVideos(id).catch((e) => ({ success: false, data: [] } as any)),
+        getMovieGenres(id).catch((e) => ({ success: false, data: [] } as any)),
+        getMovieCast(id).catch((e) => ({ success: false, data: [] } as any)),
+      ]);
+
+      // Merge into AdminMovie shape (prefer admin data when available)
+      const merged: typeof baseMovie = {
+        ...baseMovie,
+        videos: videosRes?.data || baseMovie.videos || [],
+        genres: genresRes?.data || baseMovie.genres || [],
+        cast: castRes?.data || baseMovie.cast || [],
+      };
+
+      setMovie(merged as any);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Failed to load movie";
       setError(msg);

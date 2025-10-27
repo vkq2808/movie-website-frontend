@@ -34,7 +34,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/components/common/MainPageMovieSwiper"
+    "src/components/common/MainPageMovieSwiper",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

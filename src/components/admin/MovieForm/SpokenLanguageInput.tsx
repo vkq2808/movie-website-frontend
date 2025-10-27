@@ -38,10 +38,10 @@ class CreateLanguageModal extends CreateOptionModal<AdminLanguage> {
             <label className="block text-gray-400 mb-1">English name</label>
             <input
               type="text"
-              value={this.state.creatingOption?.english_name || ""}
+              value={this.state.creatingOption?.name || ""}
               onChange={(e) =>
                 this.setState({
-                  creatingOption: { ...this.state.creatingOption, english_name: e.target.value },
+                  creatingOption: { ...this.state.creatingOption, name: e.target.value },
                 })
               }
               className="w-full rounded bg-gray-700 p-2 text-white"
@@ -98,7 +98,7 @@ class LanguageMultipleInput extends AutoCompleteMultiSelectInput<AdminLanguage> 
     }
     return (
       <CreateLanguageModal
-        creatingOption={{ id: "", name: this.state.inputValue, english_name: this.state.inputValue, iso_639_1: "" }}
+        creatingOption={{ id: "", name: this.state.inputValue, iso_639_1: "" }}
         handleSubmit={handleSubmit}
         label="Create new language"
       />
@@ -114,11 +114,6 @@ class LanguageMultipleInput extends AutoCompleteMultiSelectInput<AdminLanguage> 
         <div>
           <span>Name: </span>
           <span>{item.name}</span>
-        </div>
-
-        <div>
-          <span>English name:</span>
-          <span>{item.english_name}</span>
         </div>
 
         <div>

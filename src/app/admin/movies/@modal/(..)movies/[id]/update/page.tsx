@@ -5,8 +5,21 @@ import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import MovieForm, { type MovieFormValues } from "@/components/admin/MovieForm/MovieForm";
 import { adminApi, AdminLanguage } from "@/apis/admin.api";
+import {
+  getMovieVideos,
+  getMovieGenres,
+  getMovieCast,
+  getMovieCrew,
+  getMovieProductionCompanies,
+  getMovieKeywords,
+  getMovieSpokenLanguages,
+} from '@/apis/movie.api'
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { MovieStatus } from "@/constants/enum";
+import { ApiResponse } from "@/types/api.response";
+import { MovieCastResponseDto, MovieCrewResponseDto, MovieKeywordsResponseDto, MovieProductionCompanyResponseDto, MovieSpokenLanguagesResponseDto } from "@/dto";
+import { Movie } from "@/zustand";
+import { VideoResponseDto } from "@/dto/movie-video.dto";
 
 export default function UpdatePanel() {
   const router = useRouter();
@@ -30,7 +43,6 @@ export default function UpdatePanel() {
         original_language: {
           id: '',
           name: '',
-          english_name: '',
           iso_639_1: ''
         },
         status: MovieStatus.DRAFT,
@@ -52,29 +64,43 @@ export default function UpdatePanel() {
       try {
         const res = await adminApi.getMovie(id);
         if (!mounted) return;
-        if (res.success && res.data) {
-          const m = res.data;
-          setInitial({
-            id: m.id,
-            title: m.title,
-            overview: m.overview,
-            status: m.status,
-            genres: m.genres?.map((g) => ({ id: g.id, names: g.names })) || [],
-            keywords: m.keywords?.map((k) => ({ id: k.id, name: k.name })) || [],
-            spoken_languages: m.spoken_languages as AdminLanguage[],
-            production_companies: m.production_companies?.map((p) => ({ id: p.id, name: p.name })) || [],
-            backdrops: m.backdrops || [],
-            posters: m.posters || [],
-            cast: m.cast,
-            crew: m.crew,
-            original_language: m.original_language,
-            price: m.price,
-            release_date: ""
-          });
-        } else {
+        if (!(res.success && res.data)) {
           setError(res.message || "Failed to load movie");
+          return;
         }
-      } catch {
+
+        const m = res.data;
+
+        // fetch supplemental endpoints in parallel (tolerate failures)
+        const [videosRes, genresRes, castRes, crewRes, compsRes, keysRes, langsRes] = await Promise.all([
+          getMovieVideos(id).catch(() => ({ success: false, data: [], message: "" } as ApiResponse<VideoResponseDto[]>)),
+          getMovieGenres(id).catch(() => ({ success: false, data: [], message: "" } as ApiResponse<Movie["genres"]>)),
+          getMovieCast(id).catch(() => ({ success: false, data: { movie_id: id, cast: [] }, message: "" } as ApiResponse<MovieCastResponseDto>)),
+          getMovieCrew(id).catch(() => ({ success: false, data: { movie_id: id, crew: [] }, message: "" } as ApiResponse<MovieCrewResponseDto>)),
+          getMovieProductionCompanies(id).catch(() => ({ success: false, data: [], message: "" } as ApiResponse<MovieProductionCompanyResponseDto[]>)),
+          getMovieKeywords(id).catch(() => ({ success: false, data: { movie_id: id, keywords: [] }, message: "" } as ApiResponse<MovieKeywordsResponseDto>)),
+          getMovieSpokenLanguages(id).catch(() => ({ success: false, data: { movie_id: id, spoken_languages: [] }, message: "" } as ApiResponse<MovieSpokenLanguagesResponseDto>)),
+        ]);
+
+        setInitial({
+          id: m.id,
+          title: m.title,
+          overview: m.overview,
+          status: m.status,
+          genres: (genresRes?.data || m.genres || []).map((g) => ({ id: g.id, names: g.names })) || [],
+          keywords: (keysRes?.data.keywords || m.keywords || []).map((k) => ({ id: k.id, name: k.name })) || [],
+          spoken_languages: (langsRes?.data.spoken_languages || m.spoken_languages) as AdminLanguage[],
+          production_companies: (compsRes?.data || m.production_companies || []).map((p) => ({ id: p.id, name: p.name })) || [],
+          backdrops: m.backdrops || [],
+          posters: m.posters || [],
+          cast: (castRes?.data?.cast) || m.cast || [],
+          crew: (crewRes?.data?.crew) || m.crew || [],
+          original_language: m.original_language,
+          price: m.price,
+          release_date: ""
+        });
+      } catch (err) {
+        console.error('Error loading movie details for update modal:', err);
         setError("Failed to load movie");
       } finally {
         if (mounted) setLoading(false);
