@@ -10,11 +10,6 @@ const AboutPage: React.FC = () => {
         About Our Team & Project
       </h1>
 
-      <section>
-        <VideoUploader />
-        <VideoPlayer videoKey='da74b9d2-2332-485a-80d2-26e2b1fb96e7' />
-      </section>
-
       {/* Team Members Section */}
       <section className="mb-12 px-5 ">
         <MembersContainer />

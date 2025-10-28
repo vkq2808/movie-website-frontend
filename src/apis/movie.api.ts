@@ -53,8 +53,8 @@ export async function getMovieCrew(id: string): Promise<ApiResponse<MovieCrewRes
   return response.data
 }
 
-export async function getMovieProductionCompanies(id: string): Promise<ApiResponse<MovieProductionCompanyResponseDto[]>> {
-  const response = await api.get<ApiResponse<MovieProductionCompanyResponseDto[]>>(`${apiEndpoint.MOVIE}/${id}/production-companies`)
+export async function getMovieProductionCompanies(id: string): Promise<ApiResponse<MovieProductionCompanyResponseDto>> {
+  const response = await api.get<ApiResponse<MovieProductionCompanyResponseDto>>(`${apiEndpoint.MOVIE}/${id}/production-companies`)
   return response.data
 }
 

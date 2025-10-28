@@ -3,7 +3,7 @@
 
 import React from "react";
 import { MovieStatus } from "@/constants/enum";
-import { AdminCast, AdminCrew, AdminGenre, AdminKeyword, AdminLanguage, AdminProductionCompany, deleteImage } from "@/apis/admin.api";
+import { AdminCast, AdminCrew, AdminGenre, AdminKeyword, AdminLanguage, AdminProductionCompany, AdminVideo, deleteImage } from "@/apis/admin.api";
 import { useLanguageStore } from "@/zustand";
 import { uploadImage } from '@/apis/admin.api';
 import KeywordInput from "./KeywordInput";
@@ -14,6 +14,7 @@ import { useToast } from "@/contexts/toast.context";
 import BackdropsInput from "./BackdropInput";
 import PostersInput from "./PosterInput";
 import { OriginalLanguageInput } from "./OriginalLanguageInput";
+import MovieVideoUploader from "./MovieVideoUploader";
 
 export interface MovieFormValues {
   id: string;
@@ -21,6 +22,7 @@ export interface MovieFormValues {
   overview: string;
   status: MovieStatus;
   original_language: AdminLanguage;
+  videos: AdminVideo[];
   genres: AdminGenre[];
   production_companies: AdminProductionCompany[];
   keywords: AdminKeyword[];
@@ -66,7 +68,9 @@ export default function MovieForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(values);
+    onSubmit({
+      ...values,
+    });
   };
 
   const handleArrayFieldChange = <T extends Option,>(
@@ -198,6 +202,8 @@ export default function MovieForm({
 
       {/* Posters */}
       <PostersInput posters={values.posters} addFunction={handleUploadMultipleFile} deleteFunction={handleDeleteFile} />
+
+      <MovieVideoUploader movie={values} />
 
 
       {/* Submit */}

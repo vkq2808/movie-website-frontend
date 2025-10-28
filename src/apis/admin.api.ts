@@ -1,6 +1,7 @@
 import api, { apiEndpoint } from "@/utils/api.util";
 import { ApiResponse } from "@/types/api.response";
 import { MovieStatus, Role } from "@/constants/enum";
+import { VideoQuality, VideoType } from "@/dto/movie-video.dto";
 
 
 export interface AdminMovie {
@@ -48,9 +49,13 @@ export interface AdminVideo {
   id: string;
   name?: string;
   key: string;
-  site: string; // "YouTube" hoặc "Vimeo"
-  type: string; // "Trailer" | "Featurette" | "Clip" ...
+  site: string;
+  type: VideoType;
   official: boolean;
+  quality: VideoQuality
+  preview_url: string;
+  duration: number;
+  created_at: string;
 }
 
 export interface AdminMoviePerson {

@@ -30,7 +30,8 @@ export default function CreateModal() {
     production_companies: [],
     backdrops: [],
     posters: [],
-    release_date: ""
+    release_date: "",
+    videos: []
   };
 
   const handleClose = () => router.back();

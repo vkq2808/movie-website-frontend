@@ -25,91 +25,113 @@ export default function UpdatePanel() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const id = params?.id as string;
-  const isCreate = id === "new";
 
-  const [loading, setLoading] = React.useState(!isCreate);
+  const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
-  const [initial, setInitial] = React.useState<MovieFormValues | null>(null);
+  const [initial, setInitial] = React.useState<MovieFormValues>({
+    id: "",
+    title: "",
+    overview: "",
+    cast: [],
+    crew: [],
+    original_language: {
+      id: '',
+      name: '',
+      iso_639_1: ''
+    },
+    status: MovieStatus.DRAFT,
+    price: 0,
+    genres: [],
+    keywords: [],
+    spoken_languages: [],
+    production_companies: [],
+    backdrops: [],
+    posters: [],
+    release_date: "",
+    videos: []
+  });
 
   React.useEffect(() => {
-    if (isCreate) {
-      setInitial({
-        id: "",
-        title: "",
-        overview: "",
-        cast: [],
-        crew: [],
-        original_language: {
-          id: '',
-          name: '',
-          iso_639_1: ''
-        },
-        status: MovieStatus.DRAFT,
-        price: 0,
-        genres: [],
-        keywords: [],
-        spoken_languages: [],
-        production_companies: [],
-        backdrops: [],
-        posters: [],
-        release_date: ""
-      });
-      setLoading(false);
-      return;
-    }
-
     let mounted = true;
+
     (async () => {
       try {
         const res = await adminApi.getMovie(id);
         if (!mounted) return;
+
         if (!(res.success && res.data)) {
           setError(res.message || "Failed to load movie");
           return;
         }
 
         const m = res.data;
-
-        // fetch supplemental endpoints in parallel (tolerate failures)
-        const [videosRes, genresRes, castRes, crewRes, compsRes, keysRes, langsRes] = await Promise.all([
-          getMovieVideos(id).catch(() => ({ success: false, data: [], message: "" } as ApiResponse<VideoResponseDto[]>)),
-          getMovieGenres(id).catch(() => ({ success: false, data: [], message: "" } as ApiResponse<Movie["genres"]>)),
-          getMovieCast(id).catch(() => ({ success: false, data: { movie_id: id, cast: [] }, message: "" } as ApiResponse<MovieCastResponseDto>)),
-          getMovieCrew(id).catch(() => ({ success: false, data: { movie_id: id, crew: [] }, message: "" } as ApiResponse<MovieCrewResponseDto>)),
-          getMovieProductionCompanies(id).catch(() => ({ success: false, data: [], message: "" } as ApiResponse<MovieProductionCompanyResponseDto[]>)),
-          getMovieKeywords(id).catch(() => ({ success: false, data: { movie_id: id, keywords: [] }, message: "" } as ApiResponse<MovieKeywordsResponseDto>)),
-          getMovieSpokenLanguages(id).catch(() => ({ success: false, data: { movie_id: id, spoken_languages: [] }, message: "" } as ApiResponse<MovieSpokenLanguagesResponseDto>)),
+        const results = await Promise.allSettled([
+          getMovieVideos(id),
+          getMovieGenres(id),
+          getMovieCast(id),
+          getMovieCrew(id),
+          getMovieProductionCompanies(id),
+          getMovieKeywords(id),
+          getMovieSpokenLanguages(id),
         ]);
 
-        setInitial({
+        if (!mounted) return;
+
+        // gom dữ liệu lại
+        const [
+          videosRes,
+          genresRes,
+          castRes,
+          crewRes,
+          prodRes,
+          keywordsRes,
+          spokenRes,
+        ] = results;
+
+        const newData = {
           id: m.id,
           title: m.title,
           overview: m.overview,
           status: m.status,
-          genres: (genresRes?.data || m.genres || []).map((g) => ({ id: g.id, names: g.names })) || [],
-          keywords: (keysRes?.data.keywords || m.keywords || []).map((k) => ({ id: k.id, name: k.name })) || [],
-          spoken_languages: (langsRes?.data.spoken_languages || m.spoken_languages) as AdminLanguage[],
-          production_companies: (compsRes?.data || m.production_companies || []).map((p) => ({ id: p.id, name: p.name })) || [],
-          backdrops: m.backdrops || [],
-          posters: m.posters || [],
-          cast: (castRes?.data?.cast) || m.cast || [],
-          crew: (crewRes?.data?.crew) || m.crew || [],
-          original_language: m.original_language,
           price: m.price,
-          release_date: ""
-        });
+          release_date: "",
+          original_language: m.original_language,
+          videos:
+            videosRes.status === "fulfilled" ? videosRes.value.data : [],
+          genres:
+            genresRes.status === "fulfilled" ? genresRes.value.data : [],
+          cast:
+            castRes.status === "fulfilled" ? castRes.value.data.cast : [],
+          crew:
+            crewRes.status === "fulfilled" ? crewRes.value.data.crew : [],
+          production_companies:
+            prodRes.status === "fulfilled"
+              ? prodRes.value.data.production_companies
+              : [],
+          keywords:
+            keywordsRes.status === "fulfilled"
+              ? keywordsRes.value.data.keywords
+              : [],
+          spoken_languages:
+            spokenRes.status === "fulfilled"
+              ? spokenRes.value.data.spoken_languages
+              : [],
+        };
+
+        setInitial(prev => ({ ...prev, ...newData }));
       } catch (err) {
-        console.error('Error loading movie details for update modal:', err);
+        console.error("Error loading movie details for update modal:", err);
         setError("Failed to load movie");
       } finally {
         if (mounted) setLoading(false);
       }
     })();
+
     return () => {
       mounted = false;
     };
-  }, [id, isCreate]);
+  }, [id]);
 
   const handleClose = () => router.back();
 
@@ -125,12 +147,7 @@ export default function UpdatePanel() {
         crew,
       };
 
-      if (isCreate) {
-        await adminApi.createMovie(savingValues);
-      } else {
-        await adminApi.updateMovie(id, savingValues);
-      }
-
+      await adminApi.updateMovie(id, savingValues);
 
       // 🔙 Đóng modal
       handleClose();
@@ -150,7 +167,7 @@ export default function UpdatePanel() {
       <div className="w-[720px] max-h-[90vh] overflow-y-auto rounded-lg border border-gray-700 bg-gray-900 p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-white">
-            {isCreate ? "Create Movie" : "Update Movie"}
+            {"Update Movie"}
           </h2>
           <button
             onClick={handleClose}

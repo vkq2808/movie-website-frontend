@@ -1,12 +1,17 @@
-export type VideoType =
-  | 'Trailer'
-  | 'Teaser'
-  | 'Clip'
-  | 'Featurette'
-  | 'Behind the Scenes'
-  | 'Other'
+export enum VideoType {
+  TRAILER = "Trailer",
+  CLIP = "Clip",
+  MOVIE = "Movie",
+  FEATURETTE = "Featurette",
+  OTHER = "Other"
+}
 
-export type VideoQuality = 'low' | 'medium' | 'high' | '720' | '1080' | '4k'
+export enum VideoQuality {
+  LOW = '480p',
+  MEDIUM = '720p',
+  HD = '1080p'
+}
+
 
 export interface VideoResponseDto {
   id: string
@@ -15,10 +20,10 @@ export interface VideoResponseDto {
   name?: string
   key: string
   site: string
-  size?: number
   type: VideoType
   quality: VideoQuality
   official: boolean
-  embed_url: string
-  thumbnail_url: string
+  preview_url: string
+  duration: number
+  created_at: string;
 }

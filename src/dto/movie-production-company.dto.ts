@@ -1,4 +1,8 @@
 export interface MovieProductionCompanyResponseDto {
+  movie_id: string;
+  production_companies: ProductionCompanyDto[];
+};
+export interface ProductionCompanyDto {
   id: string;
   name: string;
   description?: string;
