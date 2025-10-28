@@ -4,8 +4,8 @@ import { adminApi, type AdminUser } from "@/apis/admin.api";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { toast } from "react-hot-toast";
 import { Eye, Lock, LockOpen, Trash2, UserCog } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/DialogUI";
+import { Input } from "@/components/ui/InputUI";
 
 export default function AdminUsersPage() {
   const [loading, setLoading] = React.useState(true);

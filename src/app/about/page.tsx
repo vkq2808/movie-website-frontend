@@ -1,3 +1,5 @@
+import VideoPlayer from '@/components/ui/VideoPlayer';
+import VideoUploader from '@/components/ui/VideoUploader';
 import Image from 'next/image';
 import React from 'react';
 
@@ -7,6 +9,11 @@ const AboutPage: React.FC = () => {
       <h1 className="text-4xl font-bold text-center mb-8">
         About Our Team & Project
       </h1>
+
+      <section>
+        <VideoUploader />
+        <VideoPlayer videoKey='da74b9d2-2332-485a-80d2-26e2b1fb96e7' />
+      </section>
 
       {/* Team Members Section */}
       <section className="mb-12 px-5 ">
@@ -27,7 +34,6 @@ const AboutPage: React.FC = () => {
           <li><strong>NestJS</strong>: A modern, secure, and maintainable backend framework.</li>
           <li><strong>NextJS</strong>: A robust frontend framework with server-side rendering capabilities.</li>
           <li><strong>TypeScript</strong>: Ensures code quality and maintainability through static type checking.</li>
-          <li><strong>MongoDB</strong>: A flexible NoSQL database for scalable data storage.</li>
         </ul>
       </section>
 
@@ -82,7 +88,7 @@ const MemberCard: React.FC<MemberCardProps> = ({ fullname, role, hobbies, avatar
   return (
     <div className={`bg-[var(--color-neutral-300)] text-[var(--color-neutral-800)] shadow-lg rounded-lg py-6 w-full ${className}`}>
       <div className="flex items-center justify-center mb-4 select-none">
-        <Image src={avatar} alt={fullname} className="w-24 h-24 md:w-48 md:h-48 rounded-full" />
+        <Image src={avatar} alt={fullname} width={60} height={60} className="w-auto h-auto md:w-48 md:h-48 rounded-full" />
       </div>
       <div className="px-6">
         <h3 className="text-2xl font-bold mb-2">{fullname}</h3>

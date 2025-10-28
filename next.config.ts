@@ -44,6 +44,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: process.env.NEXT_PUBLIC_BASE_URL ?? ''
+      },
+      {
+        protocol: 'https',
+        hostname: "avatars.githubusercontent.com"
       }
     ]
   },

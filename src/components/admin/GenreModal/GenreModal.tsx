@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/DialogUI";
+import { Input } from "@/components/ui/InputUI";
+import { Button } from "@/components/ui/ButtonUI";
 import { Plus, Trash2 } from "lucide-react";
 import { AdminGenre } from "@/apis/admin.api";
 import { useToast } from "@/contexts/toast.context";
