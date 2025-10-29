@@ -47,8 +47,6 @@ export default function VideoUploader() {
     setStatus('initializing')
 
     try {
-      const data = await initUploadApi('test-movie', file.name)
-      setSessionId(data.data.sessionId)
       setStatus('initialized')
       uploadChunks();
     } catch (err) {

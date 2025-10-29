@@ -23,7 +23,15 @@ export interface VideoResponseDto {
   type: VideoType
   quality: VideoQuality
   official: boolean
-  preview_url: string
+  thumbnail: string
   duration: number
   created_at: string;
+}
+
+export enum UploadStatus {
+  IN_PROGRESS = 'in_progress',
+  ASSEMBLING = 'assembling',
+  CONVERTING = 'converting',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
 }

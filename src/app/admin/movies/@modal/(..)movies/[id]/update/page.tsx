@@ -4,7 +4,7 @@
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import MovieForm, { type MovieFormValues } from "@/components/admin/MovieForm/MovieForm";
-import { adminApi, AdminLanguage } from "@/apis/admin.api";
+import { adminApi } from "@/apis/admin.api";
 import {
   getMovieVideos,
   getMovieGenres,
@@ -16,10 +16,6 @@ import {
 } from '@/apis/movie.api'
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { MovieStatus } from "@/constants/enum";
-import { ApiResponse } from "@/types/api.response";
-import { MovieCastResponseDto, MovieCrewResponseDto, MovieKeywordsResponseDto, MovieProductionCompanyResponseDto, MovieSpokenLanguagesResponseDto } from "@/dto";
-import { Movie } from "@/zustand";
-import { VideoResponseDto } from "@/dto/movie-video.dto";
 
 export default function UpdatePanel() {
   const router = useRouter();
@@ -133,7 +129,9 @@ export default function UpdatePanel() {
     };
   }, [id]);
 
-  const handleClose = () => router.back();
+  const handleClose = () => {
+    router.back();
+  }
 
   const handleSubmit = async (values: MovieFormValues) => {
     try {

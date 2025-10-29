@@ -7,6 +7,7 @@ import { adminApi } from "@/apis/admin.api";
 import { getMovieVideos, getMovieGenres, getMovieCast } from '@/apis/movie.api'
 import Link from "next/link";
 import { useLanguageStore } from "@/zustand";
+import VideoCard from "@/components/ui/VideoCard";
 
 export default function AdminMovieDetailPage() {
   const params = useParams<{ id: string }>();
@@ -346,38 +347,5 @@ function CastCrewSection({ title, list, type }: { title: string; list: any[]; ty
         )}
       </div>
     </section>
-  );
-}
-
-function VideoCard({ video }: { video: any }) {
-  // Hỗ trợ nhúng YouTube & Vimeo
-  const embedUrl =
-    video.site === "YouTube"
-      ? `https://www.youtube.com/embed/${video.key}`
-      : video.site === "Vimeo"
-        ? `https://player.vimeo.com/video/${video.key}`
-        : null;
-
-  return (
-    <div className="rounded border border-gray-800 bg-gray-900/50 p-2">
-      {embedUrl ? (
-        <iframe
-          src={embedUrl}
-          title={video.name || video.key}
-          allowFullScreen
-          className="aspect-video w-full rounded"
-        ></iframe>
-      ) : (
-        <div className="aspect-video flex items-center justify-center rounded border border-dashed border-gray-700 bg-gray-800 text-gray-400">
-          Unsupported site: {video.site}
-        </div>
-      )}
-
-      <div className="mt-2 text-sm font-medium text-white">{video.name || "Unnamed video"}</div>
-      <div className="text-xs text-gray-400 flex justify-between">
-        <span>{video.type}</span>
-        {video.official && <span className="text-green-400">Official</span>}
-      </div>
-    </div>
   );
 }

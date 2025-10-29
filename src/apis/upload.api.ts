@@ -1,4 +1,5 @@
 // src/api/upload.api.ts
+import { VideoType } from '@/dto/movie-video.dto'
 import axios from 'axios'
 
 const API_URL = 'http://localhost:2808/video/upload'
@@ -6,8 +7,8 @@ const API_URL = 'http://localhost:2808/video/upload'
 // -------------------------
 // 1️⃣ Initialize Upload
 // -------------------------
-export const initUploadApi = async (movie_id: string, filename: string) => {
-  const res = await axios.post(`${API_URL}/init`, { movie_id, filename })
+export const initUploadApi = async (movie_id: string, filename: string, title: string, videoType: VideoType) => {
+  const res = await axios.post(`${API_URL}/init`, { movie_id, filename, title, videoType })
   return res.data
 }
 

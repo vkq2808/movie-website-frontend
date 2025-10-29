@@ -10,6 +10,8 @@ import {
 import { Upload, Check, Loader2, Play, Lock } from 'lucide-react'
 import { AdminVideo } from '@/apis/admin.api'
 import { MovieFormValues } from './MovieForm'
+import { UploadStatus, VideoType } from '@/dto/movie-video.dto'
+import VideoCard from '@/components/ui/VideoCard'
 
 const CHUNK_SIZE = 5 * 1024 * 1024 // 5MB
 
@@ -22,17 +24,28 @@ export default function MovieVideoUploader({ movie }: Props) {
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [progress, setProgress] = useState<number>(0)
   const [status, setStatus] = useState<string>('idle')
-  const [videos, setVideos] = useState<AdminVideo[]>(movie.videos ?? [])
   const intervalRef = useRef<number | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [title, setTitle] = useState<string>('')
+  const [titleError, setTitleError] = useState<string>('');
+  const [videoType, setVideoType] = useState<VideoType>(VideoType.MOVIE)
 
+  useEffect(() => {
+    if (title.length > 100) {
+      setTitleError('Title can not contain over 100 characters.');
+      setTitle((p) => p.slice(0, 99))
+      return;
+    }
+
+    setTitleError('');
+  }, [title])
 
   // 🧱 Khởi tạo upload session
   const initUpload = async () => {
     if (!file) return alert('Chọn video trước!')
     setStatus('initializing')
     try {
-      const res = await initUploadApi(movie.id, file.name)
+      const res = await initUploadApi(movie.id, file.name, title.trim(), videoType)
       setSessionId(res.data.sessionId)
       setStatus('uploading')
       await uploadChunks(res.data.sessionId)
@@ -64,14 +77,49 @@ export default function MovieVideoUploader({ movie }: Props) {
   // 🧱 Theo dõi tiến trình xử lý server
   const pollStatus = (sessionId: string) => {
     intervalRef.current = window.setInterval(async () => {
-      const data = await getUploadStatusApi(sessionId)
-      if (data.data.progress === 100) {
+      try {
+        const res = await getUploadStatusApi(sessionId)
+        const backendStatus = res.data.status as UploadStatus
+
+        switch (backendStatus) {
+          case 'in_progress':
+            setStatus('uploading')
+            break
+
+          case 'assembling':
+            setStatus('assembling')
+            break
+
+          case 'converting':
+            setStatus('processing')
+            setFile(null)
+            setTitle('')
+            break
+
+          case 'completed':
+            clearInterval(intervalRef.current!)
+            setStatus('complete')
+            setFile(null)
+            setTitle('')
+            break
+
+          case 'failed':
+            clearInterval(intervalRef.current!)
+            setStatus('error')
+            console.error('Upload failed:', res.data.error || 'Unknown error')
+            break
+
+          default:
+            setStatus('unknown')
+        }
+      } catch (error) {
+        console.error('Polling error:', error)
+        setStatus('error')
         clearInterval(intervalRef.current!)
-        setStatus('complete')
-        setFile(null)
       }
-    }, 5000)
+    }, 4000) // 4 giây/lần, có thể tuỳ chỉnh
   }
+
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('vi-VN', {
@@ -112,34 +160,66 @@ export default function MovieVideoUploader({ movie }: Props) {
 
       {/* Upload Area */}
       {file && (
-        <div className="p-4 border-b border-gray-800 bg-neutral-800">
+        <div className="p-4 border-b border-gray-800 bg-neutral-800 space-y-3">
           <div className="flex justify-between items-center">
             <div>
               <p className="font-semibold">{file.name}</p>
               <p className="text-sm text-gray-400">{formatFileSize(file.size)}</p>
             </div>
+          </div>
 
-            <div>
-              {status === 'idle' && (
-                <button
-                  onClick={initUpload}
-                  className="bg-fuchsia-600 hover:bg-fuchsia-700 px-3 py-2 rounded-lg text-white font-medium"
-                >
-                  Upload
-                </button>
-              )}
-              {status !== 'idle' && (
-                <p className="text-sm text-gray-300">
-                  {status === 'uploading'
-                    ? `Đang tải lên... ${progress}%`
-                    : status === 'assembling'
-                      ? 'Đang ghép video...'
-                      : status === 'processing'
-                        ? 'Đang xử lý video...'
-                        : 'Hoàn tất ✅'}
-                </p>
-              )}
+          {/* Nhập tiêu đề video */}
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Tiêu đề video</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full bg-neutral-700 border border-neutral-600 rounded-lg px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-600"
+              placeholder="Nhập tiêu đề..."
+            />
+          </div>
+          {titleError && (
+            <div className='text-red-500'>
+              {titleError}
             </div>
+          )}
+          {/* Chọn loại video */}
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Loại video</label>
+            <select
+              value={videoType}
+              onChange={(e) => setVideoType(e.target.value as VideoType)}
+              className="w-full bg-neutral-700 border border-neutral-600 rounded-lg px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-600"
+            >
+              {Object.values(VideoType).map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex justify-between items-center">
+            {status === 'idle' ? (
+              <button
+                type='button'
+                onClick={initUpload}
+                className="bg-fuchsia-600 hover:bg-fuchsia-700 px-3 py-2 rounded-lg text-white font-medium cursor-poitner"
+                disabled={!title.trim()}
+              >
+                {title.trim() ? 'Upload' : 'Nhập tiêu đề trước'}
+              </button>
+            ) : (
+              <p className="text-sm text-gray-300">
+                {status === 'uploading'
+                  ? `Đang tải lên... ${progress}%`
+                  : status === 'assembling'
+                    ? 'Đang ghép video...'
+                    : status === 'processing'
+                      ? 'Đang xử lý video...'
+                      : 'Hoàn tất ✅'}
+              </p>
+            )}
           </div>
 
           {/* Progress bar */}
@@ -155,36 +235,55 @@ export default function MovieVideoUploader({ movie }: Props) {
       )}
 
       {/* Video List */}
-      <div className="divide-y divide-gray-800">
-        {videos.map((v, i) => (
-          <div key={i} className="flex items-center px-4 py-3">
-            {/* Thumbnail */}
-            <div className="w-40 h-24 bg-gray-700 rounded-lg overflow-hidden relative mr-4">
-              <video
-                src={v.preview_url}
-                className="w-full h-full object-cover"
-                muted
-              />
-              <span className="absolute bottom-1 right-1 bg-black/70 text-xs px-2 py-0.5 rounded">
-                {v.duration}
-              </span>
-            </div>
+      <VideoTabs movie={movie} />
+    </div>
+  )
+}
+function VideoTabs({ movie }: { movie: MovieFormValues }) {
+  const [activeTab, setActiveTab] = useState(VideoType.TRAILER)
 
-            {/* Info */}
-            <div className="flex-1">
-              <p className="font-medium">{`${movie.title} - ${v.type} - ${v.site}` || 'Video không tiêu đề'}</p>
-            </div>
+  const types = Object.values(VideoType)
+  const videosByType = movie?.videos?.filter(v => v.type === activeTab) || []
 
-            {/* Date */}
-            <div className="w-40 text-center">
-              <p>{formatDate(v.created_at)}</p>
-              <p className="text-xs text-gray-500">Đã tải lên</p>
-            </div>
-          </div>
+  return (
+    <div>
+      {/* Tabs */}
+      <div className="flex space-x-4 border-b border-gray-700 mb-4">
+        {types.map(type => (
+          <button
+            type="button"
+            key={type}
+            className={`pb-2 px-3 ${activeTab === type
+              ? 'border-b-2 border-red-500 text-red-400'
+              : 'text-gray-400 hover:text-gray-200'
+              }`}
+            onClick={() => setActiveTab(type)}
+          >
+            {type}
+          </button>
         ))}
+      </div>
 
-        {videos.length === 0 && (
-          <div className="text-center text-gray-400 py-6">Chưa có video nào</div>
+      {/* Nội dung tab */}
+      <div className="divide-y divide-gray-800">
+        {videosByType.length > 0 ? (
+          videosByType.map((v, i) => (
+            <div key={i} className="flex items-center px-4 py-3">
+              <div className="w-40 h-24 bg-gray-700 rounded-lg overflow-hidden relative mr-4">
+                <VideoCard video={v} />
+                <span className="absolute bottom-1 right-1 bg-black/70 text-xs px-2 py-0.5 rounded">
+                  {v.site}
+                </span>
+              </div>
+              <div className="flex-1">
+                <p className="font-medium">{`${v.name}`}</p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center text-gray-400 py-6">
+            Chưa có video {activeTab.toLowerCase()} nào.
+          </div>
         )}
       </div>
     </div>

@@ -53,7 +53,7 @@ export interface AdminVideo {
   type: VideoType;
   official: boolean;
   quality: VideoQuality
-  preview_url: string;
+  thumbnail: string;
   duration: number;
   created_at: string;
 }

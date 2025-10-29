@@ -86,9 +86,7 @@ export default function AdminMoviesPage() {
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex h-56 items-center justify-center"><LoadingSpinner /></div>
-      ) : error ? (
+      {error ? (
         <div className="rounded bg-red-500/10 p-3 text-sm text-red-300">{error}</div>
       ) : (
         <div className="overflow-x-auto">
@@ -102,7 +100,9 @@ export default function AdminMoviesPage() {
                   <th className="px-3 py-2">Rating</th>
                 </tr>
               </thead>
-              <tbody>
+              {loading ? (
+                <div className="flex h-56 items-center justify-center"><LoadingSpinner /></div>
+              ) : <tbody>
                 {movies.map((m) => (
                   <tr key={'d-' + m.id} className="border-b border-gray-800"
                   >
@@ -131,7 +131,7 @@ export default function AdminMoviesPage() {
                     <td className="px-3 py-6 text-center text-gray-400" colSpan={6}>No movies found</td>
                   </tr>
                 )}
-              </tbody>
+              </tbody>}
             </table>
             <table className="w-1/5 border-collapse text-left text-sm">
               <thead>
@@ -139,7 +139,9 @@ export default function AdminMoviesPage() {
                   <th className="px-3 py-2 text-center">Action</th>
                 </tr>
               </thead>
-              <tbody>
+              {loading ? (
+                <div className="flex h-56 items-center justify-center"></div>
+              ) : <tbody>
                 {movies.map((m) => (
                   <tr key={'a-' + m.id} className="border-b border-gray-800">
                     <td className="px-3 py-2 text-right gap-4 flex">
@@ -163,7 +165,7 @@ export default function AdminMoviesPage() {
                     <td className="px-3 py-6 text-center text-gray-400" colSpan={6}></td>
                   </tr>
                 )}
-              </tbody>
+              </tbody>}
             </table>
           </div>
 
