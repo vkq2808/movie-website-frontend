@@ -1,7 +1,7 @@
 // components/admin/MovieForm.tsx
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { MovieStatus } from "@/constants/enum";
 import { AdminCast, AdminCrew, AdminGenre, AdminKeyword, AdminLanguage, AdminProductionCompany, AdminVideo, deleteImage } from "@/apis/admin.api";
 import { useLanguageStore } from "@/zustand";
@@ -120,6 +120,8 @@ export default function MovieForm({
     const newUrls = values[field].filter(v => v.url != url);
     setValues((prev) => ({ ...prev, [field]: newUrls }))
   }
+
+  useEffect(() => { console.log(values) }, [values])
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 text-sm text-gray-200">
