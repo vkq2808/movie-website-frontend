@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { Play, Star, ThumbsUp, Share2, Plus, ChevronDown, MessageSquare, Clock, Calendar, Globe, Film } from 'lucide-react';
 
@@ -71,6 +72,10 @@ interface Feedback {
   createdAt: string;
   likes: number;
 }
+interface Image {
+  url: string;
+  alt: string;
+}
 
 interface Movie {
   id: string;
@@ -85,8 +90,8 @@ interface Movie {
   spoken_languages: Language[];
   release_date: string;
   videos: Video[];
-  posters: any[];
-  backdrops: any[];
+  posters: Image[];
+  backdrops: Image[];
   feedbacks?: Feedback[];
 }
 
