@@ -2,12 +2,13 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Genre, useAuthStore, useGenreStore, useLanguageStore } from "@/zustand";
+import { useAuthStore, useGenreStore, useLanguageStore } from "@/zustand";
 import { ChevronDownIcon, SearchIcon, UserIcon } from "lucide-react";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import Image from "next/image";
 import { useSettings } from "@/contexts/settings.context";
 import { useToast } from "@/contexts/toast.context";
+import { Genre } from "@/types/api.types";
 
 const Header = () => {
   const genres = useGenreStore(state => state.genres);

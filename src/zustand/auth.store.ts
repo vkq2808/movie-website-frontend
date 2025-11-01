@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { User } from './types';
 import type { ApiResponse } from '@/types/api.response';
 import api, { apiEndpoint } from '@/utils/api.util';
+import { User } from '@/types/api.types';
 
 export interface AuthStore {
   user: User | undefined

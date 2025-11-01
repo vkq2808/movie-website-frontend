@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
+import LoadingSpinner from "@/components/common/Loading/LoadingSpinner";
 import { adminApi, AdminGenre, type AdminStats } from "@/apis/admin.api";
 import {
   LineChart,

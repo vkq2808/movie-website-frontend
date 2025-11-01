@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { adminApi, type AdminUser } from "@/apis/admin.api";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
+import LoadingSpinner from "@/components/common/Loading/LoadingSpinner";
 import { toast } from "react-hot-toast";
 import { Eye, Lock, LockOpen, Trash2, UserCog } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/DialogUI";

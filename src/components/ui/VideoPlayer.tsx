@@ -173,7 +173,7 @@ export default function VideoPlayer({ videoSrc, resolutions }: VideoPlayerProps)
   return (
     <div
       ref={containerRef}
-      className="relative w-full max-w-5xl mx-auto bg-black rounded-2xl overflow-hidden shadow-2xl"
+      className="relative w-full mx-auto bg-black rounded-2xl overflow-hidden shadow-2xl"
       onMouseMove={handleMouseMove}
       onMouseLeave={() => isPlaying && setShowControls(false)}
     >

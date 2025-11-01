@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from 'react';
-import { getMovies } from '@/apis/movie.api';
-import { Movie } from '@/zustand';
+import movieApi from '@/apis/movie.api';
+import { Movie } from '@/types/api.types';
 import { CalendarDays } from 'lucide-react';
 import { MovieCard, LoadingSpinner } from '@/components/common';
 
@@ -26,7 +26,7 @@ export default function UpcomingPage() {
     try {
       if (append) setLoadingMore(true); else setLoading(true);
       // Get by release_date ascending, then filter client-side to future dates until backend supports filter
-      const res = await getMovies({ page: nextPage, limit: 24, sort_by: 'release_date', sort_order: 'ASC' });
+      const res = await movieApi.getMovies({ page: nextPage, limit: 24, sort_by: 'release_date', sort_order: 'ASC' });
       const pageMovies = (res.data || []).filter(m => isFuture(m.release_date));
       if (res.data) {
         setMovies(prev => append ? [...prev, ...pageMovies] : pageMovies);

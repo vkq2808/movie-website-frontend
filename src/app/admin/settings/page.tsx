@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { adminApi, type SystemSettings } from '@/apis/admin.api';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
+import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
 
 export default function AdminSettingsPage() {
   const [loading, setLoading] = React.useState(true);

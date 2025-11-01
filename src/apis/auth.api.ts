@@ -1,5 +1,5 @@
 import api, { apiEndpoint } from "@/utils/api.util";
-import { User } from "@/zustand";
+import { User } from "@/types/api.types";
 import { ApiResponse } from "@/types/api.response";
 
 export interface LoginData {

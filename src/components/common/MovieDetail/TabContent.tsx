@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { Movie } from '@/zustand'
+import { Movie } from '@/types/api.types'
 import MovieDetailTab from './tabs/MovieDetailTab'
 import GalleryTab from './tabs/GalleryTab'
 import CommentsTab from './tabs/CommentsTab'

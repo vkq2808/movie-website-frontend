@@ -1,37 +1,23 @@
-export enum VideoType {
-  TRAILER = "Trailer",
-  CLIP = "Clip",
-  MOVIE = "Movie",
-  FEATURETTE = "Featurette",
-  OTHER = "Other"
-}
-
-export enum VideoQuality {
-  LOW = '480p',
-  MEDIUM = '720p',
-  HD = '1080p'
-}
+import { VideoQuality, VideoType } from "@/types/api.types"
+import { WatchProviderResponseDto } from "./watch-provider.dto"
 
 
 export interface VideoResponseDto {
   id: string
   iso_639_1?: string
   iso_3166_1?: string
-  name?: string
-  key: string
+  name: string
+  url: string
   site: string
   type: VideoType
-  quality: VideoQuality
+  qualities: {
+    url: string;
+    quality: VideoQuality;
+  }[];
   official: boolean
   thumbnail: string
   duration: number
   created_at: string;
-}
-
-export enum UploadStatus {
-  IN_PROGRESS = 'in_progress',
-  ASSEMBLING = 'assembling',
-  CONVERTING = 'converting',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
+  embed_url: string;
+  watch_provider: WatchProviderResponseDto
 }

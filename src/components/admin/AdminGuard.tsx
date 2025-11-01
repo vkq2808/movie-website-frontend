@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/zustand';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
+import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
 
 export default function AdminGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();

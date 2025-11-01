@@ -1,9 +1,9 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { Genre, Movie } from '@/zustand'
 import Link from 'next/link'
-import { useLanguage } from '@/contexts/language.context'
 import Image from 'next/image'
+import { Genre, Movie } from '@/types/api.types'
+import { useLanguageStore } from '@/zustand'
 
 interface SuggestionsTabProps {
   movie: Movie
@@ -12,11 +12,11 @@ interface SuggestionsTabProps {
 const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
   const [suggestedMovies, setSuggestedMovies] = useState<Movie[]>([])
   const [loading, setLoading] = useState<boolean>(true)
-  const { language } = useLanguage()
+  const { currentLanguage } = useLanguageStore();
 
   // Function to get genre name based on current language
   const getGenreName = (genre: Genre) => {
-    const nameForLanguage = genre.names?.find((n) => n.iso_639_1 === language)
+    const nameForLanguage = genre.names?.find((n) => n.iso_639_1 === currentLanguage.iso_639_1)
     return nameForLanguage ? nameForLanguage.name : genre.names?.[0]?.name || 'Unknown'
   }
 
@@ -58,16 +58,17 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
           created_at: '',
           updated_at: '',
         }],
-        genres: movie.genres.slice(0, 2), // Use some genres from current movie
+        genres: movie.genres?.slice(0, 2), // Use some genres from current movie
         videos: [],
         trailer_url: null,
         rating: 7.5 + (index % 3),
         created_at: '',
         updated_at: '',
+        status: 'Draft',
         // Add missing Movie properties
         alternative_titles: [],
         alternative_overviews: [],
-        original_language: language || 'en',
+        original_language: currentLanguage,
         original_title: `Suggested Movie ${index + 1}`,
         price: 9.99 + (index % 3), // Add the missing price field
       }))
@@ -77,7 +78,7 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
     }
 
     fetchSuggestedMovies()
-  }, [movie, language])
+  }, [movie, currentLanguage])
 
   const MovieCard = ({ suggestedMovie }: { suggestedMovie: Movie }) => (
     <Link href={`/movie/${suggestedMovie.id}`}>
@@ -89,8 +90,8 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
               src={suggestedMovie.posters?.[0].url}
               alt={suggestedMovie.posters?.[0].alt || suggestedMovie.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              width={suggestedMovie.posters?.[0].width || 300}
-              height={suggestedMovie.posters?.[0].height || 450}
+              width={300}
+              height={450}
               loading="lazy"
             />
           ) : (
@@ -110,16 +111,6 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
           <h3 className="text-white font-medium text-sm mb-2 line-clamp-2 group-hover:text-yellow-400 transition-colors">
             {suggestedMovie.title}
           </h3>
-
-          <div className="flex items-center text-xs text-gray-400 mb-2">
-            <span>{suggestedMovie.release_date?.split('-')[0] || 'N/A'}</span>
-            {suggestedMovie.duration && (
-              <>
-                <span className="mx-1">•</span>
-                <span>{suggestedMovie.duration} phút</span>
-              </>
-            )}
-          </div>
 
           {/* Genres */}
           <div className="flex flex-wrap gap-1 mb-2">
@@ -192,8 +183,8 @@ const SuggestionsTab: React.FC<SuggestionsTabProps> = ({ movie }) => {
                       src={suggestedMovie.posters?.[0].url}
                       alt={suggestedMovie.title}
                       className="w-full h-full object-cover"
-                      width={suggestedMovie.posters?.[0].width || 300}
-                      height={suggestedMovie.posters?.[0].height || 450}
+                      width={300}
+                      height={450}
                       loading="lazy"
                     />
                   ) : (

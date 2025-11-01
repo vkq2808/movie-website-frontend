@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Movie, useGenreStore, useLanguageStore } from '@/zustand'
+import { useGenreStore, useLanguageStore } from '@/zustand'
 import api, { apiEndpoint } from '@/utils/api.util'
 import SearchMovieCard from '@/components/common/Search/SearchMovieCard'
 import SearchFilter from '@/components/common/Search/SearchFilter'
@@ -9,6 +9,7 @@ import { useAuthStore } from '@/zustand'
 import { saveSearchHistory } from '@/apis/search-history.api'
 
 import { PaginatedApiResponse } from '@/types/api.response'
+import { Movie } from '@/types/api.types'
 
 interface SearchResult {
   data: Movie[];

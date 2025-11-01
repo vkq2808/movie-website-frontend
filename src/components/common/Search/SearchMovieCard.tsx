@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { Movie } from '@/zustand'
+import { Movie } from '@/types/api.types'
 import Link from 'next/link'
 import { Star } from 'lucide-react'
 import Image from 'next/image'

@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import { Movie } from '@/zustand/types';
+import { Movie } from '@/types/api.types'
 import { HeartIcon, PlayIcon } from 'lucide-react';
 import Link from 'next/link';
 
@@ -31,7 +31,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
             <div className="flex justify-between items-center mb-2">
               <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                {movie.vote_average.toFixed(1)}
+                {movie.vote_average?.toFixed(1)}
               </span>
               <button className="text-white hover:text-red-500 transition-colors">
                 <HeartIcon size={20} />

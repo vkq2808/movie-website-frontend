@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { adminApi, type AdminGenre } from "@/apis/admin.api";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
+import LoadingSpinner from "@/components/common/Loading/LoadingSpinner";
 import { Plus, Edit, Trash2, Languages } from "lucide-react";
 import { useToast } from "@/contexts/toast.context";
 import { GenreModal } from "@/components/admin/GenreModal/GenreModal";

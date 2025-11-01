@@ -1,10 +1,10 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { Movie } from '@/zustand'
-import { getMovieById, getMovieVideos, getMovieGenres, getMovieCast } from '@/apis/movie.api'
 import MovieHero from './MovieHero'
 import MovieTabs from './MovieTabs'
 import Spinner from '../Spinner'
+import { Movie } from '@/types/api.types'
+import movieApi from '@/apis/movie.api'
 
 interface MovieDetailPageProps {
   movieId: string
@@ -21,12 +21,12 @@ const MovieDetailPage: React.FC<MovieDetailPageProps> = ({ movieId }) => {
         setLoading(true)
         setError(null)
         // Fetch base movie (essential fields) then fetch split resources in parallel
-        const baseRes = await getMovieById(movieId)
+        const baseRes = await movieApi.getMovieById(movieId)
         const baseMovie = baseRes.data
 
         // Parallel fetch supplemental resources
         const [genresRes] = await Promise.all([
-          getMovieGenres(movieId).catch(e => ({ success: false, data: [] } as any)) // eslint-disable-line @typescript-eslint/no-explicit-any
+          movieApi.getMovieGenres(movieId).catch(e => ({ success: false, data: [] } as any)) // eslint-disable-line @typescript-eslint/no-explicit-any
         ])
 
         const mergedMovie: Movie = {

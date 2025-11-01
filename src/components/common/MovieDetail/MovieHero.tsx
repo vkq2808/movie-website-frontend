@@ -1,97 +1,38 @@
 'use client'
-import React, { useEffect, useRef, useState } from 'react'
-import { Genre, Movie, useLanguageStore } from '@/zustand'
+import React, { useState } from 'react'
+import { useLanguageStore } from '@/zustand'
 import { Heart, Share, MessageCircle, PlusCircle } from 'lucide-react'
 import Image from 'next/image'
 import MoviePurchaseButton from '@/components/common/MoviePurchase/MoviePurchaseButton'
 import { maximizeTextLength } from '@/utils/string.util'
 import clsx from 'clsx'
-import Script from 'next/script'
-
-declare global {
-  interface Window {
-    YT: {
-      Player: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-      PlayerState: {
-        PLAYING: number;
-      };
-    };
-    onYouTubeIframeAPIReady?: () => void;
-  }
-}
+import { Genre, Movie } from '@/types/api.types'
 
 interface MovieHeroProps {
   movie: Movie
 }
 
 const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
-  const language = useLanguageStore(s => s.currentLanguage)
+  const language = useLanguageStore((s) => s.currentLanguage)
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
-  const playerRef = useRef<any>(null) // eslint-disable-line @typescript-eslint/no-explicit-any
-  const playerContainerRef = useRef<HTMLDivElement>(null)
 
-  // --- Xác định trailer URL ---
-  const mainVideo = movie.videos?.find(v => v.type === 'Trailer') || movie.videos?.[0]
-
-  useEffect(() => {
-    if (!mainVideo || mainVideo.site !== 'YouTube' || !playerContainerRef.current) return;
-
-    const initializeYouTubePlayer = () => {
-      if (typeof window !== 'undefined' && window.YT) {
-        playerRef.current = new window.YT.Player(playerContainerRef.current, {
-          videoId: mainVideo.key,
-          playerVars: {
-            autoplay: 1,
-            controls: 0,
-            modestbranding: 1,
-            loop: 1,
-            playlist: mainVideo.key,
-            mute: 1,
-            playsinline: 1,
-          },
-          events: {
-            onReady: (event) => {
-              event.target.playVideo();
-              setIsVideoLoaded(true);
-            },
-            onError: () => {
-              setHasError(true);
-              setIsVideoLoaded(false);
-            },
-            onStateChange: (event) => {
-              if (event.data === window.YT?.PlayerState?.PLAYING) {
-                setIsVideoLoaded(true);
-              }
-            }
-          }
-        });
-      }
-    };
-
-    // Initialize YouTube player when API is ready
-    if (window.YT) {
-      initializeYouTubePlayer();
-    } else {
-      window.onYouTubeIframeAPIReady = initializeYouTubePlayer;
-    }
-
-    return () => {
-      if (playerRef.current) {
-        playerRef.current.destroy();
-      }
-    };
-  }, [mainVideo]);
+  // --- Xác định video trailer hợp lệ ---
+  const mainVideo =
+    movie.videos?.find((v) => v.type === 'Trailer' && v.url) ||
+    movie.videos?.find((v) => v.url)
 
   // --- Get genre name theo ngôn ngữ ---
   const getGenreName = (genre: Genre) => {
-    const nameForLanguage = genre.names?.find((n) => n.iso_639_1 === language.iso_639_1)
+    const nameForLanguage = genre.names?.find(
+      (n) => n.iso_639_1 === language.iso_639_1
+    )
     return nameForLanguage ? nameForLanguage.name : genre.names?.[0]?.name || 'Không xác định'
   }
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
-      {/* --- BACKDROP (hiển thị trước khi video load) --- */}
+      {/* --- BACKDROP (hiển thị trước hoặc fallback khi không có video) --- */}
       <div
         className={clsx(
           'absolute inset-0 transition-opacity duration-1000',
@@ -111,26 +52,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
       </div>
 
       {/* --- VIDEO BACKGROUND --- */}
-      {mainVideo?.site === 'YouTube' && (
-        <>
-          <Script src="https://www.youtube.com/iframe_api" strategy="lazyOnload" />
-          <div
-            className={clsx(
-              'absolute inset-0 transition-opacity duration-1000',
-              isVideoLoaded ? 'opacity-100' : 'opacity-0'
-            )}
-          >
-            <div ref={playerContainerRef} className="absolute inset-0 w-full h-full object-cover" />
-
-            {/* Gradient overlay để đảm bảo readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/40" />
-          </div>
-        </>
-      )}
-
-      {/* Fallback cho Vimeo hoặc nguồn video khác */}
-      {mainVideo?.site === 'Vimeo' && (
+      {mainVideo && mainVideo.url && (
         <div
           className={clsx(
             'absolute inset-0 transition-opacity duration-1000',
@@ -138,14 +60,18 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
           )}
         >
           <iframe
-            src={`https://player.vimeo.com/video/${mainVideo.key}?autoplay=1&muted=1&loop=1&background=1`}
+            src={`${mainVideo.url}?autoplay=1&mute=1&loop=1&playsinline=1&controls=0&modestbranding=1`}
             className="absolute inset-0 w-full h-full object-cover"
             allow="autoplay; encrypted-media"
             allowFullScreen
             onLoad={() => setIsVideoLoaded(true)}
+            onError={() => {
+              setIsVideoLoaded(false)
+              setHasError(true)
+            }}
           />
 
-          {/* Gradient overlay để đảm bảo readability */}
+          {/* Gradient overlay để readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/40" />
         </div>
@@ -155,7 +81,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
       <div className="relative z-10 h-full flex items-end">
         <div className="container mx-auto px-8 pb-32">
           <div className="flex gap-8 items-start">
-            {/* --- Poster --- */}
+            {/* Poster */}
             <div className="flex-shrink-0">
               <div className="w-64 h-96 rounded-lg overflow-hidden shadow-2xl">
                 {movie.posters?.[0] ? (
@@ -174,9 +100,8 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
               </div>
             </div>
 
-            {/* --- Movie Info --- */}
+            {/* Movie Info */}
             <div className="flex-1 space-y-6">
-              {/* Title */}
               <h1 className="text-5xl font-bold text-white mb-4">
                 {movie.title}
               </h1>
@@ -216,8 +141,6 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
                 </div>
                 <span>•</span>
                 <span>{movie.release_date?.split('-')[0] || 'N/A'}</span>
-                <span>•</span>
-                <span>{movie.duration ? `${movie.duration} phút` : 'N/A'}</span>
               </div>
 
               {/* Genres */}

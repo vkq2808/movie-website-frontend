@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getWalletBalance, addBalance } from '@/apis/wallet.api';
 import { useAuthStore } from '@/zustand/auth.store';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
+import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
 
 interface WalletBalanceProps {
   showAddBalance?: boolean;

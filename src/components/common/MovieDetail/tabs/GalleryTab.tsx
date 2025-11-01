@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import { Movie } from '@/zustand'
+import { Movie } from '@/types/api.types'
 import { X } from 'lucide-react'
 import Image from 'next/image'
 

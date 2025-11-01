@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getMovieAlternativeTitles } from '@/apis/movie.api';
+import movieApi from '@/apis/movie.api';
 import { AlternativeTitle } from '@/apis/alternative-title.api';
 
 interface AlternativeTitleProps {
@@ -15,7 +15,7 @@ const AlternativeTitlesList: React.FC<AlternativeTitleProps> = ({ movieId }) => 
     const fetchAlternativeTitles = async () => {
       try {
         setLoading(true);
-        const data = await getMovieAlternativeTitles(movieId);
+        const data = await movieApi.getMovieAlternativeTitles(movieId);
         setTitles(data.data);
         setError(null);
       } catch (err) {

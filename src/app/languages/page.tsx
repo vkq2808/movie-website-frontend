@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getAllLanguages, Language } from '@/apis/language.api';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
+import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
 import { Globe2 } from 'lucide-react';
 
 export default function LanguagesPage() {

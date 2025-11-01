@@ -1,10 +1,10 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { getUserPurchases, MoviePurchaseResponse } from '@/apis/movie-purchase.api';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
+import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getMoviePoster } from '@/apis/movie.api';
+import movieApi from '@/apis/movie.api';
 
 const UserPurchasesPage: React.FC = () => {
   const [purchases, setPurchases] = useState<MoviePurchaseResponse[]>([]);
@@ -14,7 +14,7 @@ const UserPurchasesPage: React.FC = () => {
 
   const fetchMoviePoster = async (movieId: string, index: number) => {
     try {
-      const response = await getMoviePoster(movieId);
+      const response = await movieApi.getMoviePoster(movieId);
       setPurchases((prev) => {
         prev[index].movie_poster = response.data.poster_url;
         return [...prev];

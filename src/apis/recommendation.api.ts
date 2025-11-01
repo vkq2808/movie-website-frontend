@@ -1,6 +1,6 @@
 import api, { apiEndpoint } from '@/utils/api.util';
 import { ApiResponse, PaginatedApiResponse } from '@/types/api.response';
-import { Movie } from '@/zustand';
+import { Movie } from '@/types/api.types';
 
 export interface RecommendationFilters {
   type?: 'content_based' | 'collaborative' | 'hybrid' | 'trending';

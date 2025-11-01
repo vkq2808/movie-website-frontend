@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { User } from '@/zustand/types';
+import { User } from '@/types/api.types';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { MovieCard } from '@/components/common';
 import { Heart as HeartIcon, History as HistoryIcon, Wallet as WalletIcon, Settings as SettingsIcon } from 'lucide-react';

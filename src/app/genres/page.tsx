@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { adminApi } from '@/apis/admin.api';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
+import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
 import { Film } from 'lucide-react';
 import { useGenreStore } from '@/zustand';
 

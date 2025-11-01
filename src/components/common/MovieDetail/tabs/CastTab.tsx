@@ -1,9 +1,9 @@
 'use client'
 import React from 'react'
-import { Movie, MovieCast as MovieCastType, Person as PersonType } from '@/zustand'
 import Image from 'next/image'
-import { getMovieCast } from '@/apis/movie.api'
+import movieApi from '@/apis/movie.api';
 import { MovieCastItemResponseDto } from '@/dto/movie-cast.dto'
+import { Movie, Cast as MovieCastType, Person as PersonType } from '@/types/api.types';
 
 interface CastTabProps {
   movie: Movie
@@ -18,7 +18,7 @@ const CastTab: React.FC<CastTabProps> = ({ movie }) => {
     } else {
       const fetchCast = async () => {
         try {
-          const response = await getMovieCast(movie.id)
+          const response = await movieApi.getMovieCast(movie.id)
           if (response.success) {
             setCast(response.data.cast)
           } else {

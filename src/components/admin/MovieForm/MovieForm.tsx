@@ -14,7 +14,7 @@ import { useToast } from "@/contexts/toast.context";
 import BackdropsInput from "./BackdropInput";
 import PostersInput from "./PosterInput";
 import { OriginalLanguageInput } from "./OriginalLanguageInput";
-import MovieVideoUploader from "./MovieVideoUploader";
+import MovieVideoUploader from "./MovieVideoManager";
 
 export interface MovieFormValues {
   id: string;
@@ -205,7 +205,7 @@ export default function MovieForm({
       {/* Posters */}
       <PostersInput posters={values.posters} addFunction={handleUploadMultipleFile} deleteFunction={handleDeleteFile} />
 
-      <MovieVideoUploader movie={values} />
+      <MovieVideoUploader movie={values} setValues={setValues} />
 
 
       {/* Submit */}

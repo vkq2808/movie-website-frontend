@@ -1,9 +1,9 @@
 'use client'
 import React, { useState, useEffect, useCallback, useRef } from 'react'
-import { Movie } from '@/zustand'
-import { getMoviesByLanguage } from '@/apis/movie.api'
+import { Movie } from '@/types/api.types'
+import movieApi from '@/apis/movie.api';
 import MovieCard from '@/components/common/MovieCard/MovieCard'
-import LoadingSpinner from '../LoadingSpinner'
+import LoadingSpinner from '../Loading/LoadingSpinner'
 
 /**
  * LanguageMovieSelector component
@@ -76,7 +76,7 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
         )
       );
 
-      const moviesData = await getMoviesByLanguage(language.country, language.iso_639_1, 1, limit);
+      const moviesData = await movieApi.getMoviesByLanguage(language.country, language.iso_639_1, 1, limit);
 
       // Update the specific language's movies
       setMoviesByLanguage(current =>

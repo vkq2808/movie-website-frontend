@@ -2,9 +2,9 @@
 "use client";
 import React from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import LoadingSpinner from "@/components/common/LoadingSpinner";
+import LoadingSpinner from "@/components/common/Loading/LoadingSpinner";
 import { adminApi } from "@/apis/admin.api";
-import { getMovieVideos, getMovieGenres, getMovieCast } from '@/apis/movie.api'
+import movieApi from '@/apis/movie.api';
 import Link from "next/link";
 import { useLanguageStore } from "@/zustand";
 import VideoCard from "@/components/ui/VideoCard";
@@ -36,9 +36,9 @@ export default function AdminMovieDetailPage() {
 
       // Fetch supplemental resources in parallel (new split-backend design)
       const [videosRes, genresRes, castRes] = await Promise.all([
-        getMovieVideos(id).catch((e) => ({ success: false, data: [] } as any)),
-        getMovieGenres(id).catch((e) => ({ success: false, data: [] } as any)),
-        getMovieCast(id).catch((e) => ({ success: false, data: [] } as any)),
+        movieApi.getMovieVideos(id).catch((e) => ({ success: false, data: [] } as any)),
+        movieApi.getMovieGenres(id).catch((e) => ({ success: false, data: [] } as any)),
+        movieApi.getMovieCast(id).catch((e) => ({ success: false, data: [] } as any)),
       ]);
 
       // Merge into AdminMovie shape (prefer admin data when available)
@@ -155,7 +155,7 @@ export default function AdminMovieDetailPage() {
         <h2 className="text-lg font-semibold text-white">Genres & Keywords</h2>
         <div className="mt-2 flex flex-wrap gap-2">
           {movie.genres?.length
-            ? movie.genres.map((g) => (
+            ? movie.genres?.map((g) => (
               <span
                 key={g.id}
                 className="rounded border border-gray-700 bg-gray-800 px-2 py-0.5 text-xs"

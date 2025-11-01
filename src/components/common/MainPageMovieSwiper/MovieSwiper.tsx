@@ -1,9 +1,9 @@
 'use client'
 import React from 'react'
 import Swiper from '../Swiper'
-import { Movie } from '@/zustand'
+import { Movie } from '@/types/api.types'
 import { Spinner } from '../'
-import { getTop5Movies } from '@/apis/movie.api'
+import movieApi from '@/apis/movie.api';
 import MovieHero from './MovieHero'
 import { useGlobalStore } from '@/zustand/global.store'
 
@@ -16,7 +16,7 @@ const MovieSwiper = () => {
   const fetchTop5Movies = React.useCallback(async () => {
     try {
       setGlobalLoading(true);
-      const response = await getTop5Movies();
+      const response = await movieApi.getTop5Movies();
       setMovies(response.data)
     } catch (error) {
       setError('Failed to fetch movies')

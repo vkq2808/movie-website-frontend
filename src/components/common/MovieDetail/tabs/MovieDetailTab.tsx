@@ -1,33 +1,48 @@
 'use client'
 import React, { useRef, useState, useEffect } from 'react'
-import { Movie } from '@/zustand'
+import { Movie } from '@/types/api.types'
 import Script from 'next/script'
-import clsx from 'clsx'
-import { getMovieVideos } from '@/apis/movie.api'
+import movieApi from '@/apis/movie.api'
 import type { VideoResponseDto } from '@/dto/movie-video.dto'
+declare global {
+  interface Window {
+    YT: {
+      Player: new (elementId: string | HTMLElement, options) => YTPlayer; // eslint-disable-line @typescript-eslint/no-explicit-any
+      PlayerState: {
+        UNSTARTED: number;
+        ENDED: number;
+        PLAYING: number;
+        PAUSED: number;
+        BUFFERING: number;
+        CUED: number;
+      };
+    };
+    onYouTubeIframeAPIReady?: () => void;
+  }
+}
 
 interface MovieDetailTabProps {
   movie: Movie
 }
 
 type YTPlayer = {
-  destroy(): void;
-  playVideo(): void;
-  pauseVideo(): void;
-};
+  destroy(): void
+  playVideo(): void
+  pauseVideo(): void
+}
 
 interface YTPlayerOptions {
-  videoId: string;
+  videoId: string
   playerVars?: {
-    controls?: 0 | 1;
-    modestbranding?: 0 | 1;
-    rel?: 0 | 1;
-  };
+    controls?: 0 | 1
+    modestbranding?: 0 | 1
+    rel?: 0 | 1
+  }
   events?: {
-    onReady?: (event: { target: YTPlayer }) => void;
-    onError?: (event: { target: YTPlayer; data: number }) => void;
-    onStateChange?: (event: { target: YTPlayer; data: number }) => void;
-  };
+    onReady?: (event: { target: YTPlayer }) => void
+    onError?: (event: { target: YTPlayer; data: number }) => void
+    onStateChange?: (event: { target: YTPlayer; data: number }) => void
+  }
 }
 
 const MovieDetailTab: React.FC<MovieDetailTabProps> = ({ movie }) => {
@@ -39,122 +54,100 @@ const MovieDetailTab: React.FC<MovieDetailTabProps> = ({ movie }) => {
   const playerContainerRef = useRef<HTMLDivElement>(null)
   const [mainVideo, setMainVideo] = useState<VideoResponseDto | null>(null)
 
-  // Handle YouTube API Ready
+  // Khi API YouTube sẵn sàng
   useEffect(() => {
     if (window.YT?.Player) {
-      setIsYouTubeApiReady(true);
+      setIsYouTubeApiReady(true)
     } else {
-      const originalCallback = window.onYouTubeIframeAPIReady;
+      const originalCallback = window.onYouTubeIframeAPIReady
       window.onYouTubeIframeAPIReady = () => {
-        setIsYouTubeApiReady(true);
-        if (originalCallback) {
-          originalCallback();
-        }
-      };
+        setIsYouTubeApiReady(true)
+        if (originalCallback) originalCallback()
+      }
     }
-  }, []);
+  }, [])
 
-  // Fetch videos when component mounts
+  // Lấy danh sách video
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        setIsLoading(true);
-        const response = await getMovieVideos(movie.id);
-        console.log(response)
+        setIsLoading(true)
+        const response = await movieApi.getMovieVideos(movie.id)
         if (response.success && response.data) {
-          setMainVideo(response.data?.find(v => v.type === 'Trailer') || response.data[0] || null);
+          setVideos(response.data)
+          setMainVideo(response.data.find(v => v.type === 'Trailer') || response.data[0] || null)
         } else {
-          console.error('Failed to fetch videos:', response.message);
-          setIsVideoError(true);
+          setIsVideoError(true)
         }
       } catch (error) {
-        console.error('Error fetching videos:', error);
-        setIsVideoError(true);
+        console.error('Error fetching videos:', error)
+        setIsVideoError(true)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
-
-    if (movie.id) {
-      fetchVideos();
-    } else {
-      console.error('No movie ID provided');
-      setIsVideoError(true);
     }
-  }, [movie.id]);
 
-  // Initialize YouTube player when API is ready and we have video data
+    if (movie.id) fetchVideos()
+  }, [movie.id])
+
+  // Khởi tạo YouTube player khi có API và video
   useEffect(() => {
     if (isYouTubeApiReady && mainVideo?.site === 'YouTube' && !isVideoError) {
-      initializeYouTubePlayer();
+      initializeYouTubePlayer()
     }
-  }, [isYouTubeApiReady, mainVideo, isVideoError]);
+  }, [isYouTubeApiReady, mainVideo, isVideoError])
 
-  // Xử lý khởi tạo YouTube player
+  // Khởi tạo player
   const initializeYouTubePlayer = () => {
-    if (!isYouTubeApiReady) {
-      console.log('YouTube API not ready yet');
-      return;
+    if (!isYouTubeApiReady || !mainVideo?.url || !playerContainerRef.current) return
+
+    // Trích videoId từ URL embed YouTube
+    const videoId = extractYouTubeId(mainVideo.url)
+    if (!videoId) {
+      console.warn('Không thể trích xuất videoId từ URL:', mainVideo.url)
+      return
     }
 
-    console.log('Initializing YouTube player:', {
-      mainVideo,
-      hasContainer: !!playerContainerRef.current,
-      hasYT: !!window.YT
-    });
-
-    // Ensure we have valid data and DOM element
-    if (!mainVideo?.key || !playerContainerRef.current) {
-      console.warn('Missing required data for YouTube player:', {
-        hasVideo: !!mainVideo,
-        videoKey: mainVideo?.key,
-        hasContainer: !!playerContainerRef.current
-      });
-      return;
-    }
-
-    // Create new player instance
     try {
-      console.log('Creating YouTube player with video key:', mainVideo.key);
       playerRef.current = new window.YT.Player(playerContainerRef.current, {
-        videoId: mainVideo.key,
+        videoId,
         playerVars: {
-          controls: 1, // Hiển thị controls để user có thể play/pause
+          controls: 1,
           modestbranding: 1,
-          rel: 0, // Không hiện video liên quan khi kết thúc
+          rel: 0,
         },
         events: {
-          onReady: (event) => {
-            console.log('YouTube player ready');
-          },
+          onReady: () => console.log('YouTube player ready'),
           onError: (error) => {
-            console.error('YouTube player error:', error);
-            setIsVideoError(true);
+            console.error('YouTube player error:', error)
+            setIsVideoError(true)
           },
-          onStateChange: (event) => {
-            console.log('YouTube player state changed:', event.data);
-          }
+          onStateChange: (event) => console.log('YouTube player state changed:', event.data)
         }
-      });
+      })
     } catch (error) {
-      console.error('Error initializing YouTube player:', error);
-      setIsVideoError(true);
+      console.error('Error initializing YouTube player:', error)
+      setIsVideoError(true)
     }
-  };
+  }
 
-  // Xử lý cho Vimeo
-  const vimeoUrl = mainVideo?.site === 'Vimeo'
-    ? `https://player.vimeo.com/video/${mainVideo.key}`
-    : null;
+  // Hàm tách videoId từ URL
+  const extractYouTubeId = (url: string): string | null => {
+    const match = url.match(/embed\/([a-zA-Z0-9_-]+)/)
+    return match ? match[1] : null
+  }
+
+  // URL Vimeo
+  const vimeoUrl = mainVideo?.site === 'Vimeo' ? mainVideo.url : null
+  const dailymotionUrl = mainVideo?.site === 'Dailymotion' ? mainVideo.url : null
 
   return (
     <div className="space-y-8">
-      {/* --- Title --- */}
       <h2 className="text-2xl font-bold text-white">Thông tin phim</h2>
 
-      {/* --- Trailer Player Section --- */}
+      {/* --- Trailer --- */}
       <div className="bg-gray-900 rounded-lg overflow-hidden">
-        <div className="aspect-video bg-black flex items-center justify-center">
+        <div className="aspect-video bg-black flex items-center justify-center relative">
           <div className="text-xs text-gray-500 absolute top-2 left-2">
             Debug: {isLoading ? 'Loading' : videos?.length ? `Found ${videos?.length} videos` : 'No videos'}
           </div>
@@ -171,17 +164,10 @@ const MovieDetailTab: React.FC<MovieDetailTabProps> = ({ movie }) => {
                 strategy="lazyOnload"
                 async
                 onReady={() => {
-                  // Set up the global callback that YouTube API will call when ready
                   window.onYouTubeIframeAPIReady = () => {
-                    if (window.YT?.Player) {
-                      initializeYouTubePlayer();
-                    }
-                  };
-
-                  // If YT API is already loaded, initialize directly
-                  if (window.YT?.Player) {
-                    initializeYouTubePlayer();
+                    if (window.YT?.Player) initializeYouTubePlayer()
                   }
+                  if (window.YT?.Player) initializeYouTubePlayer()
                 }}
               />
               <div ref={playerContainerRef} className="w-full h-full" />
@@ -189,6 +175,13 @@ const MovieDetailTab: React.FC<MovieDetailTabProps> = ({ movie }) => {
           ) : vimeoUrl ? (
             <iframe
               src={vimeoUrl}
+              title={mainVideo?.name || 'Trailer'}
+              allowFullScreen
+              className="w-full h-full"
+            />
+          ) : dailymotionUrl ? (
+            <iframe
+              src={dailymotionUrl}
               title={mainVideo?.name || 'Trailer'}
               allowFullScreen
               className="w-full h-full"
@@ -219,13 +212,6 @@ const MovieDetailTab: React.FC<MovieDetailTabProps> = ({ movie }) => {
             <span className="text-white ml-2">
               {movie.vote_average?.toFixed(1) || '?'}
               /10 ({movie.vote_count || 0} lượt)
-            </span>
-          </div>
-
-          <div>
-            <span className="text-gray-400">Thời lượng:</span>
-            <span className="text-white ml-2">
-              {movie.duration ? `${movie.duration} phút` : 'N/A'}
             </span>
           </div>
 

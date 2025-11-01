@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import { User } from '@/zustand/types';
 import { UserIcon } from 'lucide-react';
+import { User } from '@/types/api.types';
 
 interface ProfileHeaderProps {
   user: User;

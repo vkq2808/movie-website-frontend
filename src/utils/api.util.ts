@@ -17,6 +17,8 @@ export const apiEndpoint = {
   CHAT: '/chat',
   KEYWORD: '/keyword',
   PERSON: '/person',
+  VIDEO: '/video',
+  WATCH_PROVIDER: '/watch-provider',
 }
 
 // Mở rộng interface InternalAxiosRequestConfig để thêm thuộc tính __retry

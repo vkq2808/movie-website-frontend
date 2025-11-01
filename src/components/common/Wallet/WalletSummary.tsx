@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { getWalletSummary, type WalletSummary as WalletSummaryType } from '@/apis/wallet.api';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
+import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
 
 interface WalletSummaryProps {
   className?: string;
@@ -149,8 +149,8 @@ const WalletSummary: React.FC<WalletSummaryProps> = ({ className = '' }) => {
               >
                 <div className="flex items-center space-x-3">
                   <div className={`w-2 h-2 rounded-full ${transaction.transaction_type === 'wallet_topup' || transaction.transaction_type === 'refund'
-                      ? 'bg-green-400'
-                      : 'bg-red-400'
+                    ? 'bg-green-400'
+                    : 'bg-red-400'
                     }`} />
                   <div>
                     <p className="text-sm text-white">
@@ -163,8 +163,8 @@ const WalletSummary: React.FC<WalletSummaryProps> = ({ className = '' }) => {
                 </div>
                 <div className="text-right">
                   <p className={`text-sm font-medium ${transaction.transaction_type === 'wallet_topup' || transaction.transaction_type === 'refund'
-                      ? 'text-green-400'
-                      : 'text-red-400'
+                    ? 'text-green-400'
+                    : 'text-red-400'
                     }`}>
                     {transaction.transaction_type === 'wallet_topup' || transaction.transaction_type === 'refund' ? '+' : '-'}
                     {formatAmount(transaction.amount)}

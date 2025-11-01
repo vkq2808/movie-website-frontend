@@ -6,12 +6,12 @@ import Footer from "./Footer";
 import Header from "./Header";
 import LoginOauth2 from "./LoginOauth2";
 import GenreList from "./GenreList";
-import LoadingOverlay from "./LoadingOverlay";
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingOverlay from "./Loading/LoadingOverlay";
+import LoadingSpinner from "./Loading/LoadingSpinner";
 import LanguageMovieSelector from "./MovieByLanguages/LanguageMovieSelector";
 import Spinner from "./Spinner";
 import MovieCard from "./MovieCard/MovieCard";
-import RecommendationSection from "./RecommendationSection";
+import RecommendationSection from "./Recommendation/RecommendationSection";
 
 
 export {

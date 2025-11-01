@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { Genre } from './types';
 import api, { apiEndpoint } from '@/utils/api.util';
 import { ApiResponse } from '@/types/api.response';
+import { Genre } from '@/types/api.types';
 
 type GenreStore = {
   genres: Genre[];

@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useMemo, useState } from 'react';
-import { getMovies } from '@/apis/movie.api';
-import { Movie } from '@/zustand';
+import { Movie } from '@/types/api.types';
 import { CalendarDays, Flame } from 'lucide-react';
 import { MovieCard, LoadingSpinner } from '@/components/common';
+import movieApi from '@/apis/movie.api';
 
 export default function NewReleasesPage() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -16,7 +16,7 @@ export default function NewReleasesPage() {
   const fetchPage = async (nextPage: number, append = false) => {
     try {
       if (append) setLoadingMore(true); else setLoading(true);
-      const res = await getMovies({ page: nextPage, limit: 24, sort_by: 'release_date', sort_order: 'DESC' });
+      const res = await movieApi.getMovies({ page: nextPage, limit: 24, sort_by: 'release_date', sort_order: 'DESC' });
       if (res.data) {
         setMovies(prev => append ? [...prev, ...res.data] : res.data);
         setHasMore(nextPage < (res.pagination?.totalPages || nextPage));

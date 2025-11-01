@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from 'react'
 import { getRecommendationStats, generateRecommendations, RecommendationStats } from '@/apis/recommendation.api'
 import { getRecentlyWatched, getWatchStats } from '@/apis/watch-history.api'
-import { Movie } from '@/zustand'
+import { Movie } from '@/types/api.types'
 import RecommendationSection from './RecommendationSection'
-import LoadingSpinner from './LoadingSpinner'
+import LoadingSpinner from '../Loading/LoadingSpinner'
 import { RefreshCw, TrendingUp, Users, Target, Zap, Eye, Clock, Star } from 'lucide-react'
 
 import { WatchStats } from '@/apis/watch-history.api'

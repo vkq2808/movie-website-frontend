@@ -1,8 +1,7 @@
 'use client'
 import React from 'react'
 import { PlayIcon, HeartIcon, InfoIcon } from 'lucide-react'
-import { Movie } from '@/zustand'
-import { getMovieOverviewByLanguage, getMovieTitleByLanguage } from '@/utils/movie.util'
+import { Movie } from '@/types/api.types'
 import { useLanguage } from '@/contexts/language.context'
 import { useRouter } from 'next/navigation'
 
@@ -64,7 +63,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({
 
           {/* content */}
           <div className="space-y-4 relative z-20">
-            <h1 className="text-4xl font-bold">{getMovieTitleByLanguage(movie, language)}</h1>
+            <h1 className="text-4xl font-bold">{movie.title}</h1>
 
             <div className="flex flex-wrap gap-2 text-sm mt-4">
               <span className="bg-yellow-400 text-black px-2 py-0.5 rounded">IMDb {movie.vote_average}</span>
@@ -72,7 +71,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({
             </div>
 
             <div className="flex gap-2 flex-wrap mt-4">
-              {movie.genres.map((genre, index) => (
+              {movie.genres?.map((genre, index) => (
                 <span key={index} className="bg-gray-700 text-xs px-2 py-1 rounded">
                   {genre.names.find((n) => n.iso_639_1 === language)?.name || genre.names[0]?.name || 'Unknown'}
                 </span>
@@ -81,7 +80,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({
 
             <div className="mt-4">
               <div className="text-sm text-gray-200 leading-relaxed">
-                <p>{getMovieOverviewByLanguage(movie, language)}</p>
+                <p>{movie.overview}</p>
               </div>
             </div>
 

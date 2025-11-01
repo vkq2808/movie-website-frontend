@@ -1,7 +1,9 @@
 import api, { apiEndpoint } from "@/utils/api.util";
 import { ApiResponse } from "@/types/api.response";
 import { MovieStatus, Role } from "@/constants/enum";
-import { VideoQuality, VideoType } from "@/dto/movie-video.dto";
+import { VideoQuality, VideoType } from "@/types/api.types";
+import { VideoResponseDto } from "@/dto/movie-video.dto";
+import { WatchProviderResponseDto } from "@/dto/watch-provider.dto";
 
 
 export interface AdminMovie {
@@ -48,14 +50,24 @@ export interface AdminMovie {
 export interface AdminVideo {
   id: string;
   name?: string;
-  key: string;
+  url: string;
   site: string;
   type: VideoType;
   official: boolean;
-  quality: VideoQuality
+  qualities?: {
+    url: string;
+    quality: VideoQuality;
+  }[];
   thumbnail: string;
   duration: number;
+  watch_provider: AdminWatchProvider;
   created_at: string;
+}
+export interface AdminWatchProvider {
+  id: number;
+  name: string;
+  logo_path: string;
+  display_priority: number;
 }
 
 export interface AdminMoviePerson {
@@ -230,7 +242,7 @@ export interface CreateMovieData {
 }
 
 export interface UpdateMovieData extends Partial<CreateMovieData> {
-  id?: string;
+  id: string;
 }
 
 export interface UpdateUserData {
@@ -336,6 +348,17 @@ const removeMovieKeyword = async (id: string, keyword_id: number): Promise<ApiRe
   return response.data;
 };
 
+// Video
+const getVideoById = async (id: string) => {
+  const response = await api.get<ApiResponse<VideoResponseDto>>(`${apiEndpoint.VIDEO}/detail/${id}`);
+  return response.data;
+}
+
+const deleteVideoById = async (id: string) => {
+  const response = await api.delete<ApiResponse<null>>(`${apiEndpoint.VIDEO}/${id}`);
+  return response.data;
+}
+
 // Languages
 const addLanguageToMovie = async (id: string, language_iso_code: string): Promise<ApiResponse<AdminMovie>> => {
   const response = await api.post(`${apiEndpoint.MOVIE}/${id}/languages/add`, { language_iso_code });
@@ -354,6 +377,12 @@ const removeLanguageFromMovie = async (id: string, language_iso_code: string): P
 const getPersons = async (query: string): Promise<ApiResponse<AdminPerson[]>> => {
   const response = await api.get<ApiResponse<AdminPerson[]>>(`${apiEndpoint.PERSON}/search?query=${query}`);
   return response.data;
+}
+
+// Watch Provider
+const getWatchProviders = async () => {
+  const response = await api.get<ApiResponse<WatchProviderResponseDto[]>>(`${apiEndpoint.WATCH_PROVIDER}`);
+  return response.data
 }
 
 // User Management APIs
@@ -591,25 +620,38 @@ export const adminApi = {
   restoreMovie,
   deleteMovie,
 
-  // Movie relations
+  // ========= Movie relations ========
+
+  // Genres
   setMovieGenres,
   addMovieGenre,
   removeMovieGenre,
+
+  // Production Companies
   setMovieProductionCompanies,
   addMovieProductionCompany,
   removeMovieProductionCompany,
 
+  // Keywords
   getMovieKeywords,
   setMovieKeywords,
   addMovieKeyword,
   removeMovieKeyword,
 
+  // Videos:
+  getVideoById,
+  deleteVideoById,
+
+  // Language
   addLanguageToMovie,
   setSpokenLanguages,
   removeLanguageFromMovie,
 
+  // Persons
   getPersons,
 
+  // Watch Providers
+  getWatchProviders,
 
   // Users
   getUsers,

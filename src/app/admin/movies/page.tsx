@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
+import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
 import { adminApi, type AdminMovie } from '@/apis/admin.api';
 import Link from 'next/link';
 import { MovieStatus } from '@/constants/enum';

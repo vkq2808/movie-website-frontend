@@ -1,8 +1,9 @@
 'use client';
-import { Genre, useGenreStore, useLanguageStore } from '@/zustand';
+import { useGenreStore, useLanguageStore } from '@/zustand';
 import Link from 'next/link';
 import React from 'react';
 import Spinner from './Spinner';
+import { Genre } from '@/types/api.types';
 
 interface DisplayGenre extends Genre {
   bgColor: {

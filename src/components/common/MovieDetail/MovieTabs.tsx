@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import { Movie } from '@/zustand'
+import { Movie } from '@/types/api.types'
 import TabContent from './TabContent'
 
 interface MovieTabsProps {

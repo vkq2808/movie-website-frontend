@@ -5,17 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import React from "react";
 import MovieForm, { type MovieFormValues } from "@/components/admin/MovieForm/MovieForm";
 import { adminApi } from "@/apis/admin.api";
-import {
-  getMovieVideos,
-  getMovieGenres,
-  getMovieCast,
-  getMovieCrew,
-  getMovieProductionCompanies,
-  getMovieKeywords,
-  getMovieSpokenLanguages,
-} from '@/apis/movie.api'
-import LoadingSpinner from "@/components/common/LoadingSpinner";
+import LoadingSpinner from "@/components/common/Loading/LoadingSpinner";
 import { MovieStatus } from "@/constants/enum";
+import movieApi from "@/apis/movie.api";
 
 export default function UpdatePanel() {
   const router = useRouter();
@@ -63,13 +55,13 @@ export default function UpdatePanel() {
 
         const m = res.data;
         const results = await Promise.allSettled([
-          getMovieVideos(id),
-          getMovieGenres(id),
-          getMovieCast(id),
-          getMovieCrew(id),
-          getMovieProductionCompanies(id),
-          getMovieKeywords(id),
-          getMovieSpokenLanguages(id),
+          movieApi.getMovieVideos(id),
+          movieApi.getMovieGenres(id),
+          movieApi.getMovieCast(id),
+          movieApi.getMovieCrew(id),
+          movieApi.getMovieProductionCompanies(id),
+          movieApi.getMovieKeywords(id),
+          movieApi.getMovieSpokenLanguages(id),
         ]);
 
         if (!mounted) return;
