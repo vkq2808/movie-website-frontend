@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslation } from "@/contexts/translation.context";
+import { useTranslation } from "@/hooks/useTranslation";
 import { TranslationKey } from "@/utils/translation.util";
 
 // children and props

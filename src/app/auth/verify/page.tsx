@@ -3,7 +3,7 @@ import api, { apiEndpoint } from '@/utils/api.util';
 import { authApi } from '@/apis/auth.api';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
-import { useToast } from '@/contexts/toast.context';
+import { useToast } from '@/hooks/useToast';
 
 // Component using useSearchParams
 const VerifyContent: React.FC = () => {

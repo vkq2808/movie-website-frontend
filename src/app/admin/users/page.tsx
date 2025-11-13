@@ -4,8 +4,8 @@ import { adminApi, type AdminUser } from "@/apis/admin.api";
 import LoadingSpinner from "@/components/common/Loading/LoadingSpinner";
 import { toast } from "react-hot-toast";
 import { Eye, Lock, LockOpen, Trash2, UserCog } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/DialogUI";
-import { Input } from "@/components/ui/InputUI";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 export default function AdminUsersPage() {
   const [loading, setLoading] = React.useState(true);
@@ -28,7 +28,7 @@ export default function AdminUsersPage() {
     searchRef.current = setTimeout(() => {
       load();
     }, 500);
-  }, [search, role, status, page, limit]);
+  }, [search, role, status, page, limit]); // disable-eslint-line react-hooks/exhaustive-deps
 
   const load = React.useCallback(async () => {
     try {
@@ -52,7 +52,7 @@ export default function AdminUsersPage() {
 
   React.useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   const totalPages = Math.max(1, Math.ceil(total / limit));
 

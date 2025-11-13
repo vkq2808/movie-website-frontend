@@ -4,14 +4,15 @@ import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'ax
 
 export const apiEndpoint = {
   MOVIE: '/movie',
-  MOVIE_PURCHASE: '/movie-purchases',
+  MOVIE_PURCHASE: '/movie-purchase',
   WALLET: '/wallet',
+  VOUCHER: '/voucher',
   GENRE: '/genre',
   IMAGE: '/image',
   AUTH: '/auth',
   USER: '/user',
   LANGUAGE: '/language',
-  RECOMMENDATIONS: '/recommendations',
+  RECOMMENDATION: '/recommendation',
   WATCH_HISTORY: '/watch-history',
   FEEDBACK: '/feedback',
   CHAT: '/chat',
@@ -27,7 +28,7 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   __requiresAuth?: boolean;
 }
 
-export const baseURL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:2808/api';
+export const baseURL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:2808';
 
 const api = axios.create({
   baseURL,

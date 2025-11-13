@@ -4,9 +4,8 @@ import "./globals.css";
 import { Footer, Header, LoadingOverlay } from "@/components/common";
 import TokenWatcher from "@/components/common/TokenWatcher";
 import React from "react";
-import { LanguageProvider } from "@/contexts/language.context";
-import { SettingsProvider } from "@/contexts/settings.context";
-import { ToastProvider } from "@/contexts/toast.context";
+import { SettingsProvider } from "@/hooks/useSettings";
+import { ToastProvider } from "@/hooks/useToast";
 import ChatBot from "@/components/common/ChatBot";
 import { usePathname } from "next/navigation";
 
@@ -115,18 +114,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased flex flex-col min-h-screen">
         <SettingsProvider>
-          <LanguageProvider>
-            <ToastProvider>
-              <LoadingOverlay />
-              <TokenWatcher />
-              <Header />
-              <main className="flex-1 bg-gray-900 text-gray-100">
-                {children}
-              </main>
-              {!isAdmin && <ChatBot />}
-              <Footer />
-            </ToastProvider>
-          </LanguageProvider>
+          <ToastProvider>
+            <LoadingOverlay />
+            <TokenWatcher />
+            <Header />
+            <main className="flex-1 bg-gray-900 text-gray-100">
+              {children}
+            </main>
+            {!isAdmin && <ChatBot />}
+            <Footer />
+          </ToastProvider>
         </SettingsProvider>
       </body>
     </html>

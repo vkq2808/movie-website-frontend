@@ -462,7 +462,7 @@ const getTrendingMovies = async (params?: {
   limit: number;
   hasMore: boolean;
 }>> => {
-  const response = await api.get(`${apiEndpoint.RECOMMENDATIONS}/trending`, { params });
+  const response = await api.get(`${apiEndpoint.RECOMMENDATION}/trending`, { params });
   return response.data;
 };
 
@@ -594,6 +594,35 @@ const getActivityLogs = async (params?: {
   return response.data;
 };
 
+// Watch Party APIs
+export interface CreateWatchPartyEventData {
+  movie_id: string;
+  event_type: 'random' | 'scheduled' | 'recurring';
+  scheduled_start_time?: string;
+  recurrence_type?: 'daily' | 'weekly' | 'monthly';
+  recurrence_end_date?: string;
+  recurrence_count?: number;
+  max_participants?: number;
+  is_featured?: boolean;
+}
+
+export interface WatchPartyEvent {
+  id: string;
+  movie_id: string;
+  start_time: string;
+  end_time: string;
+  is_featured: boolean;
+  max_participants: number;
+  status: 'upcoming' | 'ongoing' | 'finished';
+  created_at: string;
+  updated_at: string;
+}
+
+const createWatchPartyEvent = async (data: CreateWatchPartyEventData): Promise<ApiResponse<WatchPartyEvent | WatchPartyEvent[]>> => {
+  const response = await api.post('/admin/watch-parties', data);
+  return response.data;
+};
+
 // System Health Check
 const getSystemHealth = async (): Promise<ApiResponse<{
   database: 'connected' | 'disconnected';
@@ -681,4 +710,7 @@ export const adminApi = {
 
   // System
   getSystemHealth,
+
+  // Watch Parties
+  createWatchPartyEvent,
 };

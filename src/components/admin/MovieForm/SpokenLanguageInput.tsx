@@ -2,7 +2,7 @@ import React from "react";
 import { AutoCompleteMultiSelectInput } from "../../extensibles/AutoCompleteMultiSelectInput";
 import { adminApi, AdminLanguage } from "@/apis/admin.api";
 import { CreateOptionModal, CreateOptionProps, CreateOptionState } from "@/components/extensibles/CreateOptionModal";
-import { ToastContextValue } from "@/contexts/toast.context";
+import { ToastContextValue } from "@/hooks/useToast";
 
 
 class CreateLanguageModal extends CreateOptionModal<AdminLanguage> {

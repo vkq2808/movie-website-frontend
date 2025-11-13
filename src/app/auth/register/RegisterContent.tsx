@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { RegisterForm } from '@/components/common';
-import { useSettings } from '@/contexts/settings.context';
+import { useSettings } from '@/hooks/useSettings';
 
 export default function RegisterContent() {
   const { settings } = useSettings();

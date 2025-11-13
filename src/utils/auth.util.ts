@@ -16,8 +16,9 @@ export const isAuthenticated = (): boolean => {
 };
 
 export const getAuthToken = (): string | null => {
-  // Tokens are stored in cookies now; clients shouldn't read them directly
-  return null;
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
 };
 
 export const getUser = (): any | null => {

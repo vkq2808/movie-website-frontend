@@ -74,7 +74,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
 function ToastViewport({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id: string) => void }) {
   return (
-    <div className="pointer-events-none fixed bottom-4 right-4 z-[1000] flex w-full max-w-sm flex-col gap-2 p-2 sm:max-w-md">
+    <div className="pointer-events-none fixed top-24 right-4 z-[1000] flex w-full max-w-sm flex-col gap-2 p-2 sm:max-w-md">
       {toasts.map((t) => (
         <ToastItem key={t.id} toast={t} onClose={() => onDismiss(t.id)} />
       ))}

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authApi, RegisterData } from '@/apis/auth.api';
 import { Eye, EyeOff } from 'lucide-react';
-import { useToast } from '@/contexts/toast.context';
+import { useToast } from '@/hooks/useToast';
 
 const RegisterForm: React.FC = () => {
   const router = useRouter();

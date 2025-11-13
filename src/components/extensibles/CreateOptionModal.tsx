@@ -1,7 +1,7 @@
 import React from "react";
 import { AnimatedModalComponent, AnimatedModalState } from "./AnimatedModalComponent";
 import { Option } from "./AutoCompleteMultiSelectInput";
-import { ToastContextValue, useToast } from "@/contexts/toast.context";
+import { ToastContextValue, useToast } from "@/hooks/useToast";
 import { LoadingOverlay } from "../common";
 
 export interface CreateOptionState<T extends Option> {

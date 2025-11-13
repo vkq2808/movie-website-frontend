@@ -4,8 +4,9 @@ import { MovieFormValues } from "./MovieForm";
 import { adminApi, AdminMoviePerson, AdminPerson, deleteImage, uploadImage } from "@/apis/admin.api";
 import { CreateOptionModal, CreateOptionProps } from "@/components/extensibles/CreateOptionModal";
 import { ImageUploadList } from "../../extensibles/ImageUploadList";
-import { ToastContextValue } from "@/contexts/toast.context";
+import { ToastContextValue } from "@/hooks/useToast";
 import { LoadingOverlay } from "@/components/common";
+import Image from "next/image";
 
 interface CreatePersonOptionModalProps extends CreateOptionProps<AdminPerson> {
   toast?: ToastContextValue;
@@ -145,10 +146,12 @@ class PersonAutoCompleteInput extends AutoCompleteMultiSelectInput<Option> {
         key={Date.now().toString()}
         className="flex h-full justify-between items-center gap-2 bg-white px-3 pt-3 pb-2.5 text-black rounded-full text-sm"
       >
-        <img
+        <Image
           src={item.person.profile_image.url || "/default-avatar.png"}
           alt={item.name}
-          className="w-6 h-6 rounded-full object-cover"
+          className="rounded-full object-cover"
+          width={24}
+          height={24}
         />
         <span>{item.name}</span>
         {field === 'cast' && (

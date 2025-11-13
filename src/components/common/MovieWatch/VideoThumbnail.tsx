@@ -1,5 +1,6 @@
 import { Play } from 'lucide-react'
 import { Video } from '@/types/api.types'
+import Image from 'next/image'
 
 interface VideoThumbnailProps {
   video: Video
@@ -14,10 +15,12 @@ export default function VideoThumbnail({ video, active, onClick }: VideoThumbnai
       className={`relative flex-shrink-0 group rounded overflow-hidden ${active ? 'ring-2 ring-red-600' : ''
         }`}
     >
-      <img
+      <Image
         src={video.thumbnail}
         alt={video.name}
-        className="w-48 h-28 object-cover"
+        className="object-cover"
+        width={192}
+        height={112}
       />
       <div className="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors flex items-center justify-center">
         <Play className="w-8 h-8 text-white" fill="white" />

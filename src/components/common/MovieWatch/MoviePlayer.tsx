@@ -1,6 +1,7 @@
 import { Play, Film } from 'lucide-react'
 import { Movie, Video, VideoQuality } from '@/types/api.types'
 import VideoPlayer from '@/components/ui/VideoPlayer'
+import Image from 'next/image'
 
 interface MoviePlayerProps {
   movie: Movie
@@ -25,10 +26,10 @@ export default function MoviePlayer({ movie, video }: MoviePlayerProps) {
             />
             : (
               <div className="relative w-full h-full">
-                <img
+                <Image
                   src={backdropUrl}
                   alt={movie.title}
-                  className="w-full h-full object-cover opacity-50"
+                  className="object-cover opacity-50"
                 />
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
                   <Film className="w-16 h-16 text-gray-500" />

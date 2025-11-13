@@ -106,7 +106,7 @@ export async function getRecommendations(
     params.append('min_score', filters.min_score.toString());
   }
 
-  const url = `${apiEndpoint.RECOMMENDATIONS}${params.toString() ? `?${params.toString()}` : ''}`;
+  const url = `${apiEndpoint.RECOMMENDATION}${params.toString() ? `?${params.toString()}` : ''}`;
   const response = await api.get<ApiResponse<RecommendationsListResponse>>(url);
   return response.data;
 }
@@ -116,7 +116,7 @@ export async function generateRecommendations(
   options: GenerateRecommendationsRequest = {}
 ): Promise<ApiResponse<GenerateRecommendationsResponse>> {
   const response = await api.post<ApiResponse<GenerateRecommendationsResponse>>(
-    `${apiEndpoint.RECOMMENDATIONS}/generate`,
+    `${apiEndpoint.RECOMMENDATION}/generate`,
     options
   );
   return response.data;
@@ -125,7 +125,7 @@ export async function generateRecommendations(
 // Get recommendation statistics
 export async function getRecommendationStats(): Promise<ApiResponse<RecommendationStats>> {
   const response = await api.get<ApiResponse<RecommendationStats>>(
-    `${apiEndpoint.RECOMMENDATIONS}/stats`
+    `${apiEndpoint.RECOMMENDATION}/stats`
   );
   return response.data;
 }
@@ -156,7 +156,7 @@ export async function getTrendingRecommendations(
     params.append('min_score', filters.min_score.toString());
   }
 
-  const url = `${apiEndpoint.RECOMMENDATIONS}/trending${params.toString() ? `?${params.toString()}` : ''}`;
+  const url = `${apiEndpoint.RECOMMENDATION}/trending${params.toString() ? `?${params.toString()}` : ''}`;
   const response = await api.get<ApiResponse<RecommendationsListResponse>>(url);
   return response.data;
 }

@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useLanguageStore } from '@/zustand'
 import { Heart, Share, MessageCircle, PlusCircle } from 'lucide-react'
 import Image from 'next/image'
-import MoviePurchaseButton from '@/components/common/MoviePurchase/MoviePurchaseButton'
+import MoviePurchaseButton from '@/components/common/MovieDetail/MoviePurchaseButton'
 import { maximizeTextLength } from '@/utils/string.util'
 import clsx from 'clsx'
 import { Genre, Movie } from '@/types/api.types'
@@ -108,7 +108,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
 
               {/* Action Buttons */}
               <div className="flex items-start gap-6 mb-6">
-                <div className="flex-shrink-0 w-72">
+                <div className="flex-shrink-0 w-60">
                   <MoviePurchaseButton
                     movie={movie}
                     onPurchaseSuccess={() => console.log('Movie purchased successfully!')}

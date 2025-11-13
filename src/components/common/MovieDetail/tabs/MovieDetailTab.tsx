@@ -7,7 +7,7 @@ import type { VideoResponseDto } from '@/dto/movie-video.dto'
 declare global {
   interface Window {
     YT: {
-      Player: new (elementId: string | HTMLElement, options) => YTPlayer; // eslint-disable-line @typescript-eslint/no-explicit-any
+      Player: new (elementId: string | HTMLElement, options: any) => YTPlayer; // eslint-disable-line @typescript-eslint/no-explicit-any
       PlayerState: {
         UNSTARTED: number;
         ENDED: number;

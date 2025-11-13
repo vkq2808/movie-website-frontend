@@ -3,7 +3,7 @@ import { authApi } from '@/apis/auth.api';
 import { useRouter } from 'next/navigation';
 import React from 'react'
 import { ClipLoader } from 'react-spinners';
-import { useToast } from '@/contexts/toast.context';
+import { useToast } from '@/hooks/useToast';
 
 const ForgetPasswordPage = () => {
   const toast = useToast();

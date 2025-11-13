@@ -13,6 +13,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useLanguageStore } from "@/zustand";
+import Image from "next/image";
 
 // ===================== MAIN COMPONENT =====================
 export default function AdminDashboardPage() {
@@ -147,10 +148,12 @@ function TopMovies({
               key={movie.id}
               className="flex items-center gap-3 rounded border border-gray-800 bg-gray-900/40 p-2"
             >
-              <img
+              <Image
                 src={movie.thumbnail}
                 alt={movie.title}
-                className="h-10 w-10 rounded object-cover"
+                className="rounded object-cover"
+                height={40}
+                width={40}
               />
               <div className="flex-1">
                 <div className="font-medium">

@@ -5,6 +5,7 @@ import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import movieApi from '@/apis/movie.api';
+import Image from 'next/image';
 
 const UserPurchasesPage: React.FC = () => {
   const [purchases, setPurchases] = useState<MoviePurchaseResponse[]>([]);
@@ -128,10 +129,10 @@ const UserPurchasesPage: React.FC = () => {
                 <div className="aspect-[2/3] bg-gray-700 relative">
                   <div className="absolute inset-0 flex items-center justify-center text-gray-500">
                     {purchase.movie_poster ? (
-                      <img
+                      <Image
                         src={purchase.movie_poster}
                         alt={purchase.movie_title}
-                        className="w-full h-full object-cover"
+                        className="object-cover"
                       />
                     ) : (
                       <svg

@@ -8,6 +8,7 @@ import movieApi from '@/apis/movie.api';
 import Link from "next/link";
 import { useLanguageStore } from "@/zustand";
 import VideoCard from "@/components/ui/VideoCard";
+import Image from "next/image";
 
 export default function AdminMovieDetailPage() {
   const params = useParams<{ id: string }>();
@@ -134,18 +135,20 @@ export default function AdminMovieDetailPage() {
       {/* Images */}
       <section>
         <h2 className="text-lg font-semibold text-white">Images</h2>
-        <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2 h-32 w-56">
           <ImageGrid
             title="Posters"
             images={movie.posters}
             itemsPerRow={3}
-            placeholderSize="h-48 w-32"
+            placeholderWidth={128}
+            placeholderHeight={192}
           />
           <ImageGrid
             title="Backdrops"
             images={movie.backdrops}
             itemsPerRow={2}
-            placeholderSize="h-32 w-56"
+            placeholderWidth={224}
+            placeholderHeight={128}
           />
         </div>
       </section>
@@ -283,12 +286,14 @@ function ImageGrid({
   title,
   images,
   itemsPerRow,
-  placeholderSize,
+  placeholderWidth,
+  placeholderHeight
 }: {
   title: string;
   images: { url: string; alt: string }[];
   itemsPerRow: number;
-  placeholderSize: string;
+  placeholderWidth: number;
+  placeholderHeight: number;
 }) {
   const total = images.length;
   const totalSlots = Math.ceil(total / itemsPerRow) * itemsPerRow || itemsPerRow;
@@ -300,16 +305,22 @@ function ImageGrid({
         {Array.from({ length: totalSlots }).map((_, i) => {
           const img = images[i];
           return img ? (
-            <img
+            <Image
               key={i}
               src={img.url}
               alt={img.alt}
-              className={`${placeholderSize} rounded border border-gray-700 object-cover`}
+              className={`rounded border border-gray-700 object-cover`}
+              width={placeholderWidth}
+              height={placeholderHeight}
             />
           ) : (
             <div
               key={i}
-              className={`${placeholderSize} flex items-center justify-center rounded border border-dashed border-gray-700 bg-gray-800 text-gray-500 text-sm`}
+              className={`flex items-center justify-center rounded border border-dashed border-gray-700 bg-gray-800 text-gray-500 text-sm`}
+              style={{
+                width: placeholderWidth,
+                height: placeholderHeight
+              }}
             >
               Empty
             </div>
@@ -331,10 +342,12 @@ function CastCrewSection({ title, list, type }: { title: string; list: any[]; ty
               key={item.id}
               className="flex flex-col items-center rounded border border-gray-800 bg-gray-900/40 p-2"
             >
-              <img
+              <Image
                 src={item.person.profile_image?.url || "/placeholder.png"}
                 alt={item.person.name}
-                className="h-28 w-28 rounded object-cover"
+                className="rounded object-cover"
+                width={112}
+                height={112}
               />
               <div className="mt-1 text-sm font-medium">{item.person.name}</div>
               <div className="text-xs text-gray-400">

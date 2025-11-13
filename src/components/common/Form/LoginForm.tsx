@@ -3,7 +3,7 @@ import React, { FormEvent } from 'react'
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/zustand/auth.store';
 import { authApi } from '@/apis/auth.api';
-import { useToast } from '@/contexts/toast.context';
+import { useToast } from '@/hooks/useToast';
 
 const LoginForm = () => {
   const router = useRouter();

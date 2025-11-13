@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createComment, deleteComment, getComments, updateComment, FeedbackItem } from '@/apis/feedback.api';
 import { useAuthStore } from '@/zustand/auth.store';
+import Image from 'next/image';
 
 interface CommentsTabProps {
   movieId: string;
@@ -40,7 +41,6 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
 
   useEffect(() => {
     fetchData(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [movieId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -128,8 +128,7 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center text-sm">
                 {item.user.photo_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.user.photo_url} alt={item.user.username} className="w-full h-full object-cover" />
+                  <Image src={item.user.photo_url} alt={item.user.username} width={40} height={40} className="object-cover" />
                 ) : (
                   <span className="text-gray-300">{item.user.username.charAt(0).toUpperCase()}</span>
                 )}

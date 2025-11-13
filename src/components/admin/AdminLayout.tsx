@@ -13,6 +13,7 @@ const nav: NavItem[] = [
   { href: "/admin/movies", label: "Movies" },
   { href: "/admin/genres", label: "Genres" },
   { href: "/admin/users", label: "Users" },
+  { href: "/admin/watch-parties", label: "Watch Parties" },
   { href: "/admin/settings", label: "Settings" },
 ];
 

@@ -5,6 +5,7 @@ import { purchaseMovie, checkMovieOwnership } from '@/apis/movie-purchase.api';
 import { getWalletBalance } from '@/apis/wallet.api';
 import { useAuthStore } from '@/zustand/auth.store';
 import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface MoviePurchaseButtonProps {
   movie: Movie;
@@ -22,9 +23,15 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
   const [ownsMovie, setOwnsMovie] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
 
   // Get user from auth store
   const user = useAuthStore(state => state.user);
+
+  const onWatchMovie = () => {
+    router.push(`${movie.id}/watch`);
+  }
 
   // Check ownership and wallet balance on component mount
   useEffect(() => {
@@ -38,7 +45,7 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
       setIsLoading(true);
       try {
         // Check if user owns the movie
-        const ownershipResponse = await checkMovieOwnership(movie.id);
+        const ownershipResponse = await checkMovieOwnership(movie?.id);
         setOwnsMovie(ownershipResponse.data.owns_movie);
 
         // Get wallet balance
@@ -53,7 +60,7 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
     };
 
     checkInitialState();
-  }, [movie.id, user]);
+  }, [movie?.id, user]);
 
   const handlePurchase = async () => {
     if (isPurchasing || ownsMovie) return;
@@ -63,25 +70,13 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
 
     try {
       // Check if user has sufficient balance
-      if (walletBalance < movie.price) {
+      if (walletBalance < movie?.price) {
         setError('Insufficient wallet balance');
         return;
       }
 
       // Purchase the movie
-      const response = await purchaseMovie(movie.id);
-
-      // Update states
-      setOwnsMovie(true);
-      setWalletBalance(prev => prev - movie.price);
-
-      // Call success callback
-      if (onPurchaseSuccess) {
-        onPurchaseSuccess();
-      }
-
-      // Show success message (you can customize this)
-      alert(`Successfully purchased "${movie.title}" for $${movie.price}!`);
+      router.push(`${movie.id}/purchase`)
     } catch (error: unknown) {
       // Handle specific error messages
       if (error && typeof error === 'object' && 'response' in error &&
@@ -96,12 +91,14 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
         typeof error.message === 'string' && error.message.includes('Insufficient')) {
         setError('Insufficient wallet balance');
       } else {
-        setError('Failed to purchase movie. Please try again.');
+        setError('Failed to purchase movie?. Please try again.');
       }
     } finally {
       setIsPurchasing(false);
     }
   };
+
+
 
   // Show price without login prompt if user is not authenticated
   if (!user) {
@@ -109,7 +106,7 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
       <div className={`${className}`}>
         <div className="p-2 rounded-lg text-center bg-yellow-400 text-black">
           <div className="flex items-center justify-center">
-            <span className="text-lg font-bold">${movie.price}</span>
+            <span className="text-lg font-bold">${movie?.price}</span>
           </div>
         </div>
       </div>
@@ -129,7 +126,10 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
   // Show owned state
   if (ownsMovie) {
     return (
-      <div className={`flex items-center p-4 bg-green-600 text-white rounded-lg ${className}`}>
+      <button
+        onClick={onWatchMovie}
+        className={`flex items-center px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition ${className}`}
+      >
         <svg
           className="w-5 h-5 mr-2"
           fill="currentColor"
@@ -137,12 +137,12 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
         >
           <path
             fillRule="evenodd"
-            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+            d="M6.5 5.5a.5.5 0 0 1 .79-.407l7 4.5a.5.5 0 0 1 0 .814l-7 4.5A.5.5 0 0 1 6 14.5v-9a.5.5 0 0 1 .5-.5z"
             clipRule="evenodd"
           />
         </svg>
-        <span className="font-medium">You own this movie</span>
-      </div>
+        <span>Xem phim</span>
+      </button>
     );
   }
 
@@ -164,10 +164,10 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
       {/* Purchase Button */}
       <button
         onClick={handlePurchase}
-        disabled={isPurchasing || walletBalance < movie.price}
+        disabled={isPurchasing || walletBalance < movie?.price}
         className={`
           w-full flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-200
-          ${walletBalance >= movie.price && !isPurchasing
+          ${walletBalance >= movie?.price && !isPurchasing
             ? 'bg-blue-600 hover:bg-blue-700 text-white'
             : 'bg-gray-600 text-gray-400 cursor-not-allowed'
           }
@@ -194,17 +194,17 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
               />
             </svg>
             <span>
-              Buy Now - ${movie.price}
-              {walletBalance < movie.price && ' (Insufficient Balance)'}
+              Buy Now - ${movie?.price}
+              {walletBalance < movie?.price && ' (Insufficient Balance)'}
             </span>
           </>
         )}
       </button>
 
       {/* Insufficient Balance Warning */}
-      {walletBalance < movie.price && (
+      {walletBalance < movie?.price && (
         <div className="text-xs text-gray-500 text-center">
-          You need ${(movie.price - walletBalance).toFixed(2)} more to purchase this movie
+          You need ${(movie?.price - walletBalance).toFixed(2)} more to purchase this movie
         </div>
       )}
     </div>

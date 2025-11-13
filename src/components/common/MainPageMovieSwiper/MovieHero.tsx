@@ -2,8 +2,8 @@
 import React from 'react'
 import { PlayIcon, HeartIcon, InfoIcon } from 'lucide-react'
 import { Movie } from '@/types/api.types'
-import { useLanguage } from '@/contexts/language.context'
 import { useRouter } from 'next/navigation'
+import { useLanguageStore } from '@/zustand'
 
 interface MovieHeroProps {
   movie: Movie,
@@ -28,7 +28,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({
     router.push(`/movie/${movie.id}`);
   }
 
-  const { language } = useLanguage();
+  const { currentLanguage } = useLanguageStore();
   return (
     <div className="relative w-full h-[80vh] text-white bg-black flex items-center justify-between overflow-hidden px-16">
       {/* Ảnh nền */}
@@ -73,7 +73,7 @@ const MovieHero: React.FC<MovieHeroProps> = ({
             <div className="flex gap-2 flex-wrap mt-4">
               {movie.genres?.map((genre, index) => (
                 <span key={index} className="bg-gray-700 text-xs px-2 py-1 rounded">
-                  {genre.names.find((n) => n.iso_639_1 === language)?.name || genre.names[0]?.name || 'Unknown'}
+                  {genre.names.find((n) => n.iso_639_1 === currentLanguage.iso_639_1)?.name || genre.names[0]?.name || 'Unknown'}
                 </span>
               ))}
             </div>

@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import MovieForm, { type MovieFormValues } from "@/components/admin/MovieForm/MovieForm";
 import { adminApi, AdminLanguage } from "@/apis/admin.api";
 import { MovieStatus } from "@/constants/enum";
-import { useToast } from "@/contexts/toast.context";
+import { useToast } from "@/hooks/useToast";
 
 export default function CreateModal() {
   const router = useRouter();

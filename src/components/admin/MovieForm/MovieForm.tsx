@@ -10,7 +10,7 @@ import KeywordInput from "./KeywordInput";
 import { GenreInput } from "./GenreInput";
 import PersonInput from "./PersonInput";
 import { Option } from "@/components/extensibles/AutoCompleteMultiSelectInput";
-import { useToast } from "@/contexts/toast.context";
+import { useToast } from "@/hooks/useToast";
 import BackdropsInput from "./BackdropInput";
 import PostersInput from "./PosterInput";
 import { OriginalLanguageInput } from "./OriginalLanguageInput";

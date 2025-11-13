@@ -56,8 +56,7 @@ const CastTab: React.FC<CastTabProps> = ({ movie }) => {
             <div key={c.id} className="bg-gray-800 rounded-lg p-3 flex flex-col items-center text-center">
               <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-700 mb-3">
                 {profile ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={profile as string} alt={name} className="w-full h-full object-cover" />
+                  <Image src={profile as string} alt={name} width={96} height={96} className="object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-300">{name?.charAt(0)}</div>
                 )}

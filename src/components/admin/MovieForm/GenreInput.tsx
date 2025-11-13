@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Option, AutoCompleteMultiSelectInput } from "../../extensibles/AutoCompleteMultiSelectInput";
 import { adminApi, AdminGenre } from "@/apis/admin.api"; // Giả sử bạn có module API
-import { ToastContextValue } from "@/contexts/toast.context";
+import { ToastContextValue } from "@/hooks/useToast";
 import { MovieFormValues } from "./MovieForm";
 
 interface GenreInputProps {

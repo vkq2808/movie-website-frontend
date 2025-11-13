@@ -11,7 +11,7 @@ export default function AdminProvidersPage() {
   const load = async () => {
     setLoading(true);
     const res = await watchProviderApi.getAllProviders();
-    if (res.success) setProviders(res.data);
+    if (res.success && res.data) setProviders(res.data);
     setLoading(false);
   };
 
@@ -20,7 +20,7 @@ export default function AdminProvidersPage() {
   const onInit = async () => {
     setMessage(null);
     const res = await watchProviderApi.initializeProviders();
-    if (res.success) setMessage(`Initialized ${res.data.count} providers`);
+    if (res.success && res.data) setMessage(`Initialized ${res.data.count} providers`);
     await load();
   };
 
@@ -49,7 +49,7 @@ export default function AdminProvidersPage() {
         <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {providers.map(p => (
             <li key={p.id} className="rounded-xl border border-gray-700/60 bg-gray-800/40 p-4">
-              <div className="text-white font-medium">{p.provider_name}</div>
+              <div className="text-white font-medium">{p.name}</div>
               <div className="text-xs text-gray-400 mt-1">{p.slug}</div>
             </li>
           ))}

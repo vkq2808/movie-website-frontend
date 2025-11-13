@@ -2,7 +2,7 @@
 import React, { Component, ChangeEvent, FormEvent } from "react";
 import { MovieFormValues } from "../admin/MovieForm/MovieForm";
 import { CreateOptionModal } from "./CreateOptionModal";
-import { ToastContextValue, useToast } from "@/contexts/toast.context";
+import { ToastContextValue, useToast } from "@/hooks/useToast";
 
 export interface Option {
   id?: string;

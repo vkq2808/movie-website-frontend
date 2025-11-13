@@ -3,7 +3,7 @@ import { authApi, ResetPasswordData } from '@/apis/auth.api';
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ClipLoader } from 'react-spinners';
 import React, { Suspense } from 'react'
-import { useToast } from '@/contexts/toast.context'
+import { useToast } from '@/hooks/useToast'
 
 // Component using useSearchParams
 const ResetPasswordContent = () => {
