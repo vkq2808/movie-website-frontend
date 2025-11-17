@@ -597,31 +597,68 @@ const getActivityLogs = async (params?: {
 // Watch Party APIs
 export interface CreateWatchPartyEventData {
   movie_id: string;
-  event_type: 'random' | 'scheduled' | 'recurring';
-  scheduled_start_time?: string;
-  recurrence_type?: 'daily' | 'weekly' | 'monthly';
-  recurrence_end_date?: string;
-  recurrence_count?: number;
-  max_participants?: number;
+  start_time: string;
+  end_time: string;
   is_featured?: boolean;
+  max_participants?: number;
+  ticket_price?: number;
+  ticket_description?: string;
+  recurrence?: string;
 }
 
-export interface WatchPartyEvent {
+export interface WatchParty {
   id: string;
-  movie_id: string;
+  movie: WatchPartyMovie;
   start_time: string;
   end_time: string;
   is_featured: boolean;
   max_participants: number;
   status: 'upcoming' | 'ongoing' | 'finished';
+  participant_count: number;
+  recurrence: string;
   created_at: string;
   updated_at: string;
 }
 
-const createWatchPartyEvent = async (data: CreateWatchPartyEventData): Promise<ApiResponse<WatchPartyEvent | WatchPartyEvent[]>> => {
-  const response = await api.post('/admin/watch-parties', data);
+export interface WatchPartyMovie {
+  id: string;
+  title: string;
+}
+
+const createWatchPartyEvent = async (data: CreateWatchPartyEventData) => {
+  const response = await api.post<ApiResponse<WatchParty>>('/admin/watch-parties', data);
   return response.data;
 };
+
+const getWatchParties = async (params?: {
+  movie_title?: string;
+  event_type?: string;
+  start_date?: string;
+  end_date?: string;
+  is_featured?: boolean;
+}) => {
+  const response = await api.get<ApiResponse<{
+    watch_parties: WatchParty[];
+    total: number;
+  }>>('/admin/watch-parties', { params });
+  return response.data;
+};
+
+const getWatchParty = async (id: string) => {
+  const response = await api.get<ApiResponse<WatchParty>>(`/admin/watch-parties/${id}`);
+  return response.data;
+};
+
+const updateWatchParty = async (id: string, data: Partial<CreateWatchPartyEventData>, updateType: 'single' | 'series' = 'single') => {
+  const response = await api.patch<ApiResponse<WatchParty>>(`/admin/watch-parties/${id}`, data, { params: { update_type: updateType } });
+  return response.data;
+};
+
+const deleteWatchParty = async (id: string, deleteType: 'single' | 'series' = 'single') => {
+  const response = await api.delete<ApiResponse<null>>(`/admin/watch-parties/${id}`, { params: { delete_type: deleteType } });
+  return response.data;
+};
+
 
 // System Health Check
 const getSystemHealth = async (): Promise<ApiResponse<{
@@ -713,4 +750,8 @@ export const adminApi = {
 
   // Watch Parties
   createWatchPartyEvent,
+  getWatchParties,
+  getWatchParty,
+  updateWatchParty,
+  deleteWatchParty,
 };

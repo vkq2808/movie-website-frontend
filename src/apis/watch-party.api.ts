@@ -62,8 +62,16 @@ export interface UserTicketPurchase {
   watch_party: WatchParty;
 }
 
+
+export interface WatchPartyLiveInfo {
+  startTime: string;
+  currentTime: number;
+  chats: WatchPartyLog[];
+  watchParty: WatchParty;
+}
+
 export const watchPartyApi = {
-  async getAll(status?: string,): Promise<WatchParty[]> {
+  async getAll(status?: string): Promise<WatchParty[]> {
     const params = status ? { status } : {};
     const response = await api.get(`watch-parties`, { params });
     return response.data;
@@ -71,6 +79,11 @@ export const watchPartyApi = {
 
   async getById(id: string): Promise<WatchParty> {
     const response = await api.get(`watch-parties/${id}`);
+    return response.data;
+  },
+
+  async getLiveInfo(id: string): Promise<WatchPartyLiveInfo> {
+    const response = await api.get(`watch-parties/${id}/live`);
     return response.data;
   },
 

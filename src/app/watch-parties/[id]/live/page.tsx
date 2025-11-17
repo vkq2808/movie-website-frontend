@@ -6,12 +6,13 @@ import { Users } from 'lucide-react';
 import { SyncedVideoPlayer } from '@/components/watch-party/SyncedVideoPlayer';
 import { ChatBox } from '@/components/watch-party/ChatBox';
 import { useWatchPartySocket } from '@/hooks/useWatchPartySocket';
-import { watchPartyApi, type WatchParty } from '@/apis/watch-party.api';
+import { watchPartyApi, type WatchParty, type WatchPartyLog } from '@/apis/watch-party.api';
 
 export default function LiveWatchPartyPage() {
   const params = useParams();
   const [party, setParty] = useState<WatchParty | null>(null);
   const [loading, setLoading] = useState(true);
+  const [initialLogs, setInitialLogs] = useState<WatchPartyLog[]>([]);
 
   // Mock current user - should come from auth context
   const currentUser = {
@@ -26,7 +27,13 @@ export default function LiveWatchPartyPage() {
     playerSync,
     sendMessage,
     sendPlayerAction,
-  } = useWatchPartySocket(params.id as string, currentUser.id, currentUser.username);
+  } = useWatchPartySocket(params.id as string, currentUser.id, currentUser.username, initialLogs.map(log => ({
+    userId: log.user?.id || 'system',
+    username: log.user?.username || 'System',
+    message: log.content.message,
+    realTime: log.real_time,
+    eventTime: log.event_time,
+  })));
 
   useEffect(() => {
     loadParty();
@@ -35,8 +42,9 @@ export default function LiveWatchPartyPage() {
   const loadParty = async () => {
     try {
       setLoading(true);
-      const data = await watchPartyApi.getById(params.id as string);
-      setParty(data);
+      const data = await watchPartyApi.getLiveInfo(params.id as string);
+      setParty(data.watchParty);
+      setInitialLogs(data.chats);
     } catch (error) {
       console.error('Failed to load watch party:', error);
     } finally {

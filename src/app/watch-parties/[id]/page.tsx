@@ -53,13 +53,13 @@ export default function WatchPartyDetailPage() {
 
     if (!token) {
       error('Please sign in to purchase a ticket.');
-      router.push('/login');
+      router.push(`/auth/login?from=${encodeURIComponent(`/watch-parties/${params.id}`)}`);
       return;
     }
 
     try {
       setPurchasing(true);
-      await purchaseTicket(party.id);
+      await purchaseTicket(party.id, party.ticket?.id);
       success('Ticket purchased successfully!');
       await loadParty();
       router.push(`/watch-parties/${party.id}/live`);

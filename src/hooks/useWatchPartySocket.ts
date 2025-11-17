@@ -24,13 +24,22 @@ interface UserEvent {
   timestamp: string;
 }
 
-export const useWatchPartySocket = (partyId: string, userId: string, username: string) => {
+export const useWatchPartySocket = (
+  partyId: string,
+  userId: string,
+  username: string,
+  initialMessages: ChatMessage[] = [],
+) => {
   const socketRef = useRef<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [participants, setParticipants] = useState<string[]>([]);
   const [playerSync, setPlayerSync] = useState<PlayerSync | null>(null);
 
+  useEffect(() => {
+    setMessages(initialMessages);
+  }, [initialMessages]);
+  
   useEffect(() => {
     if (!partyId || !userId) return;
 
