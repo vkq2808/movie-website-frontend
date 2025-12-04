@@ -133,10 +133,7 @@ export default function AdminWatchPartiesPage() {
               <WatchPartyForm
                 onSubmit={handleUpdateSubmit}
                 submitting={false}
-                initialData={{
-                  ...selectedParty,
-                  movie: selectedParty.movie,
-                }}
+                initialData={selectedParty}
               />
             </DialogContent>
           </Dialog>

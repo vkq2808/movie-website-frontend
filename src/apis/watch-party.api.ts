@@ -1,3 +1,4 @@
+import { ApiResponse } from '@/types/api.response';
 import { Movie } from '@/types/api.types';
 import api from '@/utils/api.util';
 
@@ -36,8 +37,9 @@ export interface WatchParty {
 export interface WatchPartyLog {
   id: string;
   event_type: 'message' | 'join' | 'leave' | 'play' | 'pause' | 'seek';
-  content: string;
+  content: { message: string };
   real_time: string;
+  timestamp: string;
   event_time: number;
   user?: {
     id: string;
@@ -66,8 +68,13 @@ export interface UserTicketPurchase {
 export interface WatchPartyLiveInfo {
   startTime: string;
   currentTime: number;
-  chats: WatchPartyLog[];
+  messages: WatchPartyLog[];
   watchParty: WatchParty;
+  participants: WatchPartyParticipant[];
+  total_likes: {
+    [userId: string]: number;
+    total: number;
+  };
 }
 
 export const watchPartyApi = {
@@ -82,8 +89,8 @@ export const watchPartyApi = {
     return response.data;
   },
 
-  async getLiveInfo(id: string): Promise<WatchPartyLiveInfo> {
-    const response = await api.get(`watch-parties/${id}/live`);
+  async getLiveInfo(id: string) {
+    const response = await api.get<ApiResponse<WatchPartyLiveInfo>>(`watch-parties/${id}/live`);
     return response.data;
   },
 

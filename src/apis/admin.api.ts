@@ -598,7 +598,6 @@ const getActivityLogs = async (params?: {
 export interface CreateWatchPartyEventData {
   movie_id: string;
   start_time: string;
-  end_time: string;
   is_featured?: boolean;
   max_participants?: number;
   ticket_price?: number;
@@ -618,6 +617,11 @@ export interface WatchParty {
   recurrence: string;
   created_at: string;
   updated_at: string;
+  ticket?: {
+    id: string;
+    price: number;
+    description?: string;
+  };
 }
 
 export interface WatchPartyMovie {
@@ -626,7 +630,7 @@ export interface WatchPartyMovie {
 }
 
 const createWatchPartyEvent = async (data: CreateWatchPartyEventData) => {
-  const response = await api.post<ApiResponse<WatchParty>>('/admin/watch-parties', data);
+  const response = await api.post<ApiResponse<WatchParty>>(`/admin${apiEndpoint.WATCH_PARTY}`, data);
   return response.data;
 };
 
@@ -640,22 +644,22 @@ const getWatchParties = async (params?: {
   const response = await api.get<ApiResponse<{
     watch_parties: WatchParty[];
     total: number;
-  }>>('/admin/watch-parties', { params });
+  }>>(`/admin${apiEndpoint.WATCH_PARTY}`, { params });
   return response.data;
 };
 
 const getWatchParty = async (id: string) => {
-  const response = await api.get<ApiResponse<WatchParty>>(`/admin/watch-parties/${id}`);
+  const response = await api.get<ApiResponse<WatchParty>>(`/admin${apiEndpoint.WATCH_PARTY}/${id}`);
   return response.data;
 };
 
 const updateWatchParty = async (id: string, data: Partial<CreateWatchPartyEventData>, updateType: 'single' | 'series' = 'single') => {
-  const response = await api.patch<ApiResponse<WatchParty>>(`/admin/watch-parties/${id}`, data, { params: { update_type: updateType } });
+  const response = await api.patch<ApiResponse<WatchParty>>(`/admin${apiEndpoint.WATCH_PARTY}/${id}`, data, { params: { update_type: updateType } });
   return response.data;
 };
 
 const deleteWatchParty = async (id: string, deleteType: 'single' | 'series' = 'single') => {
-  const response = await api.delete<ApiResponse<null>>(`/admin/watch-parties/${id}`, { params: { delete_type: deleteType } });
+  const response = await api.delete<ApiResponse<null>>(`/admin${apiEndpoint.WATCH_PARTY}/${id}`);
   return response.data;
 };
 

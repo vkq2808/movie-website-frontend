@@ -1,8 +1,11 @@
 "use client";
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { createComment, deleteComment, getComments, updateComment, FeedbackItem } from '@/apis/feedback.api';
 import { useAuthStore } from '@/zustand/auth.store';
+import { useToast } from '@/hooks/useToast';
+import { sanitizeInput, isValidComment } from '@/utils/sanitize.util';
 import Image from 'next/image';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface CommentsTabProps {
   movieId: string;
@@ -10,30 +13,37 @@ interface CommentsTabProps {
 
 const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
   const auth = useAuthStore();
+  const toast = useToast();
   const currentUserId = auth.user?.id;
+  const controllerRef = useRef<AbortController | null>(null);
 
   const [items, setItems] = useState<FeedbackItem[]>([]);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [newComment, setNewComment] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState('');
+  const [hasNewComments, setHasNewComments] = useState(false);
 
   const canPost = useMemo(() => !!auth.user && newComment.trim().length > 0, [auth.user, newComment]);
 
   const fetchData = async (p = 1) => {
     setLoading(true);
-    setError(null);
     try {
+      controllerRef.current = new AbortController();
       const res = await getComments(movieId, p, limit);
-      setItems(res.data);
-      setTotalPages(res.pagination.totalPages);
+      if (res.data) {
+        setItems(res.data);
+        setTotalPages(res.pagination?.totalPages || 1);
+        if (p === 1) {
+          setHasNewComments(false);
+        }
+      }
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to load comments';
-      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -41,19 +51,52 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
 
   useEffect(() => {
     fetchData(1);
+    return () => {
+      controllerRef.current?.abort();
+    };
   }, [movieId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canPost) return;
+    if (!canPost || !currentUserId) return;
+
+    const newCommentText = sanitizeInput(newComment);
+
+    if (!isValidComment(newCommentText)) {
+      toast.error('Comment must be between 1 and 2000 characters');
+      return;
+    }
+
+    const tempId = 'temp-' + Math.random().toString(36).substr(2, 9);
+
+    // Optimistic update - add temp comment to UI
+    const tempComment: FeedbackItem = {
+      id: tempId,
+      feedback: newCommentText,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      user: {
+        id: currentUserId,
+        username: auth.user?.username || 'Unknown',
+        photo_url: auth.user?.photo_url || null,
+      },
+    };
+
+    setItems((prev) => [tempComment, ...prev]);
+    setNewComment('');
+
     try {
-      const res = await createComment(movieId, newComment.trim());
-      setNewComment('');
-      // Refresh to first page to show newest first
-      fetchData(1);
+      const created = await createComment(movieId, newCommentText);
+      // Replace temp comment with actual comment
+      setItems((prev) =>
+        prev.map((item) => (item.id === tempId ? created : item))
+      );
+      toast.success('Comment posted successfully');
     } catch (e: unknown) {
+      // Rollback on error
+      setItems((prev) => prev.filter((item) => item.id !== tempId));
       const msg = e instanceof Error ? e.message : 'Failed to post comment';
-      setError(msg);
+      toast.error(msg);
     }
   };
 
@@ -69,24 +112,60 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
 
   const saveEdit = async () => {
     if (!editingId) return;
+    const editedText = sanitizeInput(editingText);
+
+    if (!isValidComment(editedText)) {
+      toast.error('Comment must be between 1 and 2000 characters');
+      return;
+    }
+
+    const oldItem = items.find((i) => i.id === editingId);
+    if (!oldItem) return;
+
+    // Optimistic update
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === editingId ? { ...item, feedback: editedText } : item
+      )
+    );
+
+    setEditingId(null);
+    setEditingText('');
+
     try {
-      await updateComment(editingId, editingText.trim());
-      setEditingId(null);
-      setEditingText('');
-      fetchData(page);
+      await updateComment(editingId, editedText);
+      toast.success('Comment updated successfully');
     } catch (e: unknown) {
+      // Rollback on error
+      setItems((prev) =>
+        prev.map((item) =>
+          item.id === editingId ? { ...item, feedback: oldItem.feedback } : item
+        )
+      );
       const msg = e instanceof Error ? e.message : 'Failed to update comment';
-      setError(msg);
+      toast.error(msg);
     }
   };
 
   const remove = async (id: string) => {
+    if (!window.confirm('Bạn chắc chắn muốn xóa bình luận này?')) {
+      return;
+    }
+
+    const oldItem = items.find((i) => i.id === id);
+    if (!oldItem) return;
+
+    // Optimistic update - hide comment immediately
+    setItems((prev) => prev.filter((item) => item.id !== id));
+
     try {
       await deleteComment(id);
-      fetchData(page);
+      toast.success('Comment deleted successfully');
     } catch (e: unknown) {
+      // Rollback on error
+      setItems((prev) => [...prev, oldItem]);
       const msg = e instanceof Error ? e.message : 'Failed to delete comment';
-      setError(msg);
+      toast.error(msg);
     }
   };
 
@@ -117,10 +196,26 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
         )}
       </div>
 
+      {/* New comments badge */}
+      {hasNewComments && page > 1 && (
+        <div className="bg-yellow-900/30 border border-yellow-600 text-yellow-300 p-3 rounded-lg text-center">
+          Có bình luận mới — <button
+            onClick={() => { setPage(1); fetchData(1); }}
+            className="underline hover:text-yellow-200"
+          >
+            xem tại trang 1
+          </button>
+        </div>
+      )}
+
       {/* List */}
       <div className="space-y-4">
-        {loading && <p className="text-gray-400">Đang tải bình luận...</p>}
-        {error && <p className="text-red-500">{error}</p>}
+        {loading && (
+          <>
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </>
+        )}
         {!loading && items.length === 0 && <p className="text-gray-400">Chưa có bình luận nào</p>}
 
         {items.map((item) => (

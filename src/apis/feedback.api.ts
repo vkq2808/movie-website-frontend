@@ -9,8 +9,8 @@ export interface FeedbackItem {
   user: { id: string; username: string; photo_url?: string | null };
 }
 
-export async function createComment(movieId: string, feedback: string): Promise<ApiResponse<FeedbackItem>> {
-  const res = await api.post<ApiResponse<FeedbackItem>>(`${apiEndpoint.FEEDBACK}/${movieId}`, { movie_id: movieId, feedback });
+export async function createComment(movieId: string, feedback: string): Promise<FeedbackItem> {
+  const res = await api.post<FeedbackItem>(`${apiEndpoint.FEEDBACK}/${movieId}`, { feedback });
   return res.data;
 }
 
@@ -19,12 +19,11 @@ export async function getComments(movieId: string, page = 1, limit = 10): Promis
   return res.data;
 }
 
-export async function updateComment(id: string, feedback: string): Promise<ApiResponse<FeedbackItem>> {
-  const res = await api.patch<ApiResponse<FeedbackItem>>(`${apiEndpoint.FEEDBACK}/${id}`, { feedback });
+export async function updateComment(id: string, feedback: string): Promise<FeedbackItem> {
+  const res = await api.patch<FeedbackItem>(`${apiEndpoint.FEEDBACK}/${id}`, { feedback });
   return res.data;
 }
 
-export async function deleteComment(id: string): Promise<ApiResponse<null>> {
-  const res = await api.delete<ApiResponse<null>>(`${apiEndpoint.FEEDBACK}/${id}`);
-  return res.data;
+export async function deleteComment(id: string): Promise<void> {
+  await api.delete(`${apiEndpoint.FEEDBACK}/${id}`);
 }

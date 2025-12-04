@@ -20,6 +20,7 @@ export const apiEndpoint = {
   PERSON: '/person',
   VIDEO: '/video',
   WATCH_PROVIDER: '/watch-provider',
+  WATCH_PARTY: '/watch-parties',
 }
 
 // Mở rộng interface InternalAxiosRequestConfig để thêm thuộc tính __retry

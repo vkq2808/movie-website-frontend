@@ -8,9 +8,9 @@ interface NoControlVideoPlayerProps {
   loop?: boolean;
   autoPlay?: boolean;
   muted?: boolean;
-  onClick?: (e?: React.SyntheticEvent<HTMLVideoElement>) => void;
-  onLoadedData?: (e?: React.SyntheticEvent<HTMLVideoElement>) => void;
-  onError?: (e?: React.SyntheticEvent<HTMLVideoElement>) => void;
+  onClick?: (e?: React.SyntheticEvent<HTMLVideoElement | null>) => void;
+  onLoadedData?: (e?: React.SyntheticEvent<HTMLVideoElement | null>) => void;
+  onError?: (e?: React.SyntheticEvent<HTMLVideoElement | null>) => void;
   text?: string;
 }
 
@@ -32,7 +32,7 @@ const NoControlVideoPlayer: React.FC<NoControlVideoPlayerProps> = ({
   onError = undefined,
   text = 'Your browser does not support the video tag.'
 }) => {
-  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const videoRef = React.useRef<HTMLVideoElement | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
 
@@ -50,7 +50,7 @@ const NoControlVideoPlayer: React.FC<NoControlVideoPlayerProps> = ({
     }
   }
 
-  const handleError = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+  const handleError = (e: React.SyntheticEvent<HTMLVideoElement | null>) => {
     setIsLoading(false);
     console.error('Error loading video:', e);
   };

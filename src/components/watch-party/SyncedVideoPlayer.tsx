@@ -13,7 +13,7 @@ interface SyncedVideoPlayerProps {
 }
 
 export function SyncedVideoPlayer({ videoUrl, onPlayerAction, playerSync }: SyncedVideoPlayerProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
