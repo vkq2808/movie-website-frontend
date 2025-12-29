@@ -21,7 +21,8 @@ export const useAuthStore = create<AuthStore>(
     setAuth: async ({ user }) => {
       // Update store
       set({
-        user: user
+        user: user,
+        hydrated: true,
       });
     },
     logout: () => {
@@ -42,7 +43,7 @@ export const useAuthStore = create<AuthStore>(
       try {
         const { data } = await api.get<ApiResponse<User>>(`${apiEndpoint.AUTH}/me`);
         if (data?.success && data.data) {
-          set((state) => ({ ...state, user: data.data }));
+          set((state) => ({ ...state, user: data.data, hydrated: true }));
         }
       } catch (err) {
         // Ignore 401s silently; user is not authenticated
@@ -51,6 +52,10 @@ export const useAuthStore = create<AuthStore>(
         if (!(err?.response?.status === 401)) {
           console.error('Error fetching user:', err);
         }
+      }
+      finally {
+        // Ensure hydration flag is set even if unauthenticated or fetch failed.
+        set((s) => ({ ...s, hydrated: true }));
       }
     }
   }));

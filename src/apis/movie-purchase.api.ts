@@ -15,10 +15,17 @@ export interface MoviePurchaseResponse {
   movie_poster?: string;
 }
 
+
 export interface MovieOwnershipResponse {
   owns_movie: boolean;
 }
 
+export interface CanWatchMovieResponse {
+  canWatch: boolean;
+  reason?: 'NOT_LOGIN' | 'NOT_PURCHASED' | 'NO_TICKET';
+}
+
+// Purchase a movie
 // Purchase a movie
 export async function purchaseMovie(movieId: string): Promise<ApiResponse<MoviePurchaseResponse>> {
   const response = await api.post<ApiResponse<MoviePurchaseResponse>>(
@@ -48,6 +55,18 @@ export async function checkMovieOwnership(movieId: string): Promise<ApiResponse<
 export async function getPurchaseDetails(purchaseId: string): Promise<ApiResponse<MoviePurchaseResponse>> {
   const response = await api.get<ApiResponse<MoviePurchaseResponse>>(
     `${apiEndpoint.MOVIE_PURCHASE}/${purchaseId}`
+  );
+  return response.data;
+}
+
+/**
+ * ISSUE-02: Unified permission logic
+ * Check if user can watch a specific movie
+ * Returns canWatch status and reason for denial if applicable
+ */
+export async function canWatchMovie(movieId: string): Promise<ApiResponse<CanWatchMovieResponse>> {
+  const response = await api.get<ApiResponse<CanWatchMovieResponse>>(
+    `${apiEndpoint.MOVIE_PURCHASE}/can-watch/${movieId}`
   );
   return response.data;
 }

@@ -680,6 +680,64 @@ const getSystemHealth = async (): Promise<ApiResponse<{
   return response.data;
 };
 
+// =================== FEEDBACK MANAGEMENT ===================
+
+export interface AdminFeedback {
+  id: string;
+  user: {
+    id: string;
+    fullName?: string | null;
+    avatar?: string | null;
+  } | null;
+  movie: {
+    id: string;
+    title: string;
+  } | null;
+  feedback: string;
+  created_at: string;
+  updated_at: string;
+  status: 'active' | 'hidden' | 'deleted';
+}
+
+const getAllFeedback = async (params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: 'active' | 'hidden' | 'all';
+  movieId?: string;
+}): Promise<ApiResponse<{
+  feedbacks: AdminFeedback[];
+  total: number;
+  page: number;
+  limit: number;
+  hasMore: boolean;
+}>> => {
+  // NOTE: Backend endpoint /admin/feedback needs to be implemented
+  // Required: GET with pagination, search, filtering by status and movie
+  const response = await api.get(`/admin${apiEndpoint.FEEDBACK}`, { params });
+  return response.data;
+};
+
+const hideFeedback = async (id: string): Promise<ApiResponse<AdminFeedback>> => {
+  // NOTE: Backend endpoint /admin/feedback/:id/hide needs to be implemented
+  // This is a soft-delete pattern - feedback remains in DB but is hidden from display
+  const response = await api.post<ApiResponse<AdminFeedback>>(`/admin${apiEndpoint.FEEDBACK}/${id}/hide`);
+  return response.data;
+};
+
+const unhideFeedback = async (id: string): Promise<ApiResponse<AdminFeedback>> => {
+  // NOTE: Backend endpoint /admin/feedback/:id/unhide needs to be implemented
+  const response = await api.post<ApiResponse<AdminFeedback>>(`/admin${apiEndpoint.FEEDBACK}/${id}/unhide`);
+  return response.data;
+};
+
+const deleteFeedback = async (id: string): Promise<ApiResponse<null>> => {
+  // NOTE: Backend endpoint DELETE /admin/feedback/:id needs to be implemented
+  // This performs actual deletion of the feedback record
+  const response = await api.delete<ApiResponse<null>>(`/admin${apiEndpoint.FEEDBACK}/${id}`);
+  return response.data;
+};
+
 export const adminApi = {
   // Movies
   getMovies,
@@ -758,4 +816,10 @@ export const adminApi = {
   getWatchParty,
   updateWatchParty,
   deleteWatchParty,
+
+  // Feedback
+  getAllFeedback,
+  hideFeedback,
+  unhideFeedback,
+  deleteFeedback,
 };

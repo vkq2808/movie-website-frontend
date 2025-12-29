@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import movieApi from '@/apis/movie.api'
-import { checkMovieOwnership, purchaseMovie } from '@/apis/movie-purchase.api'
+import { checkMovieOwnership, purchaseMovie, canWatchMovie } from '@/apis/movie-purchase.api'
 import { Movie, Video, VideoType } from '@/types/api.types'
 import MoviePlayer from '@/components/common/MovieWatch/MoviePlayer'
 import VideoListSection from '@/components/common/MovieWatch/VideoListSection'
@@ -14,73 +14,106 @@ const MovieWatchPage = () => {
   const params = useParams()
   const movieId = params?.id as string
 
-  const { user } = useAuthStore() // kiểm tra đăng nhập
+  const { user } = useAuthStore()
 
   const [movie, setMovie] = useState<Movie | null>(null)
   const [videos, setVideos] = useState<Video[]>([])
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [ownsMovie, setOwnsMovie] = useState<boolean>(false)
-  const [checkingOwnership, setCheckingOwnership] = useState(true)
+
+  const [loadingUser, setLoadingUser] = useState(true)
+  const [checkingPermission, setCheckingPermission] = useState(false)
+  const [loadingVideo, setLoadingVideo] = useState(false)
+  const [canWatch, setCanWatch] = useState<boolean>(false)
   const [purchasing, setPurchasing] = useState(false)
 
-  // Lấy thông tin phim + video
+
   useEffect(() => {
-    if (!movieId) return
-    const fetchMovieData = async () => {
+    if (user !== undefined) {
+      setLoadingUser(false)
+    }
+  }, [user])
+
+  useEffect(() => {
+    if (loadingUser || !movieId) return
+
+    const checkPermission = async () => {
       try {
-        setLoading(true)
+        setCheckingPermission(true)
+
+        const res = await canWatchMovie(movieId)
+        setCanWatch(res.data.canWatch)
+      } catch (err) {
+        console.error('[MovieWatchPage] Permission check failed:', err)
+        setCanWatch(false)
+      } finally {
+        setCheckingPermission(false)
+      }
+    }
+
+    checkPermission()
+  }, [loadingUser, movieId])
+
+
+
+  useEffect(() => {
+    if (loadingUser || checkingPermission || !movieId || !canWatch) {
+
+      if (!loadingUser && !checkingPermission && !canWatch) {
+        setVideos([])
+        setSelectedVideo(null)
+      }
+      return
+    }
+
+    const fetchMovieAndVideos = async () => {
+      try {
+        setLoadingVideo(true)
         const [movieRes, videosRes] = await Promise.all([
           movieApi.getMovieById(movieId),
-          movieApi.getMovieVideos(movieId)
+          movieApi.getMovieVideos(movieId),
         ])
 
         setMovie(movieRes.data)
         setVideos(videosRes.data)
 
         const mainVideo =
-          videosRes.data.find(v => v.type === VideoType.MOVIE) || null
+          videosRes.data.find((v) => v.type === VideoType.MOVIE) || null
         setSelectedVideo(mainVideo)
       } catch (err) {
         console.error('[MovieWatchPage] Fetch error:', err)
       } finally {
-        setLoading(false)
+        setLoadingVideo(false)
       }
     }
 
-    fetchMovieData()
-  }, [movieId])
+    fetchMovieAndVideos()
+  }, [canWatch, movieId, loadingUser, checkingPermission])
 
-  // Kiểm tra quyền sở hữu phim
+
   useEffect(() => {
-    if (!user || !movieId) {
-      setOwnsMovie(false)
-      setCheckingOwnership(false)
-      return
-    }
+    if (loadingUser || !movieId) return
 
-    const checkOwnership = async () => {
+    const fetchMovieInfo = async () => {
       try {
-        setCheckingOwnership(true)
-        const res = await checkMovieOwnership(movieId)
-        setOwnsMovie(res.data.owns_movie)
+        const movieRes = await movieApi.getMovieById(movieId)
+        setMovie(movieRes.data)
       } catch (err) {
-        console.error('Ownership check failed', err)
-      } finally {
-        setCheckingOwnership(false)
+        console.error('[MovieWatchPage] Movie fetch error:', err)
       }
     }
 
-    checkOwnership()
-  }, [user, movieId])
+    fetchMovieInfo()
+  }, [movieId, loadingUser])
 
-  // Xử lý mua phim
+
   const handlePurchase = async () => {
     if (!user) return alert('Vui lòng đăng nhập để mua phim.')
     try {
       setPurchasing(true)
       await purchaseMovie(movieId)
-      setOwnsMovie(true)
+
+      const res = await canWatchMovie(movieId)
+      setCanWatch(res.data.canWatch)
       alert('Mua phim thành công! Giờ bạn có thể xem phim này.')
     } catch (err) {
       console.error('Purchase failed', err)
@@ -90,12 +123,10 @@ const MovieWatchPage = () => {
     }
   }
 
-  // ====================== RENDER ======================
-
-  if (loading || checkingOwnership)
+  if (loadingUser)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900 text-gray-400">
-        <p>Đang tải dữ liệu phim...</p>
+        <p>Đang kiểm tra trạng thái đăng nhập...</p>
       </div>
     )
 
@@ -106,7 +137,15 @@ const MovieWatchPage = () => {
       </div>
     )
 
-  // Nếu chưa đăng nhập
+
+  if (checkingPermission)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-gray-400">
+        <p>Đang kiểm tra quyền truy cập...</p>
+      </div>
+    )
+
+
   if (!user)
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-gray-300">
@@ -120,8 +159,8 @@ const MovieWatchPage = () => {
       </div>
     )
 
-  // Nếu chưa mua phim
-  if (!ownsMovie)
+
+  if (!canWatch)
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-gray-300">
         <h2 className="text-xl mb-4">Bạn chưa mua phim này</h2>
@@ -135,10 +174,18 @@ const MovieWatchPage = () => {
       </div>
     )
 
-  // Nếu đã mua phim → render player + danh sách video
-  const movieVideos = videos.filter(v => v.type === VideoType.MOVIE)
-  const trailers = videos.filter(v => v.type === VideoType.TRAILER)
-  const clips = videos.filter(v => v.type === VideoType.CLIP)
+
+  if (loadingVideo)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-gray-400">
+        <p>Đang tải danh sách video...</p>
+      </div>
+    )
+
+
+  const movieVideos = videos.filter((v) => v.type === VideoType.MOVIE)
+  const trailers = videos.filter((v) => v.type === VideoType.TRAILER)
+  const clips = videos.filter((v) => v.type === VideoType.CLIP)
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">

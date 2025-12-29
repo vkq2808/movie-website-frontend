@@ -11,6 +11,7 @@ type NavItem = {
 const nav: NavItem[] = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/movies", label: "Movies" },
+  { href: "/admin/feedback", label: "Feedback" },
   { href: "/admin/genres", label: "Genres" },
   { href: "/admin/users", label: "Users" },
   { href: "/admin/watch-parties", label: "Watch Parties" },
