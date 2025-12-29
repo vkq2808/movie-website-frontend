@@ -77,8 +77,8 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
       updated_at: new Date().toISOString(),
       user: {
         id: currentUserId,
-        username: auth.user?.username || 'Unknown',
-        photo_url: auth.user?.photo_url || null,
+        fullName: auth.user?.username || 'Unknown',
+        avatar: auth.user?.photo_url || null,
       },
     };
 
@@ -222,16 +222,16 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
           <div key={item.id} className="bg-gray-900 p-4 rounded-lg">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center text-sm">
-                {item.user.photo_url ? (
-                  <Image src={item.user.photo_url} alt={item.user.username} width={40} height={40} className="object-cover" />
+                {item.user?.avatar ? (
+                  <Image src={item.user?.avatar} alt={item.user?.fullName ?? 'Unknown'} width={40} height={40} className="object-cover" />
                 ) : (
-                  <span className="text-gray-300">{item.user.username.charAt(0).toUpperCase()}</span>
+                  <span className="text-gray-300">{item.user?.fullName?.charAt(0).toUpperCase()}</span>
                 )}
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <p className="text-white font-medium">{item.user.username}</p>
-                  {currentUserId === item.user.id && (
+                  <p className="text-white font-medium">{item.user?.fullName}</p>
+                  {currentUserId === item.user?.id && (
                     <div className="space-x-2 text-sm">
                       {editingId === item.id ? (
                         <>

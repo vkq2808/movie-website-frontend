@@ -135,82 +135,83 @@ export default function AdminMoviesPage() {
       {error ? (
         <div className="rounded bg-red-500/10 p-3 text-sm text-red-300">{error}</div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left text-sm">
-            <thead>
-              <tr className="border-b border-gray-800 text-gray-400">
-                <th className="px-3 py-2">Title</th>
-                <th className="px-3 py-2">Release</th>
-                <th className="px-3 py-2">Status</th>
-                <th className="px-3 py-2">Rating</th>
-                <th className="px-3 py-2 text-center">Action</th>
-              </tr>
-            </thead>
-            {loading ? (
-              <tbody>
-                <tr>
-                  <td colSpan={5} className="flex h-56 items-center justify-center">
-                    <LoadingSpinner />
-                  </td>
+        <>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-gray-800 text-gray-400">
+                  <th className="px-3 py-2">Title</th>
+                  <th className="px-3 py-2">Release</th>
+                  <th className="px-3 py-2">Status</th>
+                  <th className="px-3 py-2">Rating</th>
+                  <th className="px-3 py-2 text-center">Action</th>
                 </tr>
-              </tbody>
-            ) : (
-              <tbody>
-                {movies.map((m) => (
-                  <tr key={m.id} className="border-b border-gray-800">
-                    <td className="px-3 py-2 font-medium text-gray-100">
-                      <Link href={`/admin/movies/${m.id}`}>{m.title}</Link>
-                    </td>
-                    <td className="px-3 py-2 text-gray-300">{new Date(m.release_date).toLocaleDateString()}</td>
-                    <td className="px-3 py-2">
-                      <span
-                        className={
-                          'rounded px-2 py-1 text-xs ' +
-                          (m.status === 'published'
-                            ? 'bg-green-500/10 text-green-300'
-                            : 'bg-yellow-500/10 text-yellow-300')
-                        }
-                      >
-                        {m.status}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2 text-gray-300">{m.vote_average?.toFixed(1)}</td>
-                    <td className="px-3 py-2 text-right">
-                      <div className="inline-flex items-center gap-2">
-                        <button
-                          onClick={() => router.push(`/admin/movies/${m.id}/update`)}
-                          className="rounded bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-500"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(m.id)}
-                          disabled={deletingId === m.id}
-                          className={`rounded px-3 py-1 text-xs text-white ${deletingId === m.id ? 'bg-red-400/60' : 'bg-red-600 hover:bg-red-500'}`}
-                        >
-                          {deletingId === m.id ? 'Deleting...' : confirmingId === m.id ? 'Confirm delete' : 'Delete'}
-                        </button>
-                        {confirmingId === m.id && (
-                          <button
-                            onClick={() => setConfirmingId(null)}
-                            className="rounded border border-gray-700 px-2 py-1 text-xs text-gray-200"
-                          >
-                            Cancel
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {movies.length === 0 && (
+              </thead>
+              {loading ? (
+                <tbody>
                   <tr>
-                    <td className="px-3 py-6 text-center text-gray-400" colSpan={5}>No movies found</td>
+                    <td colSpan={5} className="flex h-56 items-center justify-center">
+                      <LoadingSpinner />
+                    </td>
                   </tr>
-                )}
-              </tbody>
-            )}
-          </table>
-        </div>
+                </tbody>
+              ) : (
+                <tbody>
+                  {movies.map((m) => (
+                    <tr key={m.id} className="border-b border-gray-800">
+                      <td className="px-3 py-2 font-medium text-gray-100">
+                        <Link href={`/admin/movies/${m.id}`}>{m.title}</Link>
+                      </td>
+                      <td className="px-3 py-2 text-gray-300">{new Date(m.release_date).toLocaleDateString()}</td>
+                      <td className="px-3 py-2">
+                        <span
+                          className={
+                            'rounded px-2 py-1 text-xs ' +
+                            (m.status === 'published'
+                              ? 'bg-green-500/10 text-green-300'
+                              : 'bg-yellow-500/10 text-yellow-300')
+                          }
+                        >
+                          {m.status}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 text-gray-300">{m.vote_average?.toFixed(1)}</td>
+                      <td className="px-3 py-2 text-right">
+                        <div className="inline-flex items-center gap-2">
+                          <button
+                            onClick={() => router.push(`/admin/movies/${m.id}/update`)}
+                            className="rounded bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-500"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(m.id)}
+                            disabled={deletingId === m.id}
+                            className={`rounded px-3 py-1 text-xs text-white ${deletingId === m.id ? 'bg-red-400/60' : 'bg-red-600 hover:bg-red-500'}`}
+                          >
+                            {deletingId === m.id ? 'Deleting...' : confirmingId === m.id ? 'Confirm delete' : 'Delete'}
+                          </button>
+                          {confirmingId === m.id && (
+                            <button
+                              onClick={() => setConfirmingId(null)}
+                              className="rounded border border-gray-700 px-2 py-1 text-xs text-gray-200"
+                            >
+                              Cancel
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {movies.length === 0 && (
+                    <tr>
+                      <td className="px-3 py-6 text-center text-gray-400" colSpan={5}>No movies found</td>
+                    </tr>
+                  )}
+                </tbody>
+              )}
+            </table>
+          </div>
 
           <div className="mt-4 flex items-center justify-between">
             <div className="text-sm text-gray-400">
@@ -245,9 +246,8 @@ export default function AdminMoviesPage() {
               </button>
             </div>
           </div>
-        </div >
-      )
-}
+        </>
+      )}
     </>
   );
 }

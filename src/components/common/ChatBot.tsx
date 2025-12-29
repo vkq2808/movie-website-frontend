@@ -17,10 +17,12 @@ export default function ChatBot() {
     setMessages((prev) => [...prev, { role: 'user', content: userText }]);
     setLoading(true);
     try {
-      const data = await sendChatMessage(userText);
-      const botMsg = data?.botMessage?.message ?? data?.data?.botMessage?.message;
+      const res = await sendChatMessage(userText);
+      const botMsg = res?.status === 'success' ? res.data.botMessage.message : undefined;
       if (botMsg) {
         setMessages((prev) => [...prev, { role: 'bot', content: String(botMsg) }]);
+      } else if (res?.status === 'error') {
+        setMessages((prev) => [...prev, { role: 'bot', content: res.error?.message ?? 'Có lỗi xảy ra, vui lòng thử lại.' }]);
       }
     } catch (e) {
       setMessages((prev) => [...prev, { role: 'bot', content: 'Có lỗi xảy ra, vui lòng thử lại.' }]);
