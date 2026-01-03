@@ -1,19 +1,24 @@
-
-import { Voucher, VoucherType } from '@/apis/voucher.api';
-import { Movie } from '@/types/api.types';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Dispatch, SetStateAction } from 'react';
+import { Voucher, VoucherType } from "@/apis/voucher.api";
+import { Movie } from "@/types/api.types";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { Dispatch, SetStateAction } from "react";
 
 interface Props {
-  movie: Movie
-  selectedVoucher: Voucher | null
-  agreedToTerms: boolean
-  setAgreedToTerms: Dispatch<SetStateAction<boolean>>
-  error: string
+  movie: Movie;
+  selectedVoucher: Voucher | null;
+  agreedToTerms: boolean;
+  setAgreedToTerms: Dispatch<SetStateAction<boolean>>;
+  error: string;
 }
 
-export default function PurchaseConfirmationStep({ movie, selectedVoucher, agreedToTerms, setAgreedToTerms, error }: Props) {
-
+export default function PurchaseConfirmationStep({
+  movie,
+  selectedVoucher,
+  agreedToTerms,
+  setAgreedToTerms,
+  error,
+}: Props) {
   // Calculate final price
   const calculateFinalPrice = () => {
     if (!movie) return 0;
@@ -34,7 +39,9 @@ export default function PurchaseConfirmationStep({ movie, selectedVoucher, agree
       exit={{ opacity: 0, x: -20 }}
       className="space-y-6"
     >
-      <h2 className="text-3xl font-bold text-white mb-6">Xác nhận thanh toán</h2>
+      <h2 className="text-3xl font-bold text-white mb-6">
+        Xác nhận thanh toán
+      </h2>
 
       <div className="bg-gray-800/50 rounded-lg p-6 space-y-4">
         <div className="flex items-center justify-between">
@@ -44,13 +51,17 @@ export default function PurchaseConfirmationStep({ movie, selectedVoucher, agree
         {selectedVoucher && (
           <div className="flex items-center justify-between">
             <span className="text-gray-400">Voucher:</span>
-            <span className="text-green-500 font-medium">{selectedVoucher.code}</span>
+            <span className="text-green-500 font-medium">
+              {selectedVoucher.code}
+            </span>
           </div>
         )}
         <div className="flex items-center justify-between pt-4 border-t border-gray-700">
-          <span className="text-white font-semibold text-lg">Tổng thanh toán:</span>
+          <span className="text-white font-semibold text-lg">
+            Tổng thanh toán:
+          </span>
           <span className="text-3xl font-bold text-red-500">
-            {calculateFinalPrice().toLocaleString('vi-VN')}đ
+            {calculateFinalPrice().toLocaleString("vi-VN")}đ
           </span>
         </div>
       </div>
@@ -64,10 +75,26 @@ export default function PurchaseConfirmationStep({ movie, selectedVoucher, agree
             className="mt-1 w-5 h-5 rounded border-gray-600 text-red-600 focus:ring-red-500"
           />
           <span className="text-sm text-gray-300 leading-relaxed group-hover:text-white transition-colors">
-            Tôi đồng ý với{' '}
-            <span className="text-red-500 underline">điều khoản sử dụng</span> và{' '}
-            <span className="text-red-500 underline">chính sách hoàn tiền</span>. Sau khi
-            thanh toán, tôi có thể xem phim không giới hạn trong tài khoản của mình.
+            Tôi đồng ý với{" "}
+            <Link
+              href="/terms-of-use"
+              target="_blank"
+              className="text-red-500 underline"
+            >
+              điều khoản sử dụng
+            </Link>
+            {" "}
+            và
+            {" "}
+            <Link
+              href="/policies/refund-policy"
+              target="_blank"
+              className="text-red-500 underline"
+            >
+              chính sách hoàn tiền
+            </Link>
+            . Sau khi thanh toán, tôi có thể xem phim không giới hạn trong tài
+            khoản của mình.
           </span>
         </label>
       </div>
@@ -78,5 +105,5 @@ export default function PurchaseConfirmationStep({ movie, selectedVoucher, agree
         </div>
       )}
     </motion.div>
-  )
+  );
 }

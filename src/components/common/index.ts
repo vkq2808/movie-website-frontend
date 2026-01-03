@@ -1,7 +1,6 @@
 export * from "./Form";
 export * from "./MainPageMovieSwiper";
 
-
 import Footer from "./Footer";
 import Header from "./Header";
 import LoginOauth2 from "./LoginOauth2";
@@ -13,7 +12,6 @@ import Spinner from "./Spinner";
 import MovieCard from "./MovieCard/MovieCard";
 import RecommendationSection from "./Recommendation/RecommendationSection";
 
-
 export {
   Footer,
   Header,
@@ -24,5 +22,5 @@ export {
   LoadingSpinner,
   MovieCard,
   Spinner,
-  RecommendationSection
+  RecommendationSection,
 };

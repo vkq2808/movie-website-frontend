@@ -125,9 +125,34 @@ export interface User {
   email: string;
   username: string;
   role: string;
-  birthdate: string;
-  photo_url: string;
-
+  birthdate: string | null;
+  photo_url: string | null;
+  is_verified: boolean;
+  is_active: boolean;
   favoriteMovies: Movie[];
   created_at: string;
+}
+
+export enum MovieListVisibility {
+  PUBLIC = 'PUBLIC',
+  PRIVATE = 'PRIVATE',
+}
+
+export interface MovieListItem {
+  id: string;
+  movie: Movie;
+  position?: number;
+  created_at: string;
+}
+
+export interface MovieList {
+  id: string;
+  name: string;
+  description?: string;
+  visibility: MovieListVisibility;
+  user: User;
+  items?: MovieListItem[];
+  moviesCount?: number;
+  created_at: string;
+  updated_at: string;
 }

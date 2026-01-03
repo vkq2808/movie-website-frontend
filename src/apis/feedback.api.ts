@@ -7,12 +7,24 @@ export interface FeedbackUser {
   avatar?: string | null;
 }
 
+export interface FeedbackMovie {
+  id: string;
+  title: string;
+}
+
 export interface FeedbackItem {
   id: string;
   feedback: string;
   created_at: string;
   updated_at: string;
   user: FeedbackUser | null;
+  movie?: FeedbackMovie | null;
+  status?: 'active' | 'hidden' | 'deleted';
+}
+
+export interface AdminFeedback extends FeedbackItem {
+  status: 'active' | 'hidden' | 'deleted';
+  movie: FeedbackMovie;
 }
 
 export class ApiError extends Error {
@@ -63,6 +75,8 @@ const mapAndThrow = (error: any, context?: string) => {
   throw handleApiError(error, context);
 };
 
+// User Feedback APIs
+
 export async function createComment(movieId: string, feedback: string): Promise<FeedbackItem> {
   try {
     const res = await api.post<FeedbackItem>(`${apiEndpoint.FEEDBACK}/${movieId}`, { feedback });
@@ -101,3 +115,76 @@ export async function deleteComment(id: string): Promise<void> {
     throw error;
   }
 }
+
+// Admin Feedback APIs
+
+export async function adminGetFeedbacks(params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: 'active' | 'hidden' | 'all';
+}): Promise<ApiResponse<{
+  feedbacks: AdminFeedback[];
+  total: number;
+  page: number;
+  limit: number;
+  hasMore: boolean;
+}>> {
+  try {
+    const res = await api.get<ApiResponse<{
+      feedbacks: AdminFeedback[];
+      total: number;
+      page: number;
+      limit: number;
+      hasMore: boolean;
+    }>>(`/admin${apiEndpoint.FEEDBACK}`, { params });
+    return res.data;
+  } catch (error) {
+    mapAndThrow(error, 'adminGetFeedbacks');
+    throw error;
+  }
+}
+
+export async function adminHideFeedback(id: string): Promise<ApiResponse<AdminFeedback>> {
+  try {
+    const res = await api.post<ApiResponse<AdminFeedback>>(`/admin${apiEndpoint.FEEDBACK}/${id}/hide`);
+    return res.data;
+  } catch (error) {
+    mapAndThrow(error, 'adminHideFeedback');
+    throw error;
+  }
+}
+
+export async function adminUnhideFeedback(id: string): Promise<ApiResponse<AdminFeedback>> {
+  try {
+    const res = await api.post<ApiResponse<AdminFeedback>>(`/admin${apiEndpoint.FEEDBACK}/${id}/unhide`);
+    return res.data;
+  } catch (error) {
+    mapAndThrow(error, 'adminUnhideFeedback');
+    throw error;
+  }
+}
+
+export async function adminDeleteFeedback(id: string): Promise<ApiResponse<null>> {
+  try {
+    const res = await api.delete<ApiResponse<null>>(`/admin${apiEndpoint.FEEDBACK}/${id}`);
+    return res.data;
+  } catch (error) {
+    mapAndThrow(error, 'adminDeleteFeedback');
+    throw error;
+  }
+}
+
+export const feedbackApi = {
+  // User APIs
+  createComment,
+  getComments,
+  updateComment,
+  deleteComment,
+  // Admin APIs
+  adminGetFeedbacks,
+  adminHideFeedback,
+  adminUnhideFeedback,
+  adminDeleteFeedback,
+};
+

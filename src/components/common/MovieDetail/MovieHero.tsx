@@ -1,12 +1,17 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useLanguageStore } from '@/zustand'
 import { Heart, Share, MessageCircle, PlusCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button';
+import AddToListButton from '@/components/movie-list/AddToListButton'
 import Image from 'next/image'
 import MoviePurchaseButton from '@/components/common/MovieDetail/MoviePurchaseButton'
 import { maximizeTextLength } from '@/utils/string.util'
 import clsx from 'clsx'
 import { Genre, Movie } from '@/types/api.types'
+import { useAuthStore } from '@/zustand/auth.store'
+import { toggleFavorite, getFavoriteStatus } from '@/apis/favorite.api'
+import { useRouter } from 'next/navigation'
 
 interface MovieHeroProps {
   movie: Movie
@@ -14,8 +19,40 @@ interface MovieHeroProps {
 
 const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
   const language = useLanguageStore((s) => s.currentLanguage)
+  const user = useAuthStore((s) => s.user)
+  const router = useRouter()
+  
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
+  const [isFavorite, setIsFavorite] = useState(false)
+  const [isLoadingFavorite, setIsLoadingFavorite] = useState(false)
+  const [isInitializing, setIsInitializing] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  // --- Fetch initial favorite status on mount ---
+  useEffect(() => {
+    // Only fetch if user is logged in and movie ID exists
+    if (!user || !movie?.id) {
+      setIsInitializing(false);
+      return;
+    }
+
+    const fetchStatus = async () => {
+      setIsInitializing(true);
+      try {
+        const response = await getFavoriteStatus(movie.id);
+        if (response.success && response.data) {
+          setIsFavorite(response.data.isFavorite);
+        }
+      } catch (error) {
+        setIsFavorite(false);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    fetchStatus();
+  }, [user, movie?.id]);
 
   // --- Xác định video trailer hợp lệ ---
   const mainVideo =
@@ -28,6 +65,34 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
       (n) => n.iso_639_1 === language.iso_639_1
     )
     return nameForLanguage ? nameForLanguage.name : genre.names?.[0]?.name || 'Không xác định'
+  }
+
+  // --- Handle favorite button click ---
+  const handleToggleFavorite = async () => {
+    // Check if user is logged in
+    if (!user) {
+      router.push('/auth/login')
+      return
+    }
+
+    setIsLoadingFavorite(true)
+    setErrorMessage(null)
+
+    try {
+      const response = await toggleFavorite(movie.id)
+      
+      if (response.success && response.data) {
+        setIsFavorite(response.data.isFavorite)
+      } else {
+        setErrorMessage(response.message || 'Failed to toggle favorite')
+      }
+    } catch (error: any) {
+      const errorMsg = error?.response?.data?.message || 'Failed to toggle favorite'
+      setErrorMessage(errorMsg)
+      console.error('Error toggling favorite:', error)
+    } finally {
+      setIsLoadingFavorite(false)
+    }
   }
 
   return (
@@ -116,20 +181,45 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
                 </div>
 
                 <div className="flex gap-4">
-                  <button className="p-3 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors">
-                    <Heart className="w-5 h-5 text-red-500" />
-                  </button>
-                  <button className="p-3 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors">
-                    <PlusCircle className="w-5 h-5 text-blue-500" />
-                  </button>
-                  <button className="p-3 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors">
+                  {/* Favorite Button */}
+                  <Button variant="ghost" size="icon" aria-label="Add to playlist" 
+
+                    onClick={handleToggleFavorite}
+                    className={clsx(
+                      'p-3 rounded-full transition-all duration-200',
+                      isFavorite
+                        ? 'bg-red-600 hover:bg-red-700'
+                        : 'bg-gray-800 hover:bg-gray-700',
+                      (isLoadingFavorite || isInitializing) && 'opacity-50 cursor-not-allowed'
+                    )}
+                    title={user ? (isFavorite ? 'Remove from favorites' : 'Add to favorites') : 'Please login to add to favorites'}
+                  >
+                    <Heart
+                      className={clsx(
+                        'w-5 h-5 transition-all duration-200',
+                        isFavorite ? 'fill-white text-white' : 'text-red-500'
+                      )}
+                    />
+                  </Button>
+
+                  {/* Add to Playlist Button */}
+                  <div title="Add to your playlist">
+                    <AddToListButton movieId={movie.id} />
+                  </div>
+
+                  <Button variant="ghost" size="icon" aria-label="Add to playlist" 
+                  className='p-3 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors'>
                     <Share className="w-5 h-5 text-green-500" />
-                  </button>
-                  <button className="p-3 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors">
-                    <MessageCircle className="w-5 h-5 text-yellow-500" />
-                  </button>
+                  </Button>
                 </div>
               </div>
+
+              {/* Error Message */}
+              {errorMessage && (
+                <div className="text-red-400 text-sm bg-red-900/20 px-3 py-2 rounded">
+                  {errorMessage}
+                </div>
+              )}
 
               {/* Meta Info */}
               <div className="flex items-center gap-6 text-sm text-gray-300">

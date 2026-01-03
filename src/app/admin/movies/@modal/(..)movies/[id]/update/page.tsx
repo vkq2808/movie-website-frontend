@@ -3,7 +3,9 @@
 
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
-import MovieForm, { type MovieFormValues } from "@/components/admin/MovieForm/MovieForm";
+import MovieForm, {
+  type MovieFormValues,
+} from "@/components/admin/MovieForm/MovieForm";
 import { adminApi } from "@/apis/admin.api";
 import LoadingSpinner from "@/components/common/Loading/LoadingSpinner";
 import { MovieStatus } from "@/constants/enum";
@@ -24,9 +26,9 @@ export default function UpdatePanel() {
     cast: [],
     crew: [],
     original_language: {
-      id: '',
-      name: '',
-      iso_639_1: ''
+      id: "",
+      name: "",
+      iso_639_1: "",
     },
     status: MovieStatus.DRAFT,
     price: 0,
@@ -37,7 +39,7 @@ export default function UpdatePanel() {
     backdrops: [],
     posters: [],
     release_date: "",
-    videos: []
+    videos: [],
   });
 
   React.useEffect(() => {
@@ -46,6 +48,7 @@ export default function UpdatePanel() {
     (async () => {
       try {
         const res = await adminApi.getMovie(id);
+        console.log(res);
         if (!mounted) return;
 
         if (!(res.success && res.data)) {
@@ -85,14 +88,10 @@ export default function UpdatePanel() {
           price: m.price,
           release_date: "",
           original_language: m.original_language,
-          videos:
-            videosRes.status === "fulfilled" ? videosRes.value.data : [],
-          genres:
-            genresRes.status === "fulfilled" ? genresRes.value.data : [],
-          cast:
-            castRes.status === "fulfilled" ? castRes.value.data.cast : [],
-          crew:
-            crewRes.status === "fulfilled" ? crewRes.value.data.crew : [],
+          videos: videosRes.status === "fulfilled" ? videosRes.value.data : [],
+          genres: genresRes.status === "fulfilled" ? genresRes.value.data : [],
+          cast: castRes.status === "fulfilled" ? castRes.value.data.cast : [],
+          crew: crewRes.status === "fulfilled" ? crewRes.value.data.crew : [],
           production_companies:
             prodRes.status === "fulfilled"
               ? prodRes.value.data.production_companies
@@ -105,9 +104,11 @@ export default function UpdatePanel() {
             spokenRes.status === "fulfilled"
               ? spokenRes.value.data.spoken_languages
               : [],
+          posters: m.posters,
+          backdrops: m.backdrops,
         };
 
-        setInitial(prev => ({ ...prev, ...newData }));
+        setInitial((prev) => ({ ...prev, ...newData }));
       } catch (err) {
         console.error("Error loading movie details for update modal:", err);
         setError("Failed to load movie");
@@ -123,13 +124,13 @@ export default function UpdatePanel() {
 
   const handleClose = () => {
     router.back();
-  }
+  };
 
   const handleSubmit = async (values: MovieFormValues) => {
     try {
       setSubmitting(true);
-      const cast = values.cast.map(c => ({ ...c, person_id: c.person.id }));
-      const crew = values.crew.map(c => ({ ...c, person_id: c.person.id }));
+      const cast = values.cast.map((c) => ({ ...c, person_id: c.person.id }));
+      const crew = values.crew.map((c) => ({ ...c, person_id: c.person.id }));
 
       const savingValues = {
         ...values,
@@ -143,7 +144,6 @@ export default function UpdatePanel() {
       handleClose();
       // 🔄 Refresh dữ liệu của Server Component cha
       router.refresh();
-
     } catch {
       setError("Failed to save movie");
     } finally {
@@ -151,14 +151,11 @@ export default function UpdatePanel() {
     }
   };
 
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <div className="w-[720px] max-h-[90vh] overflow-y-auto rounded-lg border border-gray-700 bg-gray-900 p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">
-            {"Update Movie"}
-          </h2>
+          <h2 className="text-lg font-semibold text-white">{"Update Movie"}</h2>
           <button
             onClick={handleClose}
             className="rounded bg-gray-700 px-3 py-1 text-xs text-gray-100 hover:bg-gray-600"

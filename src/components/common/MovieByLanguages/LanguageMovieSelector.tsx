@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Movie } from '@/types/api.types'
 import movieApi from '@/apis/movie.api';
-import MovieCard from '@/components/common/MovieCard/MovieCard'
+import {MovieCard} from '@/components/common'
 import LoadingSpinner from '../Loading/LoadingSpinner'
 
 /**
