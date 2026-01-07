@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import { getWalletBalance, addBalance } from '@/apis/wallet.api';
+import { checkout } from '@/apis/payment.api';
 import { useAuthStore } from '@/zustand/auth.store';
 import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
 
@@ -60,6 +61,25 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
     setError(null);
 
     try {
+      if (selectedPaymentMethod === 'vnpay') {
+        const checkoutResponse = await checkout({
+          amount,
+          currency: 'USD',
+          payment_method: 'vnpay',
+          return_url: `${window.location.origin}/callback-vnpay`, 
+        });
+
+        if (checkoutResponse.success && checkoutResponse.data.payment_url) {
+            window.location.href = checkoutResponse.data.payment_url;
+            return;
+        } else {
+          setError('Failed to create payment. Please try again.');
+          setIsAddingBalance(false);
+          return;
+        }
+      }
+
+      // For other payment methods (manual, momo, bank), use the old addBalance API
       const response = await addBalance(
         amount,
         selectedPaymentMethod,
