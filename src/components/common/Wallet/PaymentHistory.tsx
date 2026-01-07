@@ -125,6 +125,31 @@ const PaymentHistory: React.FC<PaymentHistoryProps> = ({ className = '' }) => {
     }
   };
 
+  const getStatusBadge = (paymentStatus: string) => {
+    switch (paymentStatus?.toLowerCase()) {
+      case 'success':
+        return (
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
+            Success
+          </span>
+        );
+      case 'pending':
+        return (
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-500/20 text-orange-400 border border-orange-500/30">
+            Pending
+          </span>
+        );
+      case 'fail':
+        return (
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">
+            Failed
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
+
   if (error) {
     return (
       <div className={`bg-gray-800 rounded-lg p-6 ${className}`}>
@@ -186,9 +211,12 @@ const PaymentHistory: React.FC<PaymentHistoryProps> = ({ className = '' }) => {
               <div className="flex items-center space-x-3">
                 {getTransactionIcon(payment.transaction_type)}
                 <div>
-                  <p className="text-white font-medium">
-                    {getTransactionTypeLabel(payment.transaction_type)}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-white font-medium">
+                      {getTransactionTypeLabel(payment.transaction_type)}
+                    </p>
+                    {payment.transaction_type === 'wallet_topup' && getStatusBadge(payment.payment_status)}
+                  </div>
                   <p className="text-sm text-gray-400">
                     {payment.description || 'Giao dịch'}
                   </p>

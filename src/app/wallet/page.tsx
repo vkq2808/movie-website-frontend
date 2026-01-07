@@ -1,21 +1,49 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import WalletBalance from '@/components/common/Wallet/WalletBalance';
 import PaymentHistory from '@/components/common/Wallet/PaymentHistory';
 import WalletSummary from '@/components/common/Wallet/WalletSummary';
 import { useAuthStore } from '@/zustand';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-const WalletPage: React.FC = () => {
+const WalletContent = () => {
   const [refreshKey, setRefreshKey] = useState(0);
+  const [paymentStatus, setPaymentStatus] = useState<'success' | 'error' | null>(null);
   const { user } = useAuthStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!user) {
       router.push(`/auth/login?from=${encodeURIComponent(window.location.pathname)}`);
     }
-  }, [user])
+  }, [user, router]);
+
+  // Check for payment status from VNPay callback
+  useEffect(() => {
+    const status = searchParams.get('payment_status');
+    const vnpResponseCode = searchParams.get('vnp_ResponseCode');
+    
+    if (status === 'success' || vnpResponseCode === '00') {
+      setPaymentStatus('success');
+      // Remove query params after showing message
+      const timer = setTimeout(() => {
+        router.replace('/wallet');
+        setPaymentStatus(null);
+        handleBalanceUpdate();
+      }, 5000); // Show message for 5 seconds
+      
+      return () => clearTimeout(timer);
+    } else if (vnpResponseCode && vnpResponseCode !== '00') {
+      setPaymentStatus('error');
+      const timer = setTimeout(() => {
+        router.replace('/wallet');
+        setPaymentStatus(null);
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, router]);
 
   const handleBalanceUpdate = () => {
     // Force refresh of all wallet-related components
@@ -32,6 +60,59 @@ const WalletPage: React.FC = () => {
             Manage your wallet balance and view transaction history
           </p>
         </div>
+
+        {/* Payment Status Notification */}
+        {paymentStatus === 'success' && (
+          <div className="max-w-2xl mx-auto mb-6 p-4 bg-green-900/20 border border-green-500 rounded-lg">
+            <div className="flex items-center">
+              <svg
+                className="w-6 h-6 text-green-400 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <div>
+                <h4 className="font-medium text-green-400 mb-1">Payment Successful!</h4>
+                <p className="text-sm text-green-200">
+                  Your payment has been processed successfully. Your wallet balance will be updated shortly.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {paymentStatus === 'error' && (
+          <div className="max-w-2xl mx-auto mb-6 p-4 bg-red-900/20 border border-red-500 rounded-lg">
+            <div className="flex items-center">
+              <svg
+                className="w-6 h-6 text-red-400 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <div>
+                <h4 className="font-medium text-red-400 mb-1">Payment Failed</h4>
+                <p className="text-sm text-red-200">
+                  Your payment could not be processed. Please try again or contact support if the problem persists.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Wallet Balance Section */}
         <div className="max-w-2xl mx-auto">
@@ -209,6 +290,18 @@ const WalletPage: React.FC = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const WalletPage: React.FC = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-gray-400">Loading...</div>
+      </div>
+    }>
+      <WalletContent />
+    </Suspense>
   );
 };
 

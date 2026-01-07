@@ -26,6 +26,7 @@ export const apiEndpoint = {
   WATCH_PROVIDER: "/watch-provider",
   WATCH_PARTY: "/watch-parties",
   FAVORITE: "/favorites",
+  PAYMENT: "/payment",
 };
 
 // Mở rộng interface InternalAxiosRequestConfig để thêm thuộc tính __retry
