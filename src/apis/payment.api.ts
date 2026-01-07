@@ -1,10 +1,10 @@
-import api, { apiEndpoint } from '@/utils/api.util';
-import { ApiResponse } from '@/types/api.response';
+import api, { apiEndpoint } from "@/utils/api.util";
+import { ApiResponse } from "@/types/api.response";
 
 export interface CheckoutRequest {
   amount: number;
-  currency: 'VND' | 'USD';
-  payment_method: 'manual' | 'momo' | 'vnpay' | 'bank';
+  currency: "VND" | "USD";
+  payment_method: "manual" | "momo" | "vnpay" | "bank";
   return_url: string;
 }
 
@@ -21,7 +21,7 @@ export interface PaymentResponse {
   amount: number;
   currency: string;
   payment_method: string;
-  payment_status: 'pending' | 'success' | 'fail';
+  payment_status: "pending" | "success" | "fail";
   transaction_type: string;
   reference_id?: string;
   description?: string;
@@ -51,3 +51,13 @@ export async function getPayment(
   return response.data;
 }
 
+export async function checkVnpaySignature(
+  paymentId: string,
+  params: Record<string, string | null>
+) {
+  const response = await api.get(
+    `${apiEndpoint.PAYMENT}/return/vnpay/${paymentId}`,
+    { params }
+  );
+  return response.data;
+}
