@@ -55,9 +55,8 @@ export async function checkVnpaySignature(
   paymentId: string,
   params: Record<string, string | null>
 ) {
-  const response = await api.get(
-    `${apiEndpoint.PAYMENT}/return/vnpay/${paymentId}`,
-    { params }
-  );
+  const response = await api.get(`${apiEndpoint.PAYMENT}/callback/vnpay`, {
+    params,
+  });
   return response.data;
 }

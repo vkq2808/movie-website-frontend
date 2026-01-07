@@ -66,9 +66,8 @@ const CallbackContent = () => {
           if (payment.payment_status === "success") {
             setStatus("success");
             toast.success("Payment Successful!", {
-              description: `Amount ${payment.amount.toLocaleString()} ${
-                payment.currency
-              } has been added to your wallet.`,
+              description: `Amount ${payment.amount.toLocaleString()} ${payment.currency
+                } has been added to your wallet.`,
             });
             setTimeout(() => router.push("/wallet"), 3000);
           } else if (payment.payment_status === "fail") {

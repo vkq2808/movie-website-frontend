@@ -23,7 +23,7 @@ const WalletContent = () => {
   useEffect(() => {
     const status = searchParams.get('payment_status');
     const vnpResponseCode = searchParams.get('vnp_ResponseCode');
-    
+
     if (status === 'success' || vnpResponseCode === '00') {
       setPaymentStatus('success');
       // Remove query params after showing message
@@ -32,7 +32,7 @@ const WalletContent = () => {
         setPaymentStatus(null);
         handleBalanceUpdate();
       }, 5000); // Show message for 5 seconds
-      
+
       return () => clearTimeout(timer);
     } else if (vnpResponseCode && vnpResponseCode !== '00') {
       setPaymentStatus('error');
@@ -40,7 +40,7 @@ const WalletContent = () => {
         router.replace('/wallet');
         setPaymentStatus(null);
       }, 5000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [searchParams, router]);
@@ -51,7 +51,7 @@ const WalletContent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white pt-20">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
