@@ -1,9 +1,9 @@
-'use client';
-import React, { useState, useEffect, useCallback } from 'react';
-import { getWalletBalance, addBalance } from '@/apis/wallet.api';
-import { checkout } from '@/apis/payment.api';
-import { useAuthStore } from '@/zustand/auth.store';
-import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
+"use client";
+import React, { useState, useEffect, useCallback } from "react";
+import { getWalletBalance, addBalance } from "@/apis/wallet.api";
+import { checkout } from "@/apis/payment.api";
+import { useAuthStore } from "@/zustand/auth.store";
+import LoadingSpinner from "@/components/common/Loading/LoadingSpinner";
 
 interface WalletBalanceProps {
   showAddBalance?: boolean;
@@ -13,18 +13,18 @@ interface WalletBalanceProps {
 
 const WalletBalance: React.FC<WalletBalanceProps> = ({
   showAddBalance = false,
-  className = '',
+  className = "",
   onBalanceUpdate,
 }) => {
   const [balance, setBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isAddingBalance, setIsAddingBalance] = useState(false);
-  const [addAmount, setAddAmount] = useState('');
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('manual');
+  const [addAmount, setAddAmount] = useState("");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("vnpay");
   const [error, setError] = useState<string | null>(null);
 
   // Get user from auth store
-  const user = useAuthStore(state => state.user);
+  const user = useAuthStore((state) => state.user);
 
   const fetchBalance = useCallback(async () => {
     // Only fetch if user is authenticated
@@ -39,7 +39,7 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
       const newBalance = response.data.balance;
       setBalance(newBalance);
     } catch (error) {
-      setError('Failed to load wallet balance');
+      setError("Failed to load wallet balance");
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +53,7 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
     const amount = parseFloat(addAmount);
 
     if (isNaN(amount) || amount <= 0) {
-      setError('Please enter a valid amount');
+      setError("Please enter a valid amount");
       return;
     }
 
@@ -61,19 +61,19 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
     setError(null);
 
     try {
-      if (selectedPaymentMethod === 'vnpay') {
+      if (selectedPaymentMethod === "vnpay") {
         const checkoutResponse = await checkout({
           amount,
-          currency: 'USD',
-          payment_method: 'vnpay',
-          return_url: `${window.location.origin}/callback-vnpay`, 
+          currency: "USD",
+          payment_method: "vnpay",
+          return_url: `${window.location.origin}/callback-vnpay`,
         });
 
         if (checkoutResponse.success && checkoutResponse.data.payment_url) {
-            window.location.href = checkoutResponse.data.payment_url;
-            return;
+          window.location.href = checkoutResponse.data.payment_url;
+          return;
         } else {
-          setError('Failed to create payment. Please try again.');
+          setError("Failed to create payment. Please try again.");
           setIsAddingBalance(false);
           return;
         }
@@ -84,23 +84,35 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
         amount,
         selectedPaymentMethod,
         undefined, // reference_id for external payments
-        `Nạp tiền qua ${selectedPaymentMethod === 'manual' ? 'thủ công' : selectedPaymentMethod}`
+        `Nạp tiền qua ${
+          selectedPaymentMethod === "manual"
+            ? "thủ công"
+            : selectedPaymentMethod
+        }`
       );
       const newBalance = response.data.balance;
       setBalance(newBalance);
-      setAddAmount('');
+      setAddAmount("");
 
       // Call callback to refresh other components
       if (onBalanceUpdate) {
         onBalanceUpdate();
       }
     } catch (error: unknown) {
-      if (error && typeof error === 'object' && 'response' in error &&
-        error.response && typeof error.response === 'object' && 'data' in error.response &&
-        error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "response" in error &&
+        error.response &&
+        typeof error.response === "object" &&
+        "data" in error.response &&
+        error.response.data &&
+        typeof error.response.data === "object" &&
+        "message" in error.response.data
+      ) {
         setError(error.response.data.message as string);
       } else {
-        setError('Failed to add balance');
+        setError("Failed to add balance");
       }
     } finally {
       setIsAddingBalance(false);
@@ -127,8 +139,12 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
             />
           </svg>
-          <h3 className="text-xl font-medium text-white mb-2">Login Required</h3>
-          <p className="text-gray-400 mb-4">Please login to view your wallet balance</p>
+          <h3 className="text-xl font-medium text-white mb-2">
+            Login Required
+          </h3>
+          <p className="text-gray-400 mb-4">
+            Please login to view your wallet balance
+          </p>
           <a
             href="/auth/login"
             className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
@@ -184,7 +200,9 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
           </div>
           <div>
             <p className="text-sm text-gray-400">Wallet Balance</p>
-            <p className="text-2xl font-bold text-white">${balance.toFixed(2)}</p>
+            <p className="text-2xl font-bold text-white">
+              ${balance.toFixed(2)}
+            </p>
           </div>
         </div>
 
@@ -212,7 +230,9 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
       {/* Add Balance Section */}
       {showAddBalance && (
         <div className="p-4 bg-gray-800 rounded-lg border border-gray-700 space-y-4">
-          <h3 className="text-lg font-medium text-white">Add Money to Wallet</h3>
+          <h3 className="text-lg font-medium text-white">
+            Add Money to Wallet
+          </h3>
 
           {/* Quick Add Buttons */}
           <div className="grid grid-cols-2 gap-2">
@@ -229,16 +249,18 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
 
           {/* Payment Method Selection */}
           <div className="space-y-2">
-            <label className="block text-sm text-gray-400">Payment Method</label>
+            <label className="block text-sm text-gray-400">
+              Payment Method
+            </label>
             <select
               value={selectedPaymentMethod}
               onChange={(e) => setSelectedPaymentMethod(e.target.value)}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
             >
               <option value="manual">Manual (Demo)</option>
-              <option value="momo">MoMo Wallet</option>
+              {/*<option value="momo">MoMo Wallet</option> */}
               <option value="vnpay">VNPay</option>
-              <option value="bank">Bank Transfer</option>
+              {/*<option value="bank">Bank Transfer</option>*/}
             </select>
           </div>
 
