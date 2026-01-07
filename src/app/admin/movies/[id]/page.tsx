@@ -4,7 +4,7 @@ import React from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/common/Loading/LoadingSpinner";
 import { adminApi } from "@/apis/admin.api";
-import movieApi from '@/apis/movie.api';
+import movieApi from "@/apis/movie.api";
 import Link from "next/link";
 import { useLanguageStore } from "@/zustand";
 import VideoCard from "@/components/ui/VideoCard";
@@ -19,7 +19,9 @@ export default function AdminMovieDetailPage() {
 
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
-  const [movie, setMovie] = React.useState<import("@/apis/admin.api").AdminMovie | null>(null);
+  const [movie, setMovie] = React.useState<
+    import("@/apis/admin.api").AdminMovie | null
+  >(null);
 
   // Hàm load movie
   const fetchMovie = React.useCallback(async () => {
@@ -37,9 +39,15 @@ export default function AdminMovieDetailPage() {
 
       // Fetch supplemental resources in parallel (new split-backend design)
       const [videosRes, genresRes, castRes] = await Promise.all([
-        movieApi.getMovieVideos(id).catch((e) => ({ success: false, data: [] } as any)),
-        movieApi.getMovieGenres(id).catch((e) => ({ success: false, data: [] } as any)),
-        movieApi.getMovieCast(id).catch((e) => ({ success: false, data: [] } as any)),
+        movieApi
+          .getMovieVideos(id)
+          .catch((e) => ({ success: false, data: [] } as any)),
+        movieApi
+          .getMovieGenres(id)
+          .catch((e) => ({ success: false, data: [] } as any)),
+        movieApi
+          .getMovieCast(id)
+          .catch((e) => ({ success: false, data: [] } as any)),
       ]);
 
       // Merge into AdminMovie shape (prefer admin data when available)
@@ -107,10 +115,11 @@ export default function AdminMovieDetailPage() {
           <h1 className="text-2xl font-semibold">{movie.title}</h1>
           <div className="mt-1 flex items-center gap-2 text-sm text-gray-400">
             <span
-              className={`rounded px-2 py-0.5 text-xs ${movie.status === "published"
-                ? "bg-green-800/40 text-green-200"
-                : "bg-yellow-800/40 text-yellow-200"
-                }`}
+              className={`rounded px-2 py-0.5 text-xs ${
+                movie.status === "published"
+                  ? "bg-green-800/40 text-green-200"
+                  : "bg-yellow-800/40 text-yellow-200"
+              }`}
             >
               {movie.status}
             </span>
@@ -129,13 +138,15 @@ export default function AdminMovieDetailPage() {
       {/* Overview */}
       <section>
         <h2 className="text-lg font-semibold text-white">Overview</h2>
-        <p className="mt-1 whitespace-pre-wrap text-sm">{movie.overview || "—"}</p>
+        <p className="mt-1 whitespace-pre-wrap text-sm">
+          {movie.overview || "—"}
+        </p>
       </section>
 
       {/* Images */}
       <section>
         <h2 className="text-lg font-semibold text-white">Images</h2>
-        <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2 h-32 w-56">
+        <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2 w-full">
           <ImageGrid
             title="Posters"
             images={movie.posters}
@@ -159,13 +170,17 @@ export default function AdminMovieDetailPage() {
         <div className="mt-2 flex flex-wrap gap-2">
           {movie.genres?.length
             ? movie.genres?.map((g) => (
-              <span
-                key={g.id}
-                className="rounded border border-gray-700 bg-gray-800 px-2 py-0.5 text-xs"
-              >
-                {g.names.find((n) => n.iso_639_1 === currentLanguage.iso_639_1)?.name}
-              </span>
-            ))
+                <span
+                  key={g.id}
+                  className="rounded border border-gray-700 bg-gray-800 px-2 py-0.5 text-xs"
+                >
+                  {
+                    g.names.find(
+                      (n) => n.iso_639_1 === currentLanguage.iso_639_1
+                    )?.name
+                  }
+                </span>
+              ))
             : "—"}
         </div>
         <div className="mt-3">
@@ -173,13 +188,13 @@ export default function AdminMovieDetailPage() {
           <div className="mt-1 flex flex-wrap gap-2">
             {movie.keywords?.length
               ? movie.keywords.map((k) => (
-                <span
-                  key={k.id}
-                  className="rounded border border-gray-700 bg-gray-800 px-2 py-0.5 text-xs"
-                >
-                  {k.name}
-                </span>
-              ))
+                  <span
+                    key={k.id}
+                    className="rounded border border-gray-700 bg-gray-800 px-2 py-0.5 text-xs"
+                  >
+                    {k.name}
+                  </span>
+                ))
               : "—"}
           </div>
         </div>
@@ -189,7 +204,10 @@ export default function AdminMovieDetailPage() {
       <section>
         <h2 className="text-lg font-semibold text-white">Production Info</h2>
         <div className="grid grid-cols-2 gap-4">
-          <InfoList title="Production Companies" items={movie.production_companies} />
+          <InfoList
+            title="Production Companies"
+            items={movie.production_companies}
+          />
           <InfoList title="Languages" items={movie.spoken_languages} />
         </div>
       </section>
@@ -202,10 +220,19 @@ export default function AdminMovieDetailPage() {
       <section>
         <h2 className="text-lg font-semibold text-white">Statistics</h2>
         <div className="mt-2 grid grid-cols-2 gap-4 md:grid-cols-3">
-          <Stat label="Budget" value={`$${movie.budget?.toLocaleString() || "—"}`} />
-          <Stat label="Revenue" value={`$${movie.revenue?.toLocaleString() || "—"}`} />
+          <Stat
+            label="Budget"
+            value={`$${movie.budget?.toLocaleString() || "—"}`}
+          />
+          <Stat
+            label="Revenue"
+            value={`$${movie.revenue?.toLocaleString() || "—"}`}
+          />
           <Stat label="Runtime" value={`${movie.runtime || "—"} min`} />
-          <Stat label="Popularity" value={movie.popularity?.toFixed(1) ?? "—"} />
+          <Stat
+            label="Popularity"
+            value={movie.popularity?.toFixed(1) ?? "—"}
+          />
           <Stat label="Vote Average" value={movie.vote_average ?? "—"} />
           <Stat label="Vote Count" value={movie.vote_count ?? "—"} />
         </div>
@@ -222,8 +249,10 @@ export default function AdminMovieDetailPage() {
                 className="rounded border border-gray-800 bg-gray-900/50 p-2 text-sm"
               >
                 <div>
-                  <span className="font-medium">{p.user.username}</span> ({p.user.email}) purchased
-                  at {new Date(p.purchased_at).toLocaleString()} for ${p.purchase_price}
+                  <span className="font-medium">{p.user.username}</span> (
+                  {p.user.email}) purchased at{" "}
+                  {new Date(p.purchased_at).toLocaleString()} for $
+                  {p.purchase_price}
                 </div>
               </div>
             ))
@@ -237,9 +266,18 @@ export default function AdminMovieDetailPage() {
       <section>
         <h2 className="text-lg font-semibold text-white">Metadata</h2>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-          <Stat label="Created At" value={movie.created_at?.toString().slice(0, 19)} />
-          <Stat label="Updated At" value={movie.updated_at?.toString().slice(0, 19)} />
-          <Stat label="Deleted At" value={movie.deleted_at?.toString().slice(0, 19) || "—"} />
+          <Stat
+            label="Created At"
+            value={movie.created_at?.toString().slice(0, 19)}
+          />
+          <Stat
+            label="Updated At"
+            value={movie.updated_at?.toString().slice(0, 19)}
+          />
+          <Stat
+            label="Deleted At"
+            value={movie.deleted_at?.toString().slice(0, 19) || "—"}
+          />
           <Stat label="TMDB id" value={movie.original_id} />
         </div>
       </section>
@@ -265,7 +303,9 @@ export default function AdminMovieDetailPage() {
 function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
-      <div className="text-xs uppercase tracking-wide text-gray-400">{label}</div>
+      <div className="text-xs uppercase tracking-wide text-gray-400">
+        {label}
+      </div>
       <div className="text-sm text-gray-200">{value}</div>
     </div>
   );
@@ -276,7 +316,11 @@ function InfoList({ title, items }: { title: string; items?: any[] }) {
     <div>
       <h3 className="text-sm text-gray-400">{title}</h3>
       <ul className="mt-1 list-disc pl-4">
-        {items?.length ? items.map((i) => <li key={i.id}>{i.name}</li>) : <li>—</li>}
+        {items?.length ? (
+          items.map((i) => <li key={i.id}>{i.name}</li>)
+        ) : (
+          <li>—</li>
+        )}
       </ul>
     </div>
   );
@@ -287,7 +331,7 @@ function ImageGrid({
   images,
   itemsPerRow,
   placeholderWidth,
-  placeholderHeight
+  placeholderHeight,
 }: {
   title: string;
   images: { url: string; alt: string }[];
@@ -296,10 +340,11 @@ function ImageGrid({
   placeholderHeight: number;
 }) {
   const total = images.length;
-  const totalSlots = Math.ceil(total / itemsPerRow) * itemsPerRow || itemsPerRow;
+  const totalSlots =
+    Math.ceil(total / itemsPerRow) * itemsPerRow || itemsPerRow;
 
   return (
-    <div>
+    <div className="w-full">
       <h3 className="text-sm text-gray-400">{title}</h3>
       <div className="mt-2 flex flex-wrap gap-3">
         {Array.from({ length: totalSlots }).map((_, i) => {
@@ -319,7 +364,7 @@ function ImageGrid({
               className={`flex items-center justify-center rounded border border-dashed border-gray-700 bg-gray-800 text-gray-500 text-sm`}
               style={{
                 width: placeholderWidth,
-                height: placeholderHeight
+                height: placeholderHeight,
               }}
             >
               Empty
@@ -331,7 +376,15 @@ function ImageGrid({
   );
 }
 
-function CastCrewSection({ title, list, type }: { title: string; list: any[]; type: "cast" | "crew" }) {
+function CastCrewSection({
+  title,
+  list,
+  type,
+}: {
+  title: string;
+  list: any[];
+  type: "cast" | "crew";
+}) {
   return (
     <section>
       <h2 className="text-lg font-semibold text-white">{title}</h2>
@@ -351,12 +404,16 @@ function CastCrewSection({ title, list, type }: { title: string; list: any[]; ty
               />
               <div className="mt-1 text-sm font-medium">{item.person.name}</div>
               <div className="text-xs text-gray-400">
-                {type === "cast" ? `as ${item.character || "Unknown"}` : item.job}
+                {type === "cast"
+                  ? `as ${item.character || "Unknown"}`
+                  : item.job}
               </div>
             </div>
           ))
         ) : (
-          <div className="text-sm text-gray-500">No {title.toLowerCase()} info</div>
+          <div className="text-sm text-gray-500">
+            No {title.toLowerCase()} info
+          </div>
         )}
       </div>
     </section>

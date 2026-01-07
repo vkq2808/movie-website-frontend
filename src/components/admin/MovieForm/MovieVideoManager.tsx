@@ -79,6 +79,7 @@ export default function MovieVideoManager({ movie, setValues }: Props) {
       setSessionId(res.data.plan.sessionId)
       setStatus('uploading')
       await uploadChunks(res.data.plan.sessionId)
+      setFile(null)
     } catch (err) {
       if (err instanceof AxiosError) {
         console.error('Error when uploading:', err.response?.data?.message)
@@ -173,6 +174,8 @@ export default function MovieVideoManager({ movie, setValues }: Props) {
   useEffect(() => {
     if (!file) {
       setVideoType(activeTab);
+    } else {
+      setTitle(file.name || activeTab);
     }
   }, [activeTab, file])
 
