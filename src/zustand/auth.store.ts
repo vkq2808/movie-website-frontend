@@ -7,7 +7,7 @@ export interface AuthStore {
   user: User | undefined
   ,
   setAuth: ({ user }: { user: User }) => Promise<void>;
-  setUser: (user: User) => void;
+  setUser: (user: User | undefined) => void;
   fetchUser: () => Promise<void>;
   logout: () => void;
   // Non-state helper signatures can be declared in components; keeping store minimal.
@@ -38,7 +38,7 @@ export const useAuthStore = create<AuthStore>(
       }
       delete api.defaults.headers.common['Authorization'];
     },
-    setUser: (user: User) => set((state) => ({ ...state, user })),
+    setUser: (user: User | undefined) => set((state) => ({ ...state, user })),
     fetchUser: async () => {
       try {
         const { data } = await api.get<ApiResponse<User>>(`${apiEndpoint.AUTH}/me`);

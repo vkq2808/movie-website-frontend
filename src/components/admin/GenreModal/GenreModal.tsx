@@ -1,6 +1,11 @@
 "use client";
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
@@ -20,7 +25,11 @@ export function GenreModal({ open, onClose, genre, onSave }: Props) {
     genre?.names || [{ iso_639_1: "en", name: "" }]
   );
 
-  const handleChange = (index: number, field: "iso_639_1" | "name", value: string) => {
+  const handleChange = (
+    index: number,
+    field: "iso_639_1" | "name",
+    value: string
+  ) => {
     setNames((prev) =>
       prev.map((n, i) => (i === index ? { ...n, [field]: value } : n))
     );
@@ -62,7 +71,7 @@ export function GenreModal({ open, onClose, genre, onSave }: Props) {
               <Input
                 value={n.name}
                 onChange={(e) => handleChange(i, "name", e.target.value)}
-                placeholder="Genre name"
+                placeholder="Tên thể loại"
                 className="flex-1"
               />
               <button type="button" onClick={() => removeLang(i)}>

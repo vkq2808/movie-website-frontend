@@ -54,7 +54,7 @@ const Header = () => {
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Tìm kiếm phim, diễn viên"
+                placeholder="Search for movies, actors"
                 className="w-full h-10 pl-10 pr-10 rounded placeholder-neutral-50 focus:outline-none bg-gray-800/70"
               />
               <button type="submit" className="absolute right-3 top-2.5">
@@ -65,7 +65,7 @@ const Header = () => {
 
           {/* Mega menu "Thể loại" */}
           <Popover className="relative">            <PopoverButton className="flex items-center space-x-1 cursor-pointer focus:outline-none min-w-24">
-            <span>Thể loại</span>
+            <span>Genres</span>
             <ChevronDownIcon className="w-4 h-4" />
           </PopoverButton>
             <PopoverPanel className="absolute z-10 mt-2 w-screen max-w-xl pr-8 bg-gray-800 p-4 rounded shadow-lg focus:outline-none">
@@ -172,19 +172,19 @@ const UserInformation = () => {
             onClick={() => {
               try {
                 logout();
-                toast.success('Đăng xuất thành công');
+                toast.success('Logged out successfully');
               } catch (e) {
-                toast.error('Đăng xuất thất bại');
+                toast.error('Logout failed');
               }
             }}
             className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors"
           >
-            Đăng xuất
+            Logout
           </button>
         </>
       ) : (
         <div onClick={handleLoginNavigate} className="text-lg cursor-pointer font-medium text-neutral-100 hover:text-gray-400 transition-colors">
-          Đăng nhập
+          Login
         </div>
       )}
     </div>

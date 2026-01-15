@@ -1,8 +1,8 @@
-'use client';
-import React from 'react';
-import Image from 'next/image';
-import { UserIcon } from 'lucide-react';
-import { User } from '@/types/api.types';
+"use client";
+import React from "react";
+import Image from "next/image";
+import { UserIcon } from "lucide-react";
+import { User } from "@/types/api.types";
 
 interface ProfileHeaderProps {
   user: User;
@@ -32,12 +32,14 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
         <p className="text-slate-400 mb-2">{user.email}</p>
         <div className="flex gap-4 mt-2">
           <div className="px-4 py-2 bg-slate-800 rounded-md">
-            <p className="text-sm text-slate-400">Role</p>
+            <p className="text-sm text-slate-400">Vai trò</p>
             <p className="font-semibold capitalize">{user.role}</p>
           </div>
           <div className="px-4 py-2 bg-slate-800 rounded-md">
-            <p className="text-sm text-slate-400">Joined</p>
-            <p className="font-semibold">{new Date(user.created_at).toLocaleDateString()}</p>
+            <p className="text-sm text-slate-400">Tham gia</p>
+            <p className="font-semibold">
+              {new Date(user.created_at).toLocaleDateString()}
+            </p>
           </div>
         </div>
       </div>

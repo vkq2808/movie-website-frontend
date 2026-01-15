@@ -91,7 +91,7 @@ export class AutoCompleteMultiSelectInput<T extends Option>
 
     onChange(field, [...values, { ...item, name: trimmed } as T]);
     this.setState({ inputValue: "", showSuggestions: false });
-    this.toast?.success("Successfully add " + this.props.label)
+    this.toast?.success("Successfully added " + this.props.label)
   };
 
   removeItem = (name: string, id?: string) => {
@@ -102,7 +102,7 @@ export class AutoCompleteMultiSelectInput<T extends Option>
       return;
     }
     onChange(field, values.filter((v) => v.id !== id));
-    this.toast?.success("Successfully remove " + this.props.label)
+    this.toast?.success("Successfully removed " + this.props.label)
   };
 
   // ======================================================

@@ -1,13 +1,18 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import { User } from '@/types/api.types';
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
-import { MovieCard } from '@/components/common';
-import { Heart as HeartIcon, History as HistoryIcon, Wallet as WalletIcon, Settings as SettingsIcon } from 'lucide-react';
-import { useUpdateProfile, useFavoriteMovies, useWatchHistory } from '@/hooks';
-import { useAuthStore } from '@/zustand';
-import toast from 'react-hot-toast';
-import axios from 'axios';
+"use client";
+import React, { useEffect, useState } from "react";
+import { User } from "@/types/api.types";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
+import { MovieCard } from "@/components/common";
+import {
+  Heart as HeartIcon,
+  History as HistoryIcon,
+  Wallet as WalletIcon,
+  Settings as SettingsIcon,
+} from "lucide-react";
+import { useUpdateProfile, useFavoriteMovies, useWatchHistory } from "@/hooks";
+import { useAuthStore } from "@/zustand";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 interface ProfileTabsProps {
   user: User;
@@ -26,11 +31,11 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
   const { fetchUser } = useAuthStore();
 
   const [form, setForm] = useState<SettingsFormState>({
-    username: user.username || '',
-    email: user.email || '',
-    birthdate: user.birthdate || '',
-    currentPassword: '',
-    newPassword: '',
+    username: user.username || "",
+    email: user.email || "",
+    birthdate: user.birthdate || "",
+    currentPassword: "",
+    newPassword: "",
   });
 
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -38,7 +43,11 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
   // Use hooks
   const { updateProfile } = useUpdateProfile();
   const { favorites, loading: favoritesLoading } = useFavoriteMovies();
-  const { watchHistory, loading: historyLoading, refetch: refetchHistory } = useWatchHistory();
+  const {
+    watchHistory,
+    loading: historyLoading,
+    refetch: refetchHistory,
+  } = useWatchHistory();
 
   // Fetch watch history when tab changes to History
   useEffect(() => {
@@ -53,9 +62,12 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
       let profileUpdated = false;
 
       // Handle profile update if there are changes
-      if (form.username !== user.username || form.birthdate !== user.birthdate) {
+      if (
+        form.username !== user.username ||
+        form.birthdate !== user.birthdate
+      ) {
         const profilePayload: { username?: string; birthdate?: string } = {};
-        
+
         if (form.username !== user.username) {
           profilePayload.username = form.username;
         }
@@ -83,19 +95,22 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
         // Clear password fields after successful change
         setForm((s) => ({
           ...s,
-          currentPassword: '',
-          newPassword: '',
+          currentPassword: "",
+          newPassword: "",
         }));
 
-        toast.success('Password changed successfully');
+        toast.success("Đổi mật khẩu thành công");
       } else if (profileUpdated) {
-        toast.success('Profile updated successfully');
+        toast.success("Cập nhật hồ sơ thành công");
       }
 
       // Refetch user data to update the UI
       await fetchUser();
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to save changes';
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Không thể lưu thay đổi";
       toast.error(errorMessage);
     } finally {
       setIsSaving(false);
@@ -109,42 +124,58 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
           <Tab
             className={({ selected }) => `
               flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium 
-              ${selected ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
+              ${
+                selected
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
+              }
               transition-all focus:outline-none
             `}
           >
             <HeartIcon size={18} />
-            <span>Favorites</span>
+            <span>Yêu thích</span>
           </Tab>
           <Tab
             className={({ selected }) => `
               flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium 
-              ${selected ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
+              ${
+                selected
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
+              }
               transition-all focus:outline-none
             `}
           >
             <HistoryIcon size={18} />
-            <span>Watch History</span>
+            <span>Lịch sử xem</span>
           </Tab>
           <Tab
             className={({ selected }) => `
               flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium 
-              ${selected ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
+              ${
+                selected
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
+              }
               transition-all focus:outline-none
             `}
           >
             <WalletIcon size={18} />
-            <span>Payments</span>
+            <span>Thanh toán</span>
           </Tab>
           <Tab
             className={({ selected }) => `
               flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium 
-              ${selected ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
+              ${
+                selected
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
+              }
               transition-all focus:outline-none
             `}
           >
             <SettingsIcon size={18} />
-            <span>Settings</span>
+            <span>Cài đặt</span>
           </Tab>
         </TabList>
 
@@ -152,7 +183,7 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
           {/* Favorites Tab */}
           <TabPanel>
             <div className="bg-slate-900 rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-4">Your Favorite Movies</h2>
+              <h2 className="text-xl font-bold mb-4">Phim yêu thích của bạn</h2>
               {favoritesLoading ? (
                 <div className="flex justify-center py-12">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -166,9 +197,13 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <HeartIcon size={48} className="text-slate-600 mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No favorites yet</h3>
+                  <h3 className="text-lg font-medium mb-2">
+                    Chưa có phim yêu thích
+                  </h3>
                   <p className="text-slate-400 max-w-md">
-                    You haven&lsquo;t added any movies to your favorites yet. Browse movies and click the heart icon to add them to your favorites.
+                    Bạn chưa thêm phim nào vào danh sách yêu thích. Duyệt phim
+                    và nhấp vào biểu tượng trái tim để thêm vào danh sách yêu
+                    thích.
                   </p>
                 </div>
               )}
@@ -178,7 +213,7 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
           {/* Watch History Tab */}
           <TabPanel>
             <div className="bg-slate-900 rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-4">Your Watch History</h2>
+              <h2 className="text-xl font-bold mb-4">Lịch sử xem của bạn</h2>
               {historyLoading ? (
                 <div className="flex justify-center py-12">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -192,9 +227,12 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <HistoryIcon size={48} className="text-slate-600 mb-4" />
-                  <h3 className="text-lg font-medium mb-2">Watch history is empty</h3>
+                  <h3 className="text-lg font-medium mb-2">
+                    Lịch sử xem trống
+                  </h3>
                   <p className="text-slate-400 max-w-md">
-                    Your watch history will appear here as you watch movies on our platform.
+                    Lịch sử xem của bạn sẽ xuất hiện ở đây khi bạn xem phim trên
+                    nền tảng của chúng tôi.
                   </p>
                 </div>
               )}
@@ -204,12 +242,17 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
           {/* Payments Tab */}
           <TabPanel>
             <div className="bg-slate-900 rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-4">Payment Methods & History</h2>
+              <h2 className="text-xl font-bold mb-4">
+                Phương thức thanh toán & Lịch sử
+              </h2>
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <WalletIcon size={48} className="text-slate-600 mb-4" />
-                <h3 className="text-lg font-medium mb-2">No payment methods</h3>
+                <h3 className="text-lg font-medium mb-2">
+                  Không có phương thức thanh toán
+                </h3>
                 <p className="text-slate-400 max-w-md">
-                  Add a payment method to unlock premium features and rent exclusive movies.
+                  Thêm phương thức thanh toán để mở khóa các tính năng cao cấp
+                  và thuê phim độc quyền.
                 </p>
                 <button
                   onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
@@ -218,7 +261,7 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
                   }}
                   className="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
                 >
-                  Add Payment Method
+                  Thêm phương thức thanh toán
                 </button>
               </div>
             </div>
@@ -227,22 +270,28 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
           {/* Settings Tab */}
           <TabPanel>
             <div className="bg-slate-900 rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-6">Account Settings</h2>
+              <h2 className="text-xl font-bold mb-6">Cài đặt tài khoản</h2>
 
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-slate-400">Username</label>
+                    <label className="block text-sm font-medium text-slate-400">
+                      Tên người dùng
+                    </label>
                     <input
                       type="text"
                       value={form.username}
-                      onChange={(e) => setForm((s) => ({ ...s, username: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((s) => ({ ...s, username: e.target.value }))
+                      }
                       className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-slate-400">Email</label>
+                    <label className="block text-sm font-medium text-slate-400">
+                      Email
+                    </label>
                     <input
                       type="email"
                       value={form.email}
@@ -254,35 +303,53 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-slate-400">Birthdate</label>
+                    <label className="block text-sm font-medium text-slate-400">
+                      Ngày sinh
+                    </label>
                     <input
                       type="date"
                       value={form.birthdate}
-                      onChange={(e) => setForm((s) => ({ ...s, birthdate: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((s) => ({ ...s, birthdate: e.target.value }))
+                      }
                       className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
 
                 <div className="pt-4 border-t border-slate-800">
-                  <h3 className="text-lg font-medium mb-4">Password</h3>
+                  <h3 className="text-lg font-medium mb-4">Mật khẩu</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="block text-sm font-medium text-slate-400">Current Password</label>
+                      <label className="block text-sm font-medium text-slate-400">
+                        Mật khẩu hiện tại
+                      </label>
                       <input
                         type="password"
                         value={form.currentPassword}
-                        onChange={(e) => setForm((s) => ({ ...s, currentPassword: e.target.value }))}
+                        onChange={(e) =>
+                          setForm((s) => ({
+                            ...s,
+                            currentPassword: e.target.value,
+                          }))
+                        }
                         className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="block text-sm font-medium text-slate-400">New Password</label>
+                      <label className="block text-sm font-medium text-slate-400">
+                        Mật khẩu mới
+                      </label>
                       <input
                         type="password"
                         value={form.newPassword}
-                        onChange={(e) => setForm((s) => ({ ...s, newPassword: e.target.value }))}
+                        onChange={(e) =>
+                          setForm((s) => ({
+                            ...s,
+                            newPassword: e.target.value,
+                          }))
+                        }
                         className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
@@ -294,16 +361,16 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
                     onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.preventDefault();
                       setForm({
-                        username: user.username || '',
-                        email: user.email || '',
-                        birthdate: user.birthdate || '',
-                        currentPassword: '',
-                        newPassword: '',
+                        username: user.username || "",
+                        email: user.email || "",
+                        birthdate: user.birthdate || "",
+                        currentPassword: "",
+                        newPassword: "",
                       });
                     }}
                     className="px-6 py-2 bg-slate-700 hover:bg-slate-600 rounded-md transition-colors"
                   >
-                    Cancel
+                    Hủy
                   </button>
                   <button
                     onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
@@ -311,9 +378,13 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
                       handleSaveSettings();
                     }}
                     disabled={isSaving}
-                    className={`px-6 py-2 rounded-md transition-colors ${isSaving ? 'bg-slate-600 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+                    className={`px-6 py-2 rounded-md transition-colors ${
+                      isSaving
+                        ? "bg-slate-600 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700"
+                    }`}
                   >
-                    {isSaving ? 'Saving...' : 'Save Changes'}
+                    {isSaving ? "Đang lưu..." : "Lưu thay đổi"}
                   </button>
                 </div>
               </div>

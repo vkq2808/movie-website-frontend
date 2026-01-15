@@ -23,7 +23,7 @@ export function useUserProfile(): UseUserProfileReturn {
       });
       setUser(response.data.data);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to fetch profile");
+      setError(err.response?.data?.message || "Không thể tải hồ sơ");
     } finally {
       setLoading(false);
     }

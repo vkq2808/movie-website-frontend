@@ -14,13 +14,13 @@ const ForgetPasswordPage = () => {
 
   const validateData = () => {
     if (!email) {
-      setError("Email không được để trống");
-      toast.warning("Email không được để trống");
+      setError("Email is required");
+      toast.warning("Email is required");
       return false;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Email không hợp lệ");
-      toast.warning("Email không hợp lệ");
+      setError("Invalid email");
+      toast.warning("Invalid email");
       return false;
     }
     return true;
@@ -38,14 +38,14 @@ const ForgetPasswordPage = () => {
         .forgetPassword({ email })
         .then((res) => {
           if (res.success) {
-            toast.success("Gửi mã OTP thành công");
+            toast.success("OTP sent successfully");
             router.push("/auth/reset-password?email=" + email);
           } else {
-            toast.error(res.message || "Không thể gửi OTP");
+            toast.error(res.message || "Could not send OTP");
           }
         })
         .catch((error) => {
-          const msg = error?.response?.data?.message || "Không thể gửi OTP";
+          const msg = error?.response?.data?.message || "Could not send OTP";
           setError(msg);
           toast.error(msg);
         })
@@ -78,7 +78,7 @@ const ForgetPasswordPage = () => {
             {loading ? (
               <ClipLoader color="#fff" loading={loading} size={20} />
             ) : (
-              "Gửi mã OTP"
+              "Send OTP"
             )}
           </button>
         </form>

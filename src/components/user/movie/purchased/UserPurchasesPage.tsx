@@ -1,11 +1,14 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import { getUserPurchases, MoviePurchaseResponse } from '@/apis/movie-purchase.api';
-import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import movieApi from '@/apis/movie.api';
-import Image from 'next/image';
+"use client";
+import React, { useState, useEffect } from "react";
+import {
+  getUserPurchases,
+  MoviePurchaseResponse,
+} from "@/apis/movie-purchase.api";
+import LoadingSpinner from "@/components/common/Loading/LoadingSpinner";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import movieApi from "@/apis/movie.api";
+import Image from "next/image";
 
 const UserPurchasesPage: React.FC = () => {
   const [purchases, setPurchases] = useState<MoviePurchaseResponse[]>([]);
@@ -21,12 +24,15 @@ const UserPurchasesPage: React.FC = () => {
         return [...prev];
       });
     } catch (error) {
-      console.error('Failed to fetch movie poster:', error);
+      console.error("Failed to fetch movie poster:", error);
     }
   };
   const fetchAllPosters = () => {
     const promises = purchases.map((purchase, index) => {
-      return Promise.allSettled([fetchMoviePoster(purchase.movie_id, index), setTimeout(() => { }, 200)]);
+      return Promise.allSettled([
+        fetchMoviePoster(purchase.movie_id, index),
+        setTimeout(() => {}, 200),
+      ]);
     });
     return Promise.allSettled(promises);
   };
@@ -37,8 +43,8 @@ const UserPurchasesPage: React.FC = () => {
         const response = await getUserPurchases();
         setPurchases(response.data);
       } catch (error: unknown) {
-        router.push('/auth/login');
-        setError('Failed to load purchases');
+        router.push("/auth/login");
+        setError("Không thể tải danh sách mua hàng");
       } finally {
         setIsLoading(false);
       }
@@ -51,18 +57,20 @@ const UserPurchasesPage: React.FC = () => {
     if (!isLoading) {
       fetchAllPosters();
     }
-  }, [isLoading])
+  }, [isLoading]);
 
   useEffect(() => {
-    console.log(purchases)
-  }, [purchases])
+    console.log(purchases);
+  }, [purchases]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="flex flex-col items-center">
           <LoadingSpinner />
-          <p className="mt-4 text-white animate-pulse">Loading your purchases...</p>
+          <p className="mt-4 text-white animate-pulse">
+            Đang tải danh sách mua hàng của bạn...
+          </p>
         </div>
       </div>
     );
@@ -73,7 +81,7 @@ const UserPurchasesPage: React.FC = () => {
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center text-red-500">
           <p className="text-xl">{error}</p>
-          <p className="text-sm text-gray-400 mt-2">Please try again later</p>
+          <p className="text-sm text-gray-400 mt-2">Vui lòng thử lại sau</p>
         </div>
       </div>
     );
@@ -84,10 +92,8 @@ const UserPurchasesPage: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">My Purchased Movies</h1>
-          <p className="text-gray-400">
-            You have purchased {purchases.length} movie{purchases.length !== 1 ? 's' : ''}
-          </p>
+          <h1 className="text-4xl font-bold mb-2">Phim đã mua của tôi</h1>
+          <p className="text-gray-400">Bạn đã mua {purchases.length} phim</p>
         </div>
 
         {/* Empty State */}
@@ -108,13 +114,17 @@ const UserPurchasesPage: React.FC = () => {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-medium text-gray-300 mb-2">No purchases yet</h3>
-            <p className="text-gray-500 mb-6">Start exploring movies and build your collection</p>
+            <h3 className="text-xl font-medium text-gray-300 mb-2">
+              Chưa có mua hàng nào
+            </h3>
+            <p className="text-gray-500 mb-6">
+              Bắt đầu khám phá phim và xây dựng bộ sưu tập của bạn
+            </p>
             <Link
               href="/home"
               className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
             >
-              Browse Movies
+              Duyệt phim
             </Link>
           </div>
         ) : (
@@ -153,7 +163,7 @@ const UserPurchasesPage: React.FC = () => {
 
                   {/* Owned Badge */}
                   <div className="absolute top-3 right-3 bg-green-600 text-white px-2 py-1 rounded text-xs font-medium">
-                    Owned
+                    Đã sở hữu
                   </div>
                 </div>
 
@@ -165,13 +175,13 @@ const UserPurchasesPage: React.FC = () => {
 
                   <div className="text-sm text-gray-400 space-y-1">
                     <div className="flex justify-between">
-                      <span>Purchase Price:</span>
+                      <span>Giá mua:</span>
                       <span className="text-green-400 font-medium">
                         ${purchase.purchase_price}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Purchased:</span>
+                      <span>Đã mua:</span>
                       <span>
                         {new Date(purchase.purchased_at).toLocaleDateString()}
                       </span>
@@ -184,13 +194,13 @@ const UserPurchasesPage: React.FC = () => {
                       href={`/movie/${purchase.movie_id}`}
                       className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded text-sm font-medium transition-colors duration-200"
                     >
-                      Watch Now
+                      Xem ngay
                     </Link>
                     <Link
                       href={`/movie/${purchase.movie_id}`}
                       className="flex-1 bg-gray-700 hover:bg-gray-600 text-white text-center py-2 px-4 rounded text-sm font-medium transition-colors duration-200"
                     >
-                      View Details
+                      Xem chi tiết
                     </Link>
                   </div>
                 </div>
@@ -202,23 +212,39 @@ const UserPurchasesPage: React.FC = () => {
         {/* Summary Stats */}
         {purchases.length > 0 && (
           <div className="mt-12 p-6 bg-gray-800 rounded-lg">
-            <h3 className="text-xl font-medium mb-4">Purchase Summary</h3>
+            <h3 className="text-xl font-medium mb-4">Tóm tắt mua hàng</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-3xl font-bold text-blue-400">{purchases.length}</p>
-                <p className="text-gray-400">Movies Owned</p>
+                <p className="text-3xl font-bold text-blue-400">
+                  {purchases.length}
+                </p>
+                <p className="text-gray-400">Phim đã sở hữu</p>
               </div>
               <div>
                 <p className="text-3xl font-bold text-green-400">
-                  ${purchases.reduce((total, purchase) => total + Number(purchase.purchase_price), 0).toFixed(2)}
+                  $
+                  {purchases
+                    .reduce(
+                      (total, purchase) =>
+                        total + Number(purchase.purchase_price),
+                      0
+                    )
+                    .toFixed(2)}
                 </p>
-                <p className="text-gray-400">Total Spent</p>
+                <p className="text-gray-400">Tổng chi tiêu</p>
               </div>
               <div>
                 <p className="text-3xl font-bold text-purple-400">
-                  ${(purchases.reduce((total, purchase) => total + Number(purchase.purchase_price), 0) / purchases.length).toFixed(2)}
+                  $
+                  {(
+                    purchases.reduce(
+                      (total, purchase) =>
+                        total + Number(purchase.purchase_price),
+                      0
+                    ) / purchases.length
+                  ).toFixed(2)}
                 </p>
-                <p className="text-gray-400">Average Price</p>
+                <p className="text-gray-400">Giá trung bình</p>
               </div>
             </div>
           </div>

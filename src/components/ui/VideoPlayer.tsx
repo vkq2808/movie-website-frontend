@@ -148,7 +148,7 @@ export default function VideoPlayer({
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         console.log("HLS manifest loaded");
-        video.play().catch(() => {}); // optional
+        video.play().catch(() => { }); // optional
       });
 
       hls.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
@@ -194,6 +194,19 @@ export default function VideoPlayer({
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!videoRef.current)
+      return;
+    if (selectedRes === "auto") return;
+    if (selectedRes === "1080") {
+      videoRef.current.src = videoSrc.replace(/\/[^/]+\.m3u8$/, "/1080p/index.m3u8");
+    } else if (selectedRes === "720") {
+      videoRef.current.src = videoSrc.replace(/\/[^/]+\.m3u8$/, "/720p/index.m3u8");
+    } else if (selectedRes === "480") {
+      videoRef.current.src = videoSrc.replace(/\/[^/]+\.m3u8$/, "/480p/index.m3u8");
+    }
+  }, [selectedRes])
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -335,9 +348,8 @@ export default function VideoPlayer({
 
       {/* Gradient Overlays */}
       <div
-        className={`absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40 pointer-events-none transition-opacity duration-300 ${
-          showControls ? "opacity-100" : "opacity-0"
-        }`}
+        className={`absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40 pointer-events-none transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0"
+          }`}
         style={{ zIndex: 10 }}
       />
 
@@ -356,9 +368,8 @@ export default function VideoPlayer({
 
       {/* Controls Container */}
       <div
-        className={`absolute bottom-0 left-0 right-0 p-6 transition-all duration-300 ${
-          showControls ? "translate-y-0" : "translate-y-full"
-        }`}
+        className={`absolute bottom-0 left-0 right-0 p-6 transition-all duration-300 ${showControls ? "translate-y-0" : "translate-y-full"
+          }`}
         style={{ zIndex: 20 }}
       >
         {/* Progress Bar */}
@@ -462,11 +473,10 @@ export default function VideoPlayer({
                     <button
                       type="button"
                       onClick={() => handleResolutionChange("auto")}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all ${
-                        selectedRes === "auto"
-                          ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                          : "hover:bg-white/10 text-white/80"
-                      }`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all ${selectedRes === "auto"
+                        ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                        : "hover:bg-white/10 text-white/80"
+                        }`}
                     >
                       Auto
                     </button>
@@ -475,11 +485,10 @@ export default function VideoPlayer({
                         type="button"
                         key={res}
                         onClick={() => handleResolutionChange(res)}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all ${
-                          selectedRes === res
-                            ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                            : "hover:bg-white/10 text-white/80"
-                        }`}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all ${selectedRes === res
+                          ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                          : "hover:bg-white/10 text-white/80"
+                          }`}
                       >
                         {res}p
                       </button>

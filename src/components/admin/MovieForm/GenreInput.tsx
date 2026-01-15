@@ -14,7 +14,7 @@ interface GenreInputProps {
 
 export const GenreInput: React.FC<GenreInputProps> = ({
   currentLanguage = {
-    iso_639_1: 'vi'
+    iso_639_1: 'en'
   },
   values,
   onChange,

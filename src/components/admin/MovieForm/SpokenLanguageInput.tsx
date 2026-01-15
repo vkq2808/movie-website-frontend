@@ -1,12 +1,14 @@
 import React from "react";
 import { AutoCompleteMultiSelectInput } from "../../extensibles/AutoCompleteMultiSelectInput";
 import { adminApi, AdminLanguage } from "@/apis/admin.api";
-import { CreateOptionModal, CreateOptionProps, CreateOptionState } from "@/components/extensibles/CreateOptionModal";
+import {
+  CreateOptionModal,
+  CreateOptionProps,
+  CreateOptionState,
+} from "@/components/extensibles/CreateOptionModal";
 import { ToastContextValue } from "@/hooks/useToast";
 
-
 class CreateLanguageModal extends CreateOptionModal<AdminLanguage> {
-
   renderModalContent(): React.JSX.Element {
     const { label } = this.props;
     return (
@@ -24,7 +26,10 @@ class CreateLanguageModal extends CreateOptionModal<AdminLanguage> {
               value={this.state.creatingOption?.name || ""}
               onChange={(e) =>
                 this.setState({
-                  creatingOption: { ...this.state.creatingOption, name: e.target.value },
+                  creatingOption: {
+                    ...this.state.creatingOption,
+                    name: e.target.value,
+                  },
                 })
               }
               className="w-full rounded bg-gray-700 p-2 text-white"
@@ -41,7 +46,10 @@ class CreateLanguageModal extends CreateOptionModal<AdminLanguage> {
               value={this.state.creatingOption?.name || ""}
               onChange={(e) =>
                 this.setState({
-                  creatingOption: { ...this.state.creatingOption, name: e.target.value },
+                  creatingOption: {
+                    ...this.state.creatingOption,
+                    name: e.target.value,
+                  },
                 })
               }
               className="w-full rounded bg-gray-700 p-2 text-white"
@@ -58,7 +66,10 @@ class CreateLanguageModal extends CreateOptionModal<AdminLanguage> {
               value={this.state.creatingOption?.iso_639_1 || ""}
               onChange={(e) =>
                 this.setState({
-                  creatingOption: { ...this.state.creatingOption, iso_639_1: e.target.value },
+                  creatingOption: {
+                    ...this.state.creatingOption,
+                    iso_639_1: e.target.value,
+                  },
                 })
               }
               className="w-full rounded bg-gray-700 p-2 text-white"
@@ -86,23 +97,22 @@ class CreateLanguageModal extends CreateOptionModal<AdminLanguage> {
           </div>
         </div>
       </>
-    )
+    );
   }
 }
 
 class LanguageMultipleInput extends AutoCompleteMultiSelectInput<AdminLanguage> {
-
   renderCreateModal(): React.JSX.Element {
     const handleSubmit = (newOption: AdminLanguage) => {
-      this.addItem(newOption)
-    }
+      this.addItem(newOption);
+    };
     return (
       <CreateLanguageModal
         creatingOption={{ id: "", name: this.state.inputValue, iso_639_1: "" }}
         handleSubmit={handleSubmit}
         label="Create new language"
       />
-    )
+    );
   }
 
   renderSelectedItem(item: AdminLanguage): React.JSX.Element {
@@ -128,7 +138,7 @@ class LanguageMultipleInput extends AutoCompleteMultiSelectInput<AdminLanguage> 
           ✕
         </button>
       </div>
-    )
+    );
   }
 
   renderAllSelectedItem(values: AdminLanguage[]): React.JSX.Element {
@@ -136,7 +146,7 @@ class LanguageMultipleInput extends AutoCompleteMultiSelectInput<AdminLanguage> 
       <div className="flex flex-col gap-2 mb-2">
         {values.map((item) => this.renderSelectedItem(item))}
       </div>
-    )
+    );
   }
 }
 
@@ -149,7 +159,7 @@ interface LanguageInputProps {
 export default function LanguageInput({
   languages,
   onChange,
-  toast
+  toast,
 }: LanguageInputProps) {
   // Hàm fetch keyword từ backend (NestJS)
   const fetchSuggestions = async (query: string): Promise<AdminLanguage[]> => {
@@ -160,7 +170,7 @@ export default function LanguageInput({
   return (
     <LanguageMultipleInput
       toast={toast}
-      label="Spoken languages"
+      label="Ngôn ngữ nói"
       field="spoken_languages"
       values={languages}
       onChange={onChange}

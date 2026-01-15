@@ -34,7 +34,7 @@ class CreatePersonOptionModal extends CreateOptionModal<AdminPerson, CreatePerso
           // Save new ProfileImage
           this.setState(prev => ({ ...prev, creatingOption: { ...prev.creatingOption, profile_image: newProfileImage } }));
         } catch {
-          this.toast?.error("Error when uploading profile image");
+          this.toast?.error("Error uploading profile image");
         }
       }
     }
@@ -156,7 +156,7 @@ class PersonAutoCompleteInput extends AutoCompleteMultiSelectInput<Option> {
         <span>{item.name}</span>
         {field === 'cast' && (
           <div className="flex gap-2">
-            <span>character&apos;s name: </span>
+            <span>Character's name: </span>
             <input
               className="outline-black"
               type="text"
@@ -167,7 +167,7 @@ class PersonAutoCompleteInput extends AutoCompleteMultiSelectInput<Option> {
         {field === 'crew' && (
           <>
             <div className="flex gap-2">
-              <span>department:</span>
+              <span>Department:</span>
               <input
                 className="outline-black"
                 type="text"
@@ -175,7 +175,7 @@ class PersonAutoCompleteInput extends AutoCompleteMultiSelectInput<Option> {
             </div>
 
             <div className="flex gap-2">
-              <span>job:</span>
+              <span>Job:</span>
               <input
                 className="outline-black"
                 type="text"

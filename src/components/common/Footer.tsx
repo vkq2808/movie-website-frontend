@@ -28,16 +28,16 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">          {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-bold mb-4 select-none">Liên kết nhanh</h3>
+            <h3 className="text-xl font-bold mb-4 select-none">Quick Links</h3>
             <ul className="space-y-2">
-              <li><Link href="/genres" className="hover:text-purple-400 transition duration-300">Danh mục phim</Link></li>
-              <li><Link href="/recommendations" className="hover:text-purple-400 transition duration-300">Phim được đánh giá cao</Link></li>
-              <li><Link href="/new" className="hover:text-purple-400 transition duration-300">Phim mới phát hành</Link></li>
-              <li><Link href="/upcoming" className="hover:text-purple-400 transition duration-300">Phim sắp chiếu</Link></li>
+              <li><Link href="/genres" className="hover:text-purple-400 transition duration-300">Categories</Link></li>
+              <li><Link href="/recommendations" className="hover:text-purple-400 transition duration-300">Top Rated</Link></li>
+              <li><Link href="/new" className="hover:text-purple-400 transition duration-300">New Releases</Link></li>
+              <li><Link href="/upcoming" className="hover:text-purple-400 transition duration-300">Upcoming</Link></li>
             </ul>
           </div>          {/* Customer Support */}
           <div>
-            <h3 className="text-xl font-bold mb-4 select-none">Hỗ trợ khách hàng</h3>
+            <h3 className="text-xl font-bold mb-4 select-none">Customer Support</h3>
             <ul className="space-y-2">
               <li className="flex items-center gap-2">
                 <FaPhone className="text-purple-400" />
@@ -47,35 +47,35 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2">
                 <FaQuestionCircle className="text-purple-400" />
-                <Link href="#" className="hover:text-purple-400 transition duration-300">Câu hỏi thường gặp</Link>
+                <Link href="#" className="hover:text-purple-400 transition duration-300">FAQ</Link>
               </li>
               <li className="flex items-center gap-2">
                 <FaUserAstronaut className="text-purple-400" />
-                <Link href="#" className="hover:text-purple-400 transition duration-300">Trung tâm trợ giúp</Link>
+                <Link href="#" className="hover:text-purple-400 transition duration-300">Help Center</Link>
               </li>
               <li className="flex items-center gap-2">
                 <FaPlusCircle className="text-purple-400" />
-                <Link href="#" className="hover:text-purple-400 transition duration-300">Hỗ trợ đăng ký</Link>
+                <Link href="#" className="hover:text-purple-400 transition duration-300">Registration Support</Link>
               </li>
             </ul>
           </div>          {/* Legal */}
           <div>
-            <h3 className="text-xl font-bold mb-4 select-none">Pháp lý</h3>
+            <h3 className="text-xl font-bold mb-4 select-none">Legal</h3>
             <ul className="space-y-2">
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Chính sách bảo mật</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Điều khoản dịch vụ</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Chính sách cookie</Link></li>
-              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Về chúng tôi</Link></li>
+              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Privacy Policy</Link></li>
+              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Terms of Service</Link></li>
+              <li><Link href="#" className="hover:text-purple-400 transition duration-300">Cookie Policy</Link></li>
+              <li><Link href="#" className="hover:text-purple-400 transition duration-300">About Us</Link></li>
             </ul>
           </div>          {/* Newsletter */}
           <div>
-            <h3 className="text-xl font-bold mb-4 select-none">Cập nhật mới nhất</h3>
+            <h3 className="text-xl font-bold mb-4 select-none">Latest Updates</h3>
             <form onSubmit={handleNewsletterSubmit} className="space-y-4">
               <div className="relative flex justify-center items-center">
                 <FaEnvelope className="left-3 text-purple-400 text-3xl" />
                 <input
                   type="email"
-                  placeholder="Nhập email của bạn"
+                  placeholder="Enter your email"
                   className="w-full bg-gray-800 rounded-lg py-2 ml-3 pl-10 pr-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
                   aria-label="Email for newsletter"
@@ -85,7 +85,7 @@ const Footer = () => {
                 type="submit"
                 className="w-full bg-purple-600 hover:bg-purple-700 font-semibold py-2 px-4 rounded-lg transition duration-300"
               >
-                Đăng ký
+                Subscribe
               </button>
             </form>
           </div>
@@ -111,7 +111,7 @@ const Footer = () => {
                 <FaTiktok size={24} />
               </Link>
             </div>            <p className="text-gray-400 text-sm">
-              © {currentYear} MovieHub. Tất cả quyền được bảo lưu.
+              © {currentYear} MovieHub. All rights reserved.
             </p>
           </div>
         </div>

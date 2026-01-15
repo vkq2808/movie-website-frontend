@@ -9,13 +9,13 @@ type NavItem = {
 };
 
 const nav: NavItem[] = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/movies", label: "Movies" },
-  { href: "/admin/feedback", label: "Feedback" },
-  { href: "/admin/genres", label: "Genres" },
-  { href: "/admin/users", label: "Users" },
-  { href: "/admin/watch-parties", label: "Watch Parties" },
-  { href: "/admin/settings", label: "Settings" },
+  { href: "/admin", label: "Bảng điều khiển" },
+  { href: "/admin/movies", label: "Phim" },
+  { href: "/admin/feedback", label: "Phản hồi" },
+  { href: "/admin/genres", label: "Thể loại" },
+  { href: "/admin/users", label: "Người dùng" },
+  { href: "/admin/watch-parties", label: "Buổi xem phim" },
+  { href: "/admin/settings", label: "Cài đặt" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -26,7 +26,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   // When the route updates to the target, clear pending state
   useEffect(() => {
     if (!pendingHref) return;
-    const reached = pathname === pendingHref || (pendingHref !== "/admin" && pathname.startsWith(pendingHref));
+    const reached =
+      pathname === pendingHref ||
+      (pendingHref !== "/admin" && pathname.startsWith(pendingHref));
     if (reached) setPendingHref(null);
   }, [pathname, pendingHref]);
 
@@ -37,7 +39,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       return;
     }
     // Avoid redundant navigation to the same active route
-    const isActive = pathname === href || (href !== "/admin" && pathname.startsWith(href));
+    const isActive =
+      pathname === href || (href !== "/admin" && pathname.startsWith(href));
     if (isActive) return;
     e.preventDefault();
     setPendingHref(href);
@@ -54,7 +57,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </h2>
             <nav className="space-y-1">
               {nav.map((n) => {
-                const active = pathname === n.href || (n.href !== "/admin" && pathname.startsWith(n.href));
+                const active =
+                  pathname === n.href ||
+                  (n.href !== "/admin" && pathname.startsWith(n.href));
                 const isPending = pendingHref === n.href;
                 const isDisabled = !!pendingHref && !isPending;
                 return (
@@ -67,9 +72,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                     tabIndex={isDisabled ? -1 : 0}
                     className={
                       "relative block rounded px-3 py-2 text-sm transition-colors " +
-                      (isDisabled
-                        ? "cursor-not-allowed opacity-50 "
-                        : "") +
+                      (isDisabled ? "cursor-not-allowed opacity-50 " : "") +
                       (active
                         ? "bg-blue-600 text-white"
                         : "text-gray-200 hover:bg-gray-800 hover:text-white")
@@ -98,4 +101,3 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     </div>
   );
 }
-

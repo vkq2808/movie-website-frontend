@@ -246,7 +246,7 @@ export default api;
 export const handleApiError = (error: any, context?: string): Error => {
   // Don't log authentication errors to console
   if (error.message === "Authentication required") {
-    return new Error("Please log in to access this feature");
+    return new Error("Vui lòng đăng nhập để truy cập tính năng này");
   }
 
   // Only log unexpected errors
@@ -256,15 +256,15 @@ export const handleApiError = (error: any, context?: string): Error => {
 
   // Return user-friendly error messages
   if (error.response?.status === 403) {
-    return new Error("You do not have permission to access this resource");
+    return new Error("Bạn không có quyền truy cập tài nguyên này");
   }
 
   if (error.response?.status === 404) {
-    return new Error("The requested resource was not found");
+    return new Error("Không tìm thấy tài nguyên được yêu cầu");
   }
 
   if (error.response?.status >= 500) {
-    return new Error("Server error. Please try again later");
+    return new Error("Lỗi máy chủ. Vui lòng thử lại sau");
   }
 
   return error;

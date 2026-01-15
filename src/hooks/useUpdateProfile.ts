@@ -24,7 +24,7 @@ export function useUpdateProfile(): UseUpdateProfileReturn {
       return response.data.data;
     } catch (err: any) {
       const errorMessage =
-        err.response?.data?.message || "Failed to update profile";
+        err.response?.data?.message || "Không thể cập nhật hồ sơ";
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {

@@ -148,9 +148,6 @@ const MovieDetailTab: React.FC<MovieDetailTabProps> = ({ movie }) => {
       {/* --- Trailer --- */}
       <div className="bg-gray-900 rounded-lg overflow-hidden">
         <div className="aspect-video bg-black flex items-center justify-center relative">
-          <div className="text-xs text-gray-500 absolute top-2 left-2">
-            Debug: {isLoading ? 'Loading' : videos?.length ? `Found ${videos?.length} videos` : 'No videos'}
-          </div>
 
           {isLoading ? (
             <div className="text-center">

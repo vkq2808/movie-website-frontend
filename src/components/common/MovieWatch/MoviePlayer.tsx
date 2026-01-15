@@ -42,13 +42,6 @@ export default function MoviePlayer({ movie, video }: MoviePlayerProps) {
               </div>
             </div>
           )}
-
-          {video && (
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6">
-              <p className="text-sm text-gray-300 mb-1">{video.type}</p>
-              <p className="font-semibold">{video.name}</p>
-            </div>
-          )}
         </div>
       </div>
     </div>

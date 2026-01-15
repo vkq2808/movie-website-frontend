@@ -58,7 +58,7 @@ export const ImageUploadList: React.FC<ImageUploadListProps> = ({
               type="button"
               onClick={() => deleteFunction(img.url, field)}
               className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-700 transition"
-              title="Xóa ảnh"
+              title="Delete image"
             >
               ✕
             </button>
@@ -69,7 +69,7 @@ export const ImageUploadList: React.FC<ImageUploadListProps> = ({
         {canAddMore && (
           <label className="cursor-pointer h-24 w-18 rounded border border-dashed border-gray-700 bg-gray-800 flex flex-col items-center justify-center text-gray-500 text-sm hover:bg-gray-700 transition">
             <span className="text-lg">＋</span>
-            <span>Thêm ảnh</span>
+            <span>Add image</span>
             <input
               type="file"
               accept="image/*"
@@ -82,7 +82,7 @@ export const ImageUploadList: React.FC<ImageUploadListProps> = ({
 
       {limit !== undefined && (
         <p className="text-gray-500 text-xs mt-1">
-          {images.length}/{limit} ảnh
+          {images.length}/{limit} images
         </p>
       )}
     </div>

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Calendar, Users, Clock, Ticket } from 'lucide-react';
-import { format } from 'date-fns';
-import Image from 'next/image';
-import type { WatchParty } from '@/apis/watch-party.api';
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Calendar, Users, Clock, Ticket } from "lucide-react";
+import { format } from "date-fns";
+import Image from "next/image";
+import type { WatchParty } from "@/apis/watch-party.api";
 
 interface WatchPartyCardProps {
   party: WatchParty;
@@ -13,25 +13,27 @@ interface WatchPartyCardProps {
 }
 
 const formatPrice = (price?: number): string => {
-  if (typeof price !== 'number') {
-    return 'Free';
+  if (typeof price !== "number") {
+    return "Miễn phí";
   }
 
-  return new Intl.NumberFormat('vi-VN').format(price);
+  return new Intl.NumberFormat("vi-VN").format(price);
 };
 
 export function WatchPartyCard({ party, index }: WatchPartyCardProps) {
   const startTime = new Date(party.start_time);
-  const isOngoing = party.status === 'ongoing';
-  const isUpcoming = party.status === 'upcoming';
+  const isOngoing = party.status === "ongoing";
+  const isUpcoming = party.status === "upcoming";
   const hasTicket = !!party.ticket;
-  const formattedPrice = hasTicket ? formatPrice(Number(party.ticket?.price)) : 'Free';
+  const formattedPrice = hasTicket
+    ? formatPrice(Number(party.ticket?.price))
+    : "Miễn phí";
 
   const actionLabel = party.has_purchased
     ? isOngoing
-      ? 'Join Live'
-      : 'View Details'
-    : 'Buy Ticket';
+      ? "Tham gia trực tiếp"
+      : "Xem chi tiết"
+    : "Mua vé";
 
   const actionHref = party.has_purchased
     ? isOngoing
@@ -48,14 +50,14 @@ export function WatchPartyCard({ party, index }: WatchPartyCardProps) {
     >
       {party.is_featured && (
         <div className="absolute top-3 right-3 z-10 bg-[#e50914] text-white text-xs font-bold px-3 py-1 rounded-full">
-          FEATURED
+          NỔI BẬT
         </div>
       )}
 
       <Link href={`/watch-parties/${party.id}`}>
         <div className="relative aspect-[2/3] overflow-hidden">
           <Image
-            src={party.movie?.posters?.[0]?.url || '/placeholder-movie.jpg'}
+            src={party.movie?.posters?.[0]?.url || "/placeholder-movie.jpg"}
             alt={party.movie?.title}
             fill
             sizes="(max-width: 768px) 100vw, 25vw"
@@ -66,7 +68,7 @@ export function WatchPartyCard({ party, index }: WatchPartyCardProps) {
           {isOngoing && (
             <div className="absolute top-3 left-3 flex items-center gap-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
               <div className="w-2 h-2 bg-white rounded-full" />
-              LIVE NOW
+              TRỰC TIẾP
             </div>
           )}
         </div>
@@ -83,27 +85,27 @@ export function WatchPartyCard({ party, index }: WatchPartyCardProps) {
           <div className="space-y-2 text-sm text-[#a0a0a0]">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <span>{format(startTime, 'MMM dd, yyyy')}</span>
+              <span>{format(startTime, "MMM dd, yyyy")}</span>
             </div>
 
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
-              <span>{format(startTime, 'HH:mm')}</span>
+              <span>{format(startTime, "HH:mm")}</span>
             </div>
 
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               <span>
-                {party.participant_count} / {party.max_participants} joined
+                {party.participant_count} / {party.max_participants} đã tham gia
               </span>
             </div>
 
             <div className="flex items-center gap-2">
               <Ticket className="w-4 h-4" />
               <span>
-                Ticket Price:{' '}
+                Giá vé:{" "}
                 <span className="text-white font-semibold">
-                  {hasTicket ? `₫${formattedPrice}` : 'Free'}
+                  {hasTicket ? `₫${formattedPrice}` : "Free"}
                 </span>
               </span>
             </div>
@@ -114,11 +116,11 @@ export function WatchPartyCard({ party, index }: WatchPartyCardProps) {
           href={actionHref}
           className={`w-full text-center font-bold py-2 px-4 rounded transition-colors ${
             party.has_purchased
-              ? 'bg-[#e50914] hover:bg-[#b8070f] text-white'
-              : 'bg-white hover:bg-gray-200 text-black'
+              ? "bg-[#e50914] hover:bg-[#b8070f] text-white"
+              : "bg-white hover:bg-gray-200 text-black"
           }`}
         >
-          {party.has_purchased && isUpcoming ? 'Ticket Purchased' : actionLabel}
+          {party.has_purchased && isUpcoming ? "Đã mua vé" : actionLabel}
         </Link>
       </div>
     </motion.div>

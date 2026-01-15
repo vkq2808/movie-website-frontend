@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Users } from 'lucide-react';
+import { Users } from "lucide-react";
 
 interface Participant {
   id: string;
@@ -18,7 +18,7 @@ export function ParticipantsList({ participants }: ParticipantsListProps) {
       <div className="flex items-center gap-2 mb-4">
         <Users className="w-5 h-5 text-[#e50914]" />
         <h3 className="text-white font-bold">
-          Watching Now ({participants.length})
+          Đang xem ({participants.length})
         </h3>
       </div>
 

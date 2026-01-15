@@ -37,7 +37,7 @@ export function useWatchHistory(): UseWatchHistoryReturn {
         [];
       setWatchHistory(movies);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to fetch watch history");
+      setError(err.response?.data?.message || "Không thể tải lịch sử xem");
     } finally {
       setLoading(false);
     }

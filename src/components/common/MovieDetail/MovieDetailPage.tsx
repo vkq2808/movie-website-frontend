@@ -1,72 +1,76 @@
-'use client'
-import React, { useState, useEffect } from 'react'
-import MovieHero from './MovieHero'
-import MovieTabs from './MovieTabs'
-import Spinner from '../Spinner'
-import { Movie } from '@/types/api.types'
-import movieApi from '@/apis/movie.api'
+"use client";
+import React, { useState, useEffect } from "react";
+import MovieHero from "./MovieHero";
+import MovieTabs from "./MovieTabs";
+import Spinner from "../Spinner";
+import { Movie } from "@/types/api.types";
+import movieApi from "@/apis/movie.api";
 
 interface MovieDetailPageProps {
-  movieId: string
+  movieId: string;
 }
 
 const MovieDetailPage: React.FC<MovieDetailPageProps> = ({ movieId }) => {
-  const [movie, setMovie] = useState<Movie | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string | null>(null)
+  const [movie, setMovie] = useState<Movie | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
         // Fetch base movie (essential fields) then fetch split resources in parallel
-        const baseRes = await movieApi.getMovieById(movieId)
-        const baseMovie = baseRes.data
+        const baseRes = await movieApi.getMovieById(movieId);
+        const baseMovie = baseRes.data;
 
         // Parallel fetch supplemental resources
         const [genresRes] = await Promise.all([
-          movieApi.getMovieGenres(movieId).catch(e => ({ success: false, data: [] } as any)) // eslint-disable-line @typescript-eslint/no-explicit-any
-        ])
+          movieApi
+            .getMovieGenres(movieId)
+            .catch((e) => ({ success: false, data: [] } as any)), // eslint-disable-line @typescript-eslint/no-explicit-any
+        ]);
 
         const mergedMovie: Movie = {
           ...baseMovie,
-          genres: genresRes?.data || baseMovie.genres || []
-        }
+          genres: genresRes?.data || baseMovie.genres || [],
+        };
 
-        setMovie(mergedMovie)
+        setMovie(mergedMovie);
       } catch (error) {
-        setError('Failed to load movie details')
+        setError("Failed to load movie details");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
     if (movieId) {
-      fetchMovieDetails()
+      fetchMovieDetails();
     }
-  }, [movieId])
+  }, [movieId]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="flex flex-col items-center">
           <Spinner size="lg" color="text-yellow-400" />
-          <p className="mt-4 text-white animate-pulse">Đang tải thông tin phim...</p>
+          <p className="mt-4 text-white animate-pulse">
+            Đang tải thông tin phim...
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error || !movie) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center text-red-500">
-          <p className="text-xl">{error || 'Không tìm thấy phim'}</p>
+          <p className="text-xl">{error || "Loading movies"}</p>
           <p className="text-sm text-gray-400 mt-2">Vui lòng thử lại sau</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -79,7 +83,7 @@ const MovieDetailPage: React.FC<MovieDetailPageProps> = ({ movieId }) => {
         <MovieTabs movie={movie} />
       </div>
     </main>
-  )
-}
+  );
+};
 
-export default MovieDetailPage
+export default MovieDetailPage;

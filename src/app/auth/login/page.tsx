@@ -7,22 +7,22 @@ const LoginPage: NextPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-400  to-pink-400">
       <div className="bg-slate-100 p-8 rounded-lg shadow-xl max-w-md w-full">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
-          Chào mừng trở lại!
+          Welcome back!
         </h2>
         <p className="text-center text-gray-600 mb-6">
-          Vui lòng đăng nhập để tiếp tục.
+          Please log in to continue.
         </p>
         <LoginForm />
         <p className="mt-6 text-sm text-center text-gray-600">
-          Chưa có tài khoản?{' '}
+          Don't have an account?{' '}
           <Link href="/auth/register" className="text-blue-600 hover:underline">
-            Đăng ký ngay
+            Sign up now
           </Link>
         </p>
         <p className="mt-6 text-sm text-center text-gray-600">
-          Quên mật khẩu?{' '}
+          Forgot your password?{' '}
           <Link href="/auth/forget-password" className="text-blue-600 hover:underline">
-            Lấy lại mật khẩu
+            Reset password
           </Link>
         </p>
         <LoginOauth2 />

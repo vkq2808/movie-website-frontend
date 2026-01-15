@@ -23,7 +23,9 @@ export function useFavoriteMovies(): UseFavoriteMoviesReturn {
       const response = await api.get(`/user/me/favorites`);
       setFavorites(response.data.data || []);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to fetch favorites");
+      setError(
+        err.response?.data?.message || "Không thể tải danh sách yêu thích"
+      );
     } finally {
       setLoading(false);
     }
@@ -37,7 +39,7 @@ export function useFavoriteMovies(): UseFavoriteMoviesReturn {
       await fetchFavorites();
     } catch (err: any) {
       const errorMessage =
-        err.response?.data?.message || "Failed to add favorite";
+        err.response?.data?.message || "Không thể thêm vào danh sách yêu thích";
       setError(errorMessage);
       throw new Error(errorMessage);
     }
@@ -49,7 +51,7 @@ export function useFavoriteMovies(): UseFavoriteMoviesReturn {
       await fetchFavorites();
     } catch (err: any) {
       const errorMessage =
-        err.response?.data?.message || "Failed to remove favorite";
+        err.response?.data?.message || "Không thể xóa khỏi danh sách yêu thích";
       setError(errorMessage);
       throw new Error(errorMessage);
     }

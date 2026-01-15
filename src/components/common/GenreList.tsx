@@ -24,7 +24,7 @@ export default function GenreList() {
   // Function to get genre name based on current language
   const getGenreName = (genre: Genre) => {
     if (!genre.names || genre.names.length === 0) {
-      return 'Tất cả thể loại'
+      return 'All Genres'
     }
     const nameForLanguage = genre.names.find(n => n.iso_639_1 === language.iso_639_1);
     return nameForLanguage ? nameForLanguage.name : genre.names[0]?.name || 'Unknown';
@@ -88,7 +88,7 @@ export default function GenreList() {
           <div className="w-full flex justify-center items-center">
             <div className="flex flex-col items-center">
               <Spinner size="lg" color="text-white" />
-              <p className="mt-4 text-white animate-pulse">Đang tải thể loại...</p>
+              <p className="mt-4 text-white animate-pulse">Loading genres...</p>
             </div>
           </div>
         </div>

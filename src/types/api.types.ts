@@ -3,21 +3,21 @@ export enum VideoType {
   CLIP = "Clip",
   MOVIE = "Movie",
   FEATURETTE = "Featurette",
-  OTHER = "Other"
+  OTHER = "Other",
 }
 
 export enum VideoQuality {
-  LOW = '480p',
-  MEDIUM = '720p',
-  HD = '1080p'
+  LOW = "480p",
+  MEDIUM = "720p",
+  HD = "1080p",
 }
 
 export enum UploadStatus {
-  IN_PROGRESS = 'in_progress',
-  ASSEMBLING = 'assembling',
-  CONVERTING = 'converting',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
+  IN_PROGRESS = "in_progress",
+  ASSEMBLING = "assembling",
+  CONVERTING = "converting",
+  COMPLETED = "completed",
+  FAILED = "failed",
 }
 
 export interface ProfileImage {
@@ -74,7 +74,7 @@ export interface Video {
   qualities?: {
     quality: VideoQuality;
     url: string;
-  }[]
+  }[];
   created_at: string;
 }
 
@@ -119,7 +119,6 @@ export interface Movie {
   vote_count?: number;
 }
 
-
 export interface User {
   id: string;
   email: string;
@@ -129,13 +128,14 @@ export interface User {
   photo_url: string | null;
   is_verified: boolean;
   is_active: boolean;
+  has_submitted_favorite_genres: boolean;
   favoriteMovies: Movie[];
   created_at: string;
 }
 
 export enum MovieListVisibility {
-  PUBLIC = 'PUBLIC',
-  PRIVATE = 'PRIVATE',
+  PUBLIC = "PUBLIC",
+  PRIVATE = "PRIVATE",
 }
 
 export interface MovieListItem {

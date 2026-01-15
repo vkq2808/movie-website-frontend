@@ -58,7 +58,7 @@ export default function MovieVideoManager({ movie, setValues }: Props) {
 
   // 🧱 Khởi tạo upload session
   const initUpload = async () => {
-    if (!file) return alert('Chọn video trước!')
+    if (!file) return alert('Select a video first!')
     setStatus('initializing')
 
     if (videoType === VideoType.MOVIE && movie.videos.some(v => v.type === VideoType.MOVIE)) {
@@ -189,7 +189,7 @@ export default function MovieVideoManager({ movie, setValues }: Props) {
           onClick={() => fileInputRef.current?.click()}
           className="bg-fuchsia-600 hover:bg-fuchsia-700 px-4 py-2 rounded-lg font-medium text-white cursor-pointer"
         >
-          Thêm video
+          Add Video
         </button>
         <input
           type="file"
@@ -212,13 +212,13 @@ export default function MovieVideoManager({ movie, setValues }: Props) {
 
           {/* Nhập tiêu đề video */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Tiêu đề video</label>
+            <label className="block text-sm text-gray-400 mb-1">Video Title</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full bg-neutral-700 border border-neutral-600 rounded-lg px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-600"
-              placeholder="Nhập tiêu đề..."
+              placeholder="Enter title..."
             />
           </div>
           {titleError && (
@@ -228,7 +228,7 @@ export default function MovieVideoManager({ movie, setValues }: Props) {
           )}
           {/* Chọn loại video */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Loại video</label>
+            <label className="block text-sm text-gray-400 mb-1">Video Type</label>
             <select
               value={videoType}
               onChange={(e) => { setVideoType(e.target.value as VideoType); }}
@@ -264,17 +264,17 @@ export default function MovieVideoManager({ movie, setValues }: Props) {
                 className="bg-fuchsia-600 hover:bg-fuchsia-700 px-3 py-2 rounded-lg text-white font-medium cursor-poitner"
                 disabled={!title.trim()}
               >
-                {title.trim() ? 'Upload' : 'Nhập tiêu đề trước'}
+                {title.trim() ? 'Upload' : 'Enter title first'}
               </button>
             ) : (
               <p className="text-sm text-gray-300">
                 {status === 'uploading'
-                  ? `Đang tải lên... ${progress}%`
+                  ? `Uploading... ${progress}%`
                   : status === 'assembling'
-                    ? 'Đang ghép video...'
+                    ? 'Assembling video...'
                     : status === 'processing'
-                      ? 'Đang xử lý video...'
-                      : 'Hoàn tất ✅'}
+                      ? 'Processing video...'
+                      : 'Complete ✅'}
               </p>
             )}
           </div>
@@ -309,7 +309,7 @@ function VideoTabs({ movie, setValues, statusMap, activeTab, setActiveTab }: {
   const [deletingVideoIds, setDeletingVideoIds] = useState<string[]>([]);
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('vi-VN', {
+    return new Date(date).toLocaleDateString('en-US', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'
@@ -399,7 +399,7 @@ function VideoTabs({ movie, setValues, statusMap, activeTab, setActiveTab }: {
           ))
         ) : (
           <div className="text-center text-gray-400 py-6">
-            Chưa có video {activeTab.toLowerCase()} nào.
+            No {activeTab.toLowerCase()} videos yet.
           </div>
         )}
       </div>

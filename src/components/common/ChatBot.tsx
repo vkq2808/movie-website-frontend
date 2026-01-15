@@ -2,10 +2,12 @@
 import React from 'react';
 import { SendIcon } from 'lucide-react';
 import { sendChatMessage } from '@/apis/chat.api';
+import MovieCard from './MovieCard/MovieCard';
+import { Movie } from '@/types/api.types';
 
 export default function ChatBot() {
   const [open, setOpen] = React.useState(false);
-  const [messages, setMessages] = React.useState<{ role: 'user' | 'bot'; content: string }[]>([]);
+  const [messages, setMessages] = React.useState<{ role: 'user' | 'bot'; content: React.ReactNode }[]>([]);
   const [input, setInput] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -15,19 +17,30 @@ export default function ChatBot() {
     if (!text) return;
     const userText = text;
     setMessages((prev) => [...prev, { role: 'user', content: userText }]);
+    setInput('');
     setLoading(true);
     try {
       const res = await sendChatMessage(userText);
-      const botMsg = res?.status === 'success' ? res.data.botMessage.message : undefined;
-      if (botMsg) {
-        setMessages((prev) => [...prev, { role: 'bot', content: String(botMsg) }]);
-      } else if (res?.status === 'error') {
-        setMessages((prev) => [...prev, { role: 'bot', content: res.error?.message ?? 'Có lỗi xảy ra, vui lòng thử lại.' }]);
+      if (res.response) {
+        setMessages((prev) => [...prev, { role: 'bot', content: res.response }]);
       }
-    } catch (e) {
-      setMessages((prev) => [...prev, { role: 'bot', content: 'Có lỗi xảy ra, vui lòng thử lại.' }]);
+
+      if (res.relatedMovies && res.relatedMovies.length > 0) {
+        const movieCards = (
+          <div className="flex gap-2 overflow-x-auto p-1">
+            {res.relatedMovies.map((movie) => (
+              <div key={movie.id} className="w-32 flex-shrink-0">
+                <MovieCard movie={movie} />
+              </div>
+            ))}
+          </div>
+        );
+        setMessages((prev) => [...prev, { role: 'bot', content: movieCards }]);
+      }
+    } catch (e: any) {
+      const errorMessage = e?.response?.data?.message ?? 'An error occurred, please try again.';
+      setMessages((prev) => [...prev, { role: 'bot', content: errorMessage }]);
     }
-    if (!custom) setInput('');
     setLoading(false);
   };
 
@@ -80,7 +93,7 @@ export default function ChatBot() {
             aria-hidden="true"
           />
           <div
-            className="fixed z-[1000] bg-white rounded-2xl shadow-[0_8px_28px_rgba(0,0,0,0.28)] flex flex-col
+            className="fixed z-[999] bg-white rounded-2xl shadow-[0_8px_28px_rgba(0,0,0,0.28)] flex flex-col
                        w-[95vw] h-[70vh] bottom-2 right-2
                        sm:bottom-6 sm:right-6 sm:w-[380px] sm:h-[520px]"
             role="dialog"
@@ -99,7 +112,7 @@ export default function ChatBot() {
                 </div>
                 <div className="leading-tight">
                   <div className="text-white font-semibold">Chat Bot</div>
-                  <div className="text-white/80 text-xs">Trực tuyến</div>
+                  <div className="text-white/80 text-xs">Online</div>
                 </div>
               </div>
               <button
@@ -115,7 +128,7 @@ export default function ChatBot() {
               className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2 bg-[#F0F2F5]"
             >
               {messages.length === 0 && !loading && (
-                <div className="text-gray-500 text-sm text-center mt-8">Hãy gửi câu hỏi cho bot!</div>
+                <div className="text-gray-500 text-sm text-center mt-8">Send a question to the bot!</div>
               )}
               {messages.map((msg, idx) => (
                 <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -135,7 +148,7 @@ export default function ChatBot() {
               {loading && (
                 <div className="flex justify-start">
                   <div className="px-3 py-2 rounded-2xl text-sm max-w-[75%] bg-white text-[#050505] inline-flex items-center gap-2 shadow-sm rounded-bl-sm">
-                    <span>Đang soạn…</span>
+                    <span>Typing...</span>
                     <span className="inline-flex gap-1">
                       <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.2s]"></span>
                       <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.1s]"></span>
@@ -163,7 +176,7 @@ export default function ChatBot() {
                     onChange={e => setInput(e.target.value)}
                     disabled={loading}
                     autoFocus
-                    aria-label="Tin nhắn"
+                    aria-label="Message"
                   />
                 </div>
                 {input.trim().length === 0 ? (
@@ -173,8 +186,8 @@ export default function ChatBot() {
                     className={`h-10 w-10 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center transition
                                 ${loading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-gray-50'}`}
                     disabled={loading}
-                    aria-label="Gửi lời chào"
-                    title="Gửi lời chào"
+                    aria-label="Send a greeting"
+                    title="Send a greeting"
                   >
                     <span className="text-lg select-none">👋</span>
                   </button>
@@ -184,7 +197,7 @@ export default function ChatBot() {
                     className={`h-10 w-10 rounded-full flex items-center justify-center text-white shadow-md transition
                                 ${loading ? 'bg-gray-300 cursor-not-allowed' : 'bg-gradient-to-br from-[#00B2FF] to-[#006AFF] hover:brightness-110'}`}
                     disabled={loading}
-                    aria-label="Gửi"
+                    aria-label="Send"
                   >
                     <SendIcon size={16} />
                   </button>

@@ -29,7 +29,7 @@ export function useUploadAvatar(): UseUploadAvatarReturn {
       return response.data.data;
     } catch (err: any) {
       const errorMessage =
-        err.response?.data?.message || "Failed to upload avatar";
+        err.response?.data?.message || "Không thể tải lên avatar";
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {

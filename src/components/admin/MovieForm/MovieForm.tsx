@@ -3,9 +3,18 @@
 
 import React, { useEffect } from "react";
 import { MovieStatus } from "@/constants/enum";
-import { AdminCast, AdminCrew, AdminGenre, AdminKeyword, AdminLanguage, AdminProductionCompany, AdminVideo, deleteImage } from "@/apis/admin.api";
+import {
+  AdminCast,
+  AdminCrew,
+  AdminGenre,
+  AdminKeyword,
+  AdminLanguage,
+  AdminProductionCompany,
+  AdminVideo,
+  deleteImage,
+} from "@/apis/admin.api";
 import { useLanguageStore } from "@/zustand";
-import { uploadImage } from '@/apis/admin.api';
+import { uploadImage } from "@/apis/admin.api";
 import KeywordInput from "./KeywordInput";
 import { GenreInput } from "./GenreInput";
 import PersonInput from "./PersonInput";
@@ -39,7 +48,7 @@ export default function MovieForm({
   initialValues,
   onSubmit,
   submitting,
-  isCreate = false
+  isCreate = false,
 }: {
   initialValues: MovieFormValues;
   onSubmit: (v: MovieFormValues) => void;
@@ -51,16 +60,18 @@ export default function MovieForm({
   const toast = useToast();
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
-    if (name === 'title') {
+    if (name === "title") {
       setValues((prev) => ({
         ...prev,
         title: value,
-        backdrops: prev.backdrops.map(b => ({ url: b.url, alt: value })),
-        posters: prev.posters.map(p => ({ url: p.url, alt: value }))
-      }))
+        backdrops: prev.backdrops.map((b) => ({ url: b.url, alt: value })),
+        posters: prev.posters.map((p) => ({ url: p.url, alt: value })),
+      }));
       return;
     }
     setValues((prev) => ({ ...prev, [name]: value }));
@@ -73,21 +84,24 @@ export default function MovieForm({
     });
   };
 
-  const handleArrayFieldChange = <T extends Option,>(
+  const handleArrayFieldChange = <T extends Option>(
     field: keyof MovieFormValues,
     newList: T[]
   ) => {
     setValues((prev) => ({ ...prev, [field]: newList }));
   };
 
-  const handleSingleFieldChange = <T extends Option,>(
+  const handleSingleFieldChange = <T extends Option>(
     field: keyof MovieFormValues,
     newItem: T
   ) => {
-    setValues((prev) => ({ ...prev, [field]: newItem }))
-  }
+    setValues((prev) => ({ ...prev, [field]: newItem }));
+  };
 
-  const handleUploadMultipleFile = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+  const handleUploadMultipleFile = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: string
+  ) => {
     const files = e.target?.files;
     if (!files) return;
 
@@ -96,8 +110,8 @@ export default function MovieForm({
         const formData = new FormData();
         formData.append("file", file);
 
-        const res = await uploadImage(file, values.id || ('new-' + field))
-        if (!res.success) throw new Error("Upload failed");
+        const res = await uploadImage(file, values.id || "new-" + field);
+        if (!res.success) throw new Error("Tải lên thất bại");
 
         console.log(res.data.url);
         return res.data.url;
@@ -109,25 +123,32 @@ export default function MovieForm({
 
     const urls = await Promise.all(uploadPromises);
 
-    const notNullUrls = urls.filter(u => u != null);
-    const newUrls = [...values[field], ...notNullUrls.map(u => ({ url: u, alt: values.title }))]
-    setValues((prev) => ({ ...prev, [field]: newUrls }))
+    const notNullUrls = urls.filter((u) => u != null);
+    const newUrls = [
+      ...values[field],
+      ...notNullUrls.map((u) => ({ url: u, alt: values.title })),
+    ];
+    setValues((prev) => ({ ...prev, [field]: newUrls }));
     e.target.value = "";
   };
 
   const handleDeleteFile = async (url: string, field: string) => {
-    await deleteImage(url)
-    const newUrls = values[field].filter(v => v.url != url);
-    setValues((prev) => ({ ...prev, [field]: newUrls }))
-  }
+    await deleteImage(url);
+    const newUrls = values[field].filter((v) => v.url != url);
+    setValues((prev) => ({ ...prev, [field]: newUrls }));
+  };
 
-  useEffect(() => { console.log(values) }, [values])
+  useEffect(() => {
+    console.log(values);
+  }, [values]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 text-sm text-gray-200">
       {/* Title */}
       <div>
-        <label className="block text-gray-400">Title<span className="text-red-500"> * </span></label>
+        <label className="block text-gray-400">
+          Title<span className="text-red-500"> * </span>
+        </label>
         <input
           type="text"
           name="title"
@@ -178,35 +199,62 @@ export default function MovieForm({
       </div>
 
       {/* Genres */}
-      <GenreInput currentLanguage={currentLanguage} onChange={handleArrayFieldChange} values={values.genres} toast={toast} />
+      <GenreInput
+        currentLanguage={currentLanguage}
+        onChange={handleArrayFieldChange}
+        values={values.genres}
+        toast={toast}
+      />
 
       {/* Keywords */}
-      <KeywordInput onChange={handleArrayFieldChange} keywords={values.keywords} toast={toast} />
+      <KeywordInput
+        onChange={handleArrayFieldChange}
+        keywords={values.keywords}
+        toast={toast}
+      />
 
       {/* Original Language */}
       <OriginalLanguageInput onChange={handleSingleFieldChange} />
 
       {/* Cast */}
-      {
-        isCreate && <PersonInput label="Cast" field="cast" onChange={handleArrayFieldChange} values={values.cast} toast={toast} />
-      }
+      {isCreate && (
+        <PersonInput
+          label="Cast"
+          field="cast"
+          onChange={handleArrayFieldChange}
+          values={values.cast}
+          toast={toast}
+        />
+      )}
 
       {/* Crew */}
-      {
-        isCreate && <PersonInput label="Crew" field="crew" onChange={handleArrayFieldChange} values={values.crew} toast={toast} />
-      }
+      {isCreate && (
+        <PersonInput
+          label="Crew"
+          field="crew"
+          onChange={handleArrayFieldChange}
+          values={values.crew}
+          toast={toast}
+        />
+      )}
 
       {/* Production Companay */}
 
-
       {/* Backdrops */}
-      <BackdropsInput backdrops={values.backdrops} addFunction={handleUploadMultipleFile} deleteFunction={handleDeleteFile} />
+      <BackdropsInput
+        backdrops={values.backdrops}
+        addFunction={handleUploadMultipleFile}
+        deleteFunction={handleDeleteFile}
+      />
 
       {/* Posters */}
-      <PostersInput posters={values.posters} addFunction={handleUploadMultipleFile} deleteFunction={handleDeleteFile} />
+      <PostersInput
+        posters={values.posters}
+        addFunction={handleUploadMultipleFile}
+        deleteFunction={handleDeleteFile}
+      />
 
       <MovieVideoUploader movie={values} setValues={setValues} />
-
 
       {/* Submit */}
       <div className="flex justify-end gap-3 pt-2">
