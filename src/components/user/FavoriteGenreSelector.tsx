@@ -1,128 +1,155 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { getAllGenres, submitFavoriteGenres, Genre } from "@/apis/genre.api";
 import { useAuthStore } from "@/zustand/auth.store";
-import { User } from "@/types/api.types"
 import { useOverlay } from "@/hooks/overlay";
-import { Loader2, Check } from "lucide-react";
-
+import { Loader2, Check, Film } from "lucide-react";
 
 export default function FavoriteGenreSelector() {
   const [genres, setGenres] = useState<Genre[]>([]);
+  const { user,fetchUser } = useAuthStore();
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [fetchingGenres, setFetchingGenres] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { fetchUser } = useAuthStore();
-  const { close } = useOverlay();
-
   useEffect(() => {
-    const fetchGenres = async () => {
+    (async () => {
       try {
-        const data = await getAllGenres();
-        setGenres(data);
-      } catch (err) {
-        setError("Failed to load genres");
-        console.error("Error fetching genres:", err);
+        setGenres(await getAllGenres());
+      } catch {
+        setError("Không thể tải danh sách thể loại");
       } finally {
         setFetchingGenres(false);
       }
-    };
-
-    fetchGenres();
+    })();
   }, []);
 
-  const handleGenreToggle = (genreId: string) => {
+  useEffect(()=>{
+    console.log(user);
+    if(!genres || !genres.length || !user || !user.has_submitted_favorite_genres || !user.favorite_genres || !user.favorite_genres.length) return;
+    setSelectedGenres(user.favorite_genres.map((g) => g.id));
+  }, [genres, user])
+
+  const toggleGenre = (id: string) => {
     setSelectedGenres((prev) =>
-      prev.includes(genreId)
-        ? prev.filter((id) => id !== genreId)
-        : [...prev, genreId]
+      prev.includes(id) ? prev.filter((g) => g !== id) : [...prev, id]
     );
   };
 
   const handleSubmit = async () => {
-    if (selectedGenres.length === 0) return;
-
+    if (!selectedGenres.length) return;
     setLoading(true);
-    setError(null);
-
     try {
       await submitFavoriteGenres(selectedGenres);
-      // Update user state
       await fetchUser();
       close();
-    } catch (err) {
-      setError("Failed to submit favorite genres");
-      console.error("Error submitting genres:", err);
+    } catch {
+      setError("Gửi thể loại yêu thích thất bại");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSkip = () => {
-    close();
-  };
-
   if (fetchingGenres) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold mb-2">Chọn thể loại yêu thích</h2>
-        <p className="text-muted-foreground">
-          Hãy chọn các thể loại phim bạn yêu thích để chúng tôi có thể gợi ý
-          phim phù hợp hơn
-        </p>
-      </div>
+    <Card className="mx-auto w-full max-w-4xl border-none shadow-xl">
+      {/* Header */}
+      <CardHeader className="text-center space-y-3">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+          <Film className="h-6 w-6 text-primary" />
+        </div>
 
+        <h2 className="text-2xl font-semibold tracking-tight">
+          Chọn thể loại bạn yêu thích
+        </h2>
+
+        <p className="text-sm text-muted-foreground max-w-md mx-auto">
+          Việc này giúp hệ thống gợi ý phim sát với gu xem của bạn hơn.
+        </p>
+      </CardHeader>
+
+      <Separator />
+
+      {/* Error */}
       {error && (
-        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md text-destructive text-sm">
+        <div className="mx-6 mt-4 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
           {error}
         </div>
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
-        {genres.map((genre) => {
-          const isSelected = selectedGenres.includes(genre.id);
-          return (
-            <Card
-              key={genre.id}
-              className={`p-4 cursor-pointer transition-all hover:shadow-md ${isSelected
-                ? "bg-primary text-primary-foreground border-primary"
-                : "hover:bg-accent"
-                }`}
-              onClick={() => handleGenreToggle(genre.id)}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-sm">{genre.name}</span>
-                {isSelected && <Check className="h-4 w-4" />}
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+      {/* Content */}
+      <CardContent className="py-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+          {genres.map((genre) => {
+            const selected = selectedGenres.includes(genre.id);
 
-      <div className="flex gap-3 justify-center">
-        <Button variant="outline" onClick={handleSkip} disabled={loading}>
-          Bỏ qua
-        </Button>
-        <Button
-          onClick={handleSubmit}
-          disabled={selectedGenres.length === 0 || loading}
-        >
-          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Xác nhận ({selectedGenres.length})
-        </Button>
-      </div>
-    </div>
+            return (
+              <button
+                key={genre.id}
+                type="button"
+                onClick={() => toggleGenre(genre.id)}
+                className={`
+                  group relative rounded-lg border px-4 py-3 text-sm font-medium
+                  transition-all duration-200
+                  ${
+                    selected
+                      ? "border-primary bg-primary text-primary-foreground ring-2 ring-primary/30"
+                      : "hover:border-primary/40 hover:bg-accent"
+                  }
+                `}
+              >
+                <span className="flex items-center justify-between gap-2">
+                  {genre.name}
+                  {selected && (
+                    <Check className="h-4 w-4 shrink-0 opacity-90" />
+                  )}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </CardContent>
+
+      <Separator />
+
+      {/* Footer */}
+      <CardFooter className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          {selectedGenres.length > 0 ? (
+            <Badge variant="secondary">
+              Đã chọn {selectedGenres.length} thể loại
+            </Badge>
+          ) : (
+            "Bạn có thể chọn nhiều thể loại"
+          )}
+        </div>
+
+        <div className="flex gap-3">
+
+          <Button
+            onClick={handleSubmit}
+            disabled={!selectedGenres.length || loading}
+          >
+            {loading && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            Xác nhận
+          </Button>
+        </div>
+      </CardFooter>
+    </Card>
   );
 }

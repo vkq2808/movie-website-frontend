@@ -34,7 +34,7 @@ export default function PurchaseModal() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [purchaseComplete, setPurchaseComplete] = useState(false);
-  const { user } = useAuthStore();
+  const { user, fetchUser } = useAuthStore();
 
   const { id: movieId } = useParams();
 
@@ -112,10 +112,11 @@ export default function PurchaseModal() {
       setPurchaseComplete(true);
       setCurrentStep(4);
 
-      // Redirect after 3 seconds
-      setTimeout(() => {
+      const finalStep = async () => {
+        fetchUser();
         router.back();
-      }, 3000);
+      }
+      finalStep();
     } catch (err) {
       if (err instanceof AxiosError)
         setError(err.message || "Đã xảy ra lỗi khi thanh toán");

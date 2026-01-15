@@ -133,7 +133,7 @@ const MovieWatchPage = () => {
   if (!movie)
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900 text-gray-400">
-        <p>Không tìm thấy thông tin phim.</p>
+        <p>Đang lấy thông tin phim.</p>
       </div>
     )
 
@@ -143,7 +143,7 @@ const MovieWatchPage = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-900 text-gray-400">
         <p>Đang kiểm tra quyền truy cập...</p>
       </div>
-    )
+    ) 
 
 
   if (!user)

@@ -100,7 +100,7 @@ export default function VideoPlayer({
         }
         // Pattern 2: If videoSrc points to a numbered m3u8 file, replace with index.m3u8
         else if (videoSrc.match(/\/[^/]+\.m3u8$/)) {
-          m3u8Url = videoSrc.replace(/\/[^/]+\.m3u8$/, "/index.m3u8");
+          m3u8Url = videoSrc.replace(/\/[^/]+\.m3u8$/, "/1080/index.m3u8");
         }
         // Pattern 3: If videoSrc is a directory, append index.m3u8
         else if (videoSrc.endsWith("/")) {
@@ -200,11 +200,11 @@ export default function VideoPlayer({
       return;
     if (selectedRes === "auto") return;
     if (selectedRes === "1080") {
-      videoRef.current.src = videoSrc.replace(/\/[^/]+\.m3u8$/, "/1080p/index.m3u8");
+      videoRef.current.src = videoSrc.replace(/\/[^/]+\.m3u8$/, "/1080/index.m3u8");
     } else if (selectedRes === "720") {
-      videoRef.current.src = videoSrc.replace(/\/[^/]+\.m3u8$/, "/720p/index.m3u8");
+      videoRef.current.src = videoSrc.replace(/\/[^/]+\.m3u8$/, "/720/index.m3u8");
     } else if (selectedRes === "480") {
-      videoRef.current.src = videoSrc.replace(/\/[^/]+\.m3u8$/, "/480p/index.m3u8");
+      videoRef.current.src = videoSrc.replace(/\/[^/]+\.m3u8$/, "/480/index.m3u8");
     }
   }, [selectedRes])
 

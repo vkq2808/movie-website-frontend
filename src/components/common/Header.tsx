@@ -54,7 +54,7 @@ const Header = () => {
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Search for movies, actors"
+                placeholder="Tìm kiếm phim, diễn viên"
                 className="w-full h-10 pl-10 pr-10 rounded placeholder-neutral-50 focus:outline-none bg-gray-800/70"
               />
               <button type="submit" className="absolute right-3 top-2.5">
@@ -65,7 +65,7 @@ const Header = () => {
 
           {/* Mega menu "Thể loại" */}
           <Popover className="relative">            <PopoverButton className="flex items-center space-x-1 cursor-pointer focus:outline-none min-w-24">
-            <span>Genres</span>
+            <span>Thể loại</span>
             <ChevronDownIcon className="w-4 h-4" />
           </PopoverButton>
             <PopoverPanel className="absolute z-10 mt-2 w-screen max-w-xl pr-8 bg-gray-800 p-4 rounded shadow-lg focus:outline-none">
@@ -97,7 +97,7 @@ const Header = () => {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6.5M7 13h10M17 21a2 2 0 100-4 2 2 0 000 4zM9 21a2 2 0 100-4 2 2 0 000 4z" />
             </svg>
-            <span>Purchase</span>
+            <span>Mua</span>
           </Link>
 
           <Link
@@ -107,7 +107,7 @@ const Header = () => {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
             </svg>
-            <span>Wallet</span>
+            <span>Ví</span>
           </Link>
 
           <Link
@@ -117,7 +117,7 @@ const Header = () => {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
-            <span>My List</span>
+            <span>Danh sách của tôi</span>
           </Link>
         </nav>
 
@@ -165,26 +165,26 @@ const UserInformation = () => {
           </Link>
           {user.role === 'admin' && (
             <Link href="/admin" prefetch={false} className="text-lg font-medium text-blue-400 hover:text-blue-300 transition-colors">
-              Admin
+              Quản trị
             </Link>
           )}
           <button
             onClick={() => {
               try {
                 logout();
-                toast.success('Logged out successfully');
+                toast.success('Đăng xuất thành công');
               } catch (e) {
-                toast.error('Logout failed');
+                toast.error('Đăng xuất thất bại');
               }
             }}
             className="text-lg font-medium text-neutral-100 hover:text-gray-400 transition-colors"
           >
-            Logout
+            Đăng xuất
           </button>
         </>
       ) : (
         <div onClick={handleLoginNavigate} className="text-lg cursor-pointer font-medium text-neutral-100 hover:text-gray-400 transition-colors">
-          Login
+          Đăng nhập
         </div>
       )}
     </div>

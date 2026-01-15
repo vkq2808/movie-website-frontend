@@ -50,7 +50,6 @@ const MoviePurchaseButton: React.FC<MoviePurchaseButtonProps> = ({
 
         // Get wallet balance
         const balanceResponse = await getWalletBalance();
-        console.log('Wallet balance:', balanceResponse);
         setWalletBalance(balanceResponse.data.balance);
       } catch (error) {
         setError('Failed to load purchase information');

@@ -84,10 +84,9 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
         amount,
         selectedPaymentMethod,
         undefined, // reference_id for external payments
-        `Nạp tiền qua ${
-          selectedPaymentMethod === "manual"
-            ? "thủ công"
-            : selectedPaymentMethod
+        `Nạp tiền qua ${selectedPaymentMethod === "manual"
+          ? "thủ công"
+          : selectedPaymentMethod
         }`
       );
       const newBalance = response.data.balance;
@@ -268,15 +267,11 @@ const WalletBalance: React.FC<WalletBalanceProps> = ({
           <div className="space-y-2">
             <label className="block text-sm text-gray-400">Custom Amount</label>
             <div className="flex space-x-2">
-              <input
-                type="number"
-                value={addAmount}
-                onChange={(e) => setAddAmount(e.target.value)}
-                placeholder="Enter amount"
-                min="0.01"
-                step="0.01"
-                className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-              />
+              <div
+                className="flex-1 cursor-not-allowed px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+              >
+                {addAmount}
+              </div >
               <button
                 onClick={handleAddBalance}
                 disabled={isAddingBalance || !addAmount}

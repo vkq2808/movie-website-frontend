@@ -8,15 +8,17 @@ import {
   History as HistoryIcon,
   Wallet as WalletIcon,
   Settings as SettingsIcon,
+  Film as FilmIcon,
 } from "lucide-react";
-import { useUpdateProfile, useFavoriteMovies, useWatchHistory } from "@/hooks";
+import { useUpdateProfile, useFavoriteMovies, useWatchHistory, useToast } from "@/hooks";
 import { useAuthStore } from "@/zustand";
-import toast from "react-hot-toast";
-import axios from "axios";
+import api from "@/utils/api.util";
+import FavoriteGenreSelector from "./FavoriteGenreSelector";
 
 interface ProfileTabsProps {
   user: User;
 }
+
 
 interface SettingsFormState {
   username: string;
@@ -29,6 +31,7 @@ interface SettingsFormState {
 export default function ProfileTabs({ user }: ProfileTabsProps) {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const { fetchUser } = useAuthStore();
+  const toast = useToast();
 
   const [form, setForm] = useState<SettingsFormState>({
     username: user.username || "",
@@ -81,14 +84,11 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
 
       // Handle password change if both fields are filled
       if (form.currentPassword && form.newPassword) {
-        await axios.patch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/change-password`,
+        await api.patch(
+          `/auth/change-password`,
           {
             current_password: form.currentPassword,
             new_password: form.newPassword,
-          },
-          {
-            withCredentials: true,
           }
         );
 
@@ -148,6 +148,20 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
           >
             <HistoryIcon size={18} />
             <span>Lịch sử xem</span>
+          </Tab>
+          <Tab
+            className={({ selected }) => `
+              flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium 
+              ${
+                selected
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
+              }
+              transition-all focus:outline-none
+            `}
+          >
+            <FilmIcon size={18} />
+            <span>Thể loại yêu thích</span>
           </Tab>
           <Tab
             className={({ selected }) => `
@@ -236,6 +250,13 @@ export default function ProfileTabs({ user }: ProfileTabsProps) {
                   </p>
                 </div>
               )}
+            </div>
+          </TabPanel>
+
+          {/* Favorite Genres Tab */}
+          <TabPanel>
+            <div className="bg-slate-900 rounded-lg p-6">
+              <FavoriteGenreSelector />
             </div>
           </TabPanel>
 

@@ -129,6 +129,7 @@ export interface User {
   is_verified: boolean;
   is_active: boolean;
   has_submitted_favorite_genres: boolean;
+  favorite_genres: Genre[];
   favoriteMovies: Movie[];
   created_at: string;
 }

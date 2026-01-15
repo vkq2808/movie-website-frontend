@@ -28,12 +28,12 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">          {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-bold mb-4 select-none">Quick Links</h3>
+            <h3 className="text-xl font-bold mb-4 select-none">Liên kết nhanh</h3>
             <ul className="space-y-2">
-              <li><Link href="/genres" className="hover:text-purple-400 transition duration-300">Categories</Link></li>
-              <li><Link href="/recommendations" className="hover:text-purple-400 transition duration-300">Top Rated</Link></li>
-              <li><Link href="/new" className="hover:text-purple-400 transition duration-300">New Releases</Link></li>
-              <li><Link href="/upcoming" className="hover:text-purple-400 transition duration-300">Upcoming</Link></li>
+              <li><Link href="/genres" className="hover:text-purple-400 transition duration-300">Thể loại</Link></li>
+              <li><Link href="/recommendations" className="hover:text-purple-400 transition duration-300">Đánh giá cao</Link></li>
+              <li><Link href="/new" className="hover:text-purple-400 transition duration-300">Phim mới</Link></li>
+              <li><Link href="/upcoming" className="hover:text-purple-400 transition duration-300">Sắp chiếu</Link></li>
             </ul>
           </div>          {/* Customer Support */}
           <div>

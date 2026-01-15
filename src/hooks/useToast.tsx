@@ -25,7 +25,7 @@ const ToastContext = React.createContext<ToastContextValue | null>(null);
 
 export function useToast() {
   const ctx = React.useContext(ToastContext);
-  if (!ctx) throw new Error('useToast must be used within ToastProvider');
+  if (!ctx) throw new Error('useToast phải được sử dụng trong ToastProvider');
   return ctx;
 }
 
@@ -115,7 +115,7 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
         className="ml-1 rounded px-2 py-1 text-xs text-white/70 hover:bg-white/10 hover:text-white"
         onClick={onClose}
       >
-        Close
+        Đóng
       </button>
     </div>
   );

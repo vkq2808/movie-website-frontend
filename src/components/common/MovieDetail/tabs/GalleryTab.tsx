@@ -71,8 +71,8 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
         </div>
       ) : (
         <div className="text-center py-12">
-          <div className="text-6xl text-gray-600 mb-4">🖼</div>
-          <p className="text-gray-400 text-lg">Không có hình ảnh thư viện</p>
+          <div className="text-6xl text-gray-600 mb-4"></div>
+          <p className="text-gray-400 text-lg"></p>
         </div>
       )}
 
@@ -99,7 +99,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
               key={`screenshot-${index}`}
               className="aspect-video bg-gray-800 rounded-lg flex items-center justify-center"
             >
-              <span className="text-gray-500 text-xs">Ảnh chụp {index + 2}</span>
+              <span className="text-gray-500 text-xs"></span>
             </div>
           ))}
         </div>
@@ -127,7 +127,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ movie }) => {
               key={`poster-${index}`}
               className="aspect-[2/3] bg-gray-800 rounded-lg flex items-center justify-center"
             >
-              <span className="text-gray-500 text-xs text-center">Poster {index + 2}</span>
+              <span className="text-gray-500 text-xs text-center"></span>
             </div>
           ))}
         </div>
