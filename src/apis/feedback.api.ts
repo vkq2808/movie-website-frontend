@@ -3,8 +3,8 @@ import { ApiResponse, PaginatedApiResponse } from '@/types/api.response';
 
 export interface FeedbackUser {
   id: string;
-  fullName?: string | null;
-  avatar?: string | null;
+  username?: string | null;
+  photo_url?: string | null;
 }
 
 export interface FeedbackMovie {

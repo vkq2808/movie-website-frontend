@@ -91,10 +91,10 @@ export function FeedbackTable({ feedbacks, isLoading, onRefresh }: FeedbackTable
               <tr key={fb.id} className="border-b border-gray-800">
                 <td className="px-3 py-2">
                   <div className="flex items-center gap-2">
-                    {fb.user?.avatar && (
+                    {fb.user?.photo_url && (
                       <img
-                        src={fb.user.avatar}
-                        alt={fb.user.fullName || 'User'}
+                        src={fb.user.photo_url}
+                        alt={fb.user.username || 'User'}
                         className="h-6 w-6 rounded-full bg-gray-800 object-cover"
                         onError={(e) => {
                           (e.target as HTMLImageElement).style.display = 'none';
@@ -102,7 +102,7 @@ export function FeedbackTable({ feedbacks, isLoading, onRefresh }: FeedbackTable
                       />
                     )}
                     <span className="text-gray-100">
-                      {fb.user?.fullName || 'Unknown User'}
+                      {fb.user?.username || 'Unknown User'}
                     </span>
                   </div>
                 </td>

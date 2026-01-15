@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Movie } from '@/types/api.types'
-import { purchaseMovie, checkMovieOwnership } from '@/apis/movie-purchase.api';
+import {  checkMovieOwnership } from '@/apis/movie-purchase.api';
 import { getWalletBalance } from '@/apis/wallet.api';
 import { useAuthStore } from '@/zustand/auth.store';
 import LoadingSpinner from '@/components/common/Loading/LoadingSpinner';

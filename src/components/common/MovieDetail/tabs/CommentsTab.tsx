@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/useToast';
 import { sanitizeInput, isValidComment } from '@/utils/sanitize.util';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
+import {  checkMovieOwnership } from '@/apis/movie-purchase.api';
 
 interface CommentsTabProps {
   movieId: string;
@@ -26,8 +27,8 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState('');
   const [hasNewComments, setHasNewComments] = useState(false);
-
-  const canPost = useMemo(() => !!auth.user && newComment.trim().length > 0, [auth.user, newComment]);
+  const [ownsMovie, setOwnsMovie] = useState(false);
+  const {user} = useAuthStore();
 
   const fetchData = async (p = 1) => {
     setLoading(true);
@@ -56,9 +57,27 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
     };
   }, [movieId]);
 
+  useEffect(() => {
+      // Only fetch data if user is authenticated
+      if (!user || !movieId) {
+        return;
+      }
+  
+      const checkInitialState = async () => {
+        try {
+          // Check if user owns the movie
+          const ownershipResponse = await checkMovieOwnership(movieId);
+          setOwnsMovie(ownershipResponse.data.owns_movie);
+        } catch (error) {
+        } 
+      };
+  
+      checkInitialState();
+    }, [movieId, user]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canPost || !currentUserId) return;
+    if (!currentUserId) return;
 
     const newCommentText = sanitizeInput(newComment);
 
@@ -77,12 +96,12 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
       updated_at: new Date().toISOString(),
       user: {
         id: currentUserId,
-        fullName: auth.user?.username || 'Unknown',
-        avatar: auth.user?.photo_url || null,
+        username: user?.username || 'Unknown',
+        photo_url: user?.photo_url || null,
       },
     };
 
-    setItems((prev) => [tempComment, ...prev]);
+    setItems((prev) => [ ...prev,tempComment]);
     setNewComment('');
 
     try {
@@ -177,15 +196,16 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
           <form onSubmit={handleSubmit} className="space-y-3">
             <textarea
               value={newComment}
+              disabled={!ownsMovie  }
               onChange={(e) => setNewComment(e.target.value)}
-              className="w-full bg-gray-800 text-white p-3 rounded-md outline-none border border-gray-700 focus:border-yellow-400 min-h-[80px]"
+              className={`w-full ${(!ownsMovie ) && 'bg-gray-700 cursor-not-allowed'} bg-gray-800 text-white p-3 rounded-md outline-none border border-gray-700 focus:border-yellow-400 min-h-[80px]`}
               placeholder="Viết bình luận của bạn..."
             />
-            <div className="flex justify-end">
+            <div className="flex justify-between">
               <button
                 type="submit"
-                disabled={!canPost}
-                className={`px-4 py-2 rounded-md ${canPost ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-gray-700 cursor-not-allowed'} text-black`}
+                disabled={!ownsMovie}
+                className={`px-4 py-2 rounded-md ${ownsMovie? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-gray-700 cursor-not-allowed'} text-black`}
               >
                 Gửi
               </button>
@@ -222,15 +242,15 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
           <div key={item.id} className="bg-gray-900 p-4 rounded-lg">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center text-sm">
-                {item.user?.avatar ? (
-                  <Image src={item.user?.avatar} alt={item.user?.fullName ?? 'Unknown'} width={40} height={40} className="object-cover" />
+                {item.user?.photo_url ? (
+                  <Image src={item.user?.photo_url} alt={item.user?.username ?? 'Unknown'} width={40} height={40} className="object-cover" />
                 ) : (
-                  <span className="text-gray-300">{item.user?.fullName?.charAt(0).toUpperCase()}</span>
+                  <span className="text-gray-300">{item.user?.username?.charAt(0).toUpperCase()}</span>
                 )}
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <p className="text-white font-medium">{item.user?.fullName}</p>
+                  <p className="text-white font-medium">{item.user?.username}</p>
                   {currentUserId === item.user?.id && (
                     <div className="space-x-2 text-sm">
                       {editingId === item.id ? (
@@ -253,9 +273,9 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
                     onChange={(e) => setEditingText(e.target.value)}
                     className="w-full bg-gray-800 text-white p-3 mt-2 rounded-md outline-none border border-gray-700 focus:border-yellow-400"
                   />
-                ) : (
-                  <p className="text-gray-300 mt-2 whitespace-pre-wrap">{item.feedback}</p>
-                )}
+                )  : item.user?.id === currentUserId ? (
+                  <p className={`${item.status && item.status === 'hidden' ? 'text-gray-500' : 'text-gray-300'} mt-2 whitespace-pre-wrap`}>{item.feedback} {`${item.status && item.status === 'hidden' ? (<span className="text-red-500"> - Đã ẩn</span>) : ''}`}</p>
+                ) : (<></>)}
                 <p className="text-gray-500 text-xs mt-1">{new Date(item.created_at).toLocaleString()}</p>
               </div>
             </div>

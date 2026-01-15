@@ -686,8 +686,8 @@ export interface AdminFeedback {
   id: string;
   user: {
     id: string;
-    fullName?: string | null;
-    avatar?: string | null;
+    username?: string | null;
+    photo_url?: string | null;
   } | null;
   movie: {
     id: string;
