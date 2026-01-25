@@ -192,14 +192,14 @@ const CommentsTab: React.FC<CommentsTabProps> = ({ movieId }) => {
     <div className="space-y-6">
       {/* Post form */}
       <div className="bg-gray-900 p-4 rounded-lg">
-        {auth.user ? (
+        {auth.user ?(
           <form onSubmit={handleSubmit} className="space-y-3">
             <textarea
               value={newComment}
               disabled={!ownsMovie  }
               onChange={(e) => setNewComment(e.target.value)}
-              className={`w-full ${(!ownsMovie ) && 'bg-gray-700 cursor-not-allowed'} bg-gray-800 text-white p-3 rounded-md outline-none border border-gray-700 focus:border-yellow-400 min-h-[80px]`}
-              placeholder="Viết bình luận của bạn..."
+              className={`w-full ${(!ownsMovie ) && 'bg-gray-600 cursor-not-allowed'} bg-gray-800 text-white p-3 rounded-md outline-none border border-gray-700 focus:border-yellow-400 min-h-[80px]`}
+              placeholder={ownsMovie?"Viết bình luận của bạn...":"Hãy sở hữu phim trước khi bình luận"}
             />
             <div className="flex justify-between">
               <button

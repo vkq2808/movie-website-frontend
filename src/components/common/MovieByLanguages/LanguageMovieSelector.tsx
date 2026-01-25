@@ -106,10 +106,10 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
         setLanguagesLoading(true)
         // Fallback to default languages if API returns empty
         const defaultLanguages: Language[] = [
-          { id: 'default-language-1', iso_639_1: 'en', name: 'English', english_name: 'English', country: 'US' },
-          { id: 'default-language-2', iso_639_1: 'ko', name: 'Korean', english_name: 'Korean', country: 'KR' },
-          { id: 'default-language-3', iso_639_1: 'ja', name: 'Japanese', english_name: 'Japanese', country: 'JP' },
-          { id: 'default-language-4', iso_639_1: 'zh', name: 'Chinese', english_name: 'Chinese', country: 'CN' },
+          { id: 'default-language-1', iso_639_1: 'en', name: 'Phim Anh Quốc', english_name: 'Phim Anh Quốc', country: 'US' },
+          { id: 'default-language-2', iso_639_1: 'ko', name: 'Phim Hàn Quốc', english_name: 'Phim Hàn Quốc', country: 'KR' },
+          { id: 'default-language-3', iso_639_1: 'ja', name: 'Phim Nhật Bản', english_name: 'Phim Nhật Bản', country: 'JP' },
+          { id: 'default-language-4', iso_639_1: 'zh', name: 'Phim Trung Quốc', english_name: 'Phim Trung Quốc', country: 'CN' },
         ]
 
         // Initialize with default languages
@@ -128,10 +128,10 @@ const LanguageMovieSelector: React.FC<LanguageMovieSelectorProps> = ({
 
         // Fallback to default languages if API fails
         const defaultLanguages: Language[] = [
-          { id: 'default-language-1', iso_639_1: 'en', name: 'English', english_name: 'English', country: 'US' },
-          { id: 'default-language-2', iso_639_1: 'ko', name: 'Korean', english_name: 'Korean', country: 'KR' },
-          { id: 'default-language-3', iso_639_1: 'ja', name: 'Japanese', english_name: 'Japanese', country: 'JP' },
-          { id: 'default-language-4', iso_639_1: 'zh', name: 'Chinese', english_name: 'Chinese', country: 'CN' },
+          { id: 'default-language-1', iso_639_1: 'en', name: 'Phim Anh Quốc', english_name: 'Phim Anh Quốc', country: 'US' },
+          { id: 'default-language-2', iso_639_1: 'ko', name: 'Phim Hàn Quốc', english_name: 'Phim Hàn Quốc', country: 'KR' },
+          { id: 'default-language-3', iso_639_1: 'ja', name: 'Phim Nhật Bản', english_name: 'Phim Nhật Bản', country: 'JP' },
+          { id: 'default-language-4', iso_639_1: 'zh', name: 'Phim Trung Quốc', english_name: 'Phim Trung Quốc', country: 'CN' },
         ]
 
         // Initialize with default languages

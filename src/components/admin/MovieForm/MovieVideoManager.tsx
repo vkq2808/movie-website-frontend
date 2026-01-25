@@ -189,7 +189,7 @@ export default function MovieVideoManager({ movie, setValues }: Props) {
           onClick={() => fileInputRef.current?.click()}
           className="bg-fuchsia-600 hover:bg-fuchsia-700 px-4 py-2 rounded-lg font-medium text-white cursor-pointer"
         >
-          Add Video
+          Thêm video
         </button>
         <input
           type="file"
@@ -269,11 +269,11 @@ export default function MovieVideoManager({ movie, setValues }: Props) {
             ) : (
               <p className="text-sm text-gray-300">
                 {status === 'uploading'
-                  ? `Uploading... ${progress}%`
+                  ? `Đang tải lên... ${progress}%`
                   : status === 'assembling'
-                    ? 'Assembling video...'
+                    ? 'Đang hợp nhất các mảnh video...'
                     : status === 'processing'
-                      ? 'Processing video...'
+                      ? 'Đang xử  lý video...'
                       : 'Complete ✅'}
               </p>
             )}
@@ -399,7 +399,7 @@ function VideoTabs({ movie, setValues, statusMap, activeTab, setActiveTab }: {
           ))
         ) : (
           <div className="text-center text-gray-400 py-6">
-            No {activeTab.toLowerCase()} videos yet.
+            Chưa có {activeTab.toLowerCase()} video nào.
           </div>
         )}
       </div>

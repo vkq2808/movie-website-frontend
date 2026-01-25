@@ -206,11 +206,6 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
                   <div title="Add to your playlist">
                     <AddToListButton movieId={movie.id} />
                   </div>
-
-                  <Button variant="ghost" size="icon" aria-label="Add to playlist" 
-                  className='p-3 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors'>
-                    <Share className="w-5 h-5 text-green-500" />
-                  </Button>
                 </div>
               </div>
 
@@ -227,7 +222,6 @@ const MovieHero: React.FC<MovieHeroProps> = ({ movie }) => {
                   <span className="bg-yellow-400 text-black px-2 py-1 rounded text-xs font-bold">
                     {movie.vote_average?.toFixed(1) || '?'} ★
                   </span>
-                  <span>Đánh giá</span>
                 </div>
                 <span>•</span>
                 <span>{movie.release_date?.split('-')[0] || 'N/A'}</span>
